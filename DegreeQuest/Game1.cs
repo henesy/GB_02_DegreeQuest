@@ -5,7 +5,8 @@ using Microsoft.Xna.Framework.Input;
 namespace DegreeQuest
 {
     /// <summary>
-    /// This is the main type for your game.
+    /// 2D rogue-like game for CS 309 with Mitra
+    /// By Sean, Zach B., Zach T., and Dennis
     /// </summary>
     public class Game1 : Game
     {
