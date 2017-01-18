@@ -7,6 +7,7 @@ namespace DegreeQuest
     /// <summary>
     /// 2D rogue-like game for CS 309 with Mitra
     /// By Sean, Zach B., Zach T., and Dennis
+    /// Team 102
     /// </summary>
     public class Game1 : Game
     {
