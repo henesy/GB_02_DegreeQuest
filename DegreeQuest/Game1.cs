@@ -9,12 +9,12 @@ namespace DegreeQuest
     /// By Sean, Zach B., Zach T., and Dennis
     /// Team 102
     /// </summary>
-    public class Game1 : Game
+    public class DegreeQuest : Game
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        public Game1()
+        public DegreeQuest()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
