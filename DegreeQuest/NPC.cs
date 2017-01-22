@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace DegreeQuest
 {
-    class NPC
+    /* Generic NPC class type */
+    class NPC 
     {
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using DegreeQuest;
 
 namespace DegreeQuest
 {
@@ -13,6 +14,8 @@ namespace DegreeQuest
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+
+        PC pc;
 
         public DegreeQuest()
         {
@@ -30,6 +33,9 @@ namespace DegreeQuest
         {
             // TODO: Add your initialization logic here
 
+            //initialize the player
+            pc = new PC();
+
             base.Initialize();
         }
 
@@ -43,6 +49,11 @@ namespace DegreeQuest
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+
+            Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X,
+                GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
+
+            pc.Initialize(Content.Load<Texture2D>("U:\\cs309\\DegreeQuest\\DegreeQuest\\DegreeQuest\\Content\\Graphics\\player"), playerPosition);
         }
 
         /// <summary>
@@ -79,7 +90,16 @@ namespace DegreeQuest
 
             // TODO: Add your drawing code here
 
+            // start drawing
+            spriteBatch.Begin();
+
+            //draw player
+            pc.Draw(spriteBatch);
+
             base.Draw(gameTime);
+
+            //stop draw
+            spriteBatch.End();
         }
     }
 }
