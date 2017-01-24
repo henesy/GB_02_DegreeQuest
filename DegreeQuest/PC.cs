@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DegreeQuest
 {
     /* Player clsas to manage to user */
-    class PC
+    class PC : Actor
     {
         // Animation representing the player
         public Texture2D PlayerTexture;
@@ -62,5 +62,12 @@ namespace DegreeQuest
             spriteBatch.Draw(PlayerTexture, Position, null, Color.White, 0f, Vector2.Zero, 1f,
                 SpriteEffects.None, 0f);
         }
+
+        /* As per Actor */
+        public AType GetAType()
+        { return AType.PC; }
+
+        public Vector2 GetPos()
+        { return Position; }
     }
 }

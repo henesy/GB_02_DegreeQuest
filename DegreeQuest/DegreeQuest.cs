@@ -12,16 +12,29 @@ namespace DegreeQuest
     /// </summary>
     public class DegreeQuest : Game
     {
+        /* Through trial and error, puts you at the "root" project directory (with the .sln, etc.) */
+        public string root = System.AppDomain.CurrentDomain.BaseDirectory + "..\\..\\..\\..";
+
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
         PC pc;
+
+        //states to determine keypresses
+        KeyboardState currentKeyboardState;
+        KeyboardState previousKeyboardState;
+
+        //movement speed of player
+        float playerMoveSpeed;
+
+        /** End Variables **/
 
         public DegreeQuest()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
         }
+
 
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -36,8 +49,11 @@ namespace DegreeQuest
             //initialize the player
             pc = new PC();
 
+            playerMoveSpeed = 8.0f;      
+
             base.Initialize();
         }
+
 
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
@@ -53,7 +69,7 @@ namespace DegreeQuest
             Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X,
                 GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
 
-            pc.Initialize(Content.Load<Texture2D>("U:\\cs309\\DegreeQuest\\DegreeQuest\\DegreeQuest\\Content\\Graphics\\player"), playerPosition);
+            pc.Initialize(Content.Load<Texture2D>(root + "\\Content\\Graphics\\player"), playerPosition);
         }
 
         /// <summary>
@@ -64,6 +80,7 @@ namespace DegreeQuest
         {
             // TODO: Unload any non ContentManager content here
         }
+
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -76,9 +93,32 @@ namespace DegreeQuest
                 Exit();
 
             // TODO: Add your update logic here
+            previousKeyboardState = currentKeyboardState;
+            currentKeyboardState = Keyboard.GetState();
+            UpdatePlayer(gameTime);
 
             base.Update(gameTime);
         }
+
+
+        private void UpdatePlayer(GameTime gameTime)
+        {
+            if (currentKeyboardState.IsKeyDown(Keys.Left))
+                pc.Position.X -= playerMoveSpeed;
+
+            if (currentKeyboardState.IsKeyDown(Keys.Right))
+                pc.Position.X += playerMoveSpeed;
+
+            if (currentKeyboardState.IsKeyDown(Keys.Up))
+                pc.Position.Y -= playerMoveSpeed;
+
+            if (currentKeyboardState.IsKeyDown(Keys.Down))
+                pc.Position.Y += playerMoveSpeed;
+
+            pc.Position.X = MathHelper.Clamp(pc.Position.X, 0, GraphicsDevice.Viewport.Width - pc.Width);
+            pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 0, GraphicsDevice.Viewport.Height - pc.Height);
+        }
+
 
         /// <summary>
         /// This is called when the game should draw itself.

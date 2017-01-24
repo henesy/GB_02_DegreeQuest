@@ -38,10 +38,11 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Room.cs" />
     <Compile Include="PC.cs" />
     <Compile Include="NPC.cs" />
     <Compile Include="DegreeQuest.cs" />
-    <Compile Include="Monster.cs" />
+    <Compile Include="Actor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
