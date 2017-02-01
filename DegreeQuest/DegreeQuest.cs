@@ -32,6 +32,13 @@ namespace DegreeQuest
         public DegreeQuest()
         {
             graphics = new GraphicsDeviceManager(this);
+
+            /* window resize code */
+            graphics.IsFullScreen = false;
+            graphics.PreferredBackBufferWidth = 1280;
+            graphics.PreferredBackBufferHeight = 1024;
+            graphics.ApplyChanges();
+
             Content.RootDirectory = "Content";
         }
 
