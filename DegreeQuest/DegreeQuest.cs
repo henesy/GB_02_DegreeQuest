@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using DegreeQuest;
+using RogueSharp;
+using RogueSharp.MapCreation;
 
 namespace DegreeQuest
 {
@@ -14,6 +16,9 @@ namespace DegreeQuest
     {
         /* Through trial and error, puts you at the "root" project directory (with the .sln, etc.) */
         public string root = System.AppDomain.CurrentDomain.BaseDirectory + "..\\..\\..\\..";
+        private IMap _map;
+        private Texture2D _floor;
+        private Texture2D _wall;
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -47,9 +52,10 @@ namespace DegreeQuest
             // TODO: Add your initialization logic here
 
             //initialize the player
-            pc = new PC();
-
-            playerMoveSpeed = 8.0f;      
+            //pc = new PC();
+            IMapCreationStrategy<Map> mapCreationStrategy = new RandomRoomsMapCreationStrategy<Map>(50, 30, 100, 7, 3);
+            _map = Map.Create(mapCreationStrategy);
+            //playerMoveSpeed = 8.0f;      
 
             base.Initialize();
         }
@@ -66,10 +72,19 @@ namespace DegreeQuest
 
             // TODO: use this.Content to load your game content here
 
-            Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X,
-                GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
+            //Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X,
+            //    GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
+            try
+            {
+                _floor = Content.Load<Texture2D>("floor");
+                _wall = Content.Load<Texture2D>("wall");
+            }
+            finally
+            {
 
-            pc.Initialize(Content.Load<Texture2D>(root + "\\Content\\Graphics\\player"), playerPosition);
+            }
+
+            //pc.Initialize(Content.Load<Texture2D>(root + "\\Content\\Graphics\\player"), playerPosition);
         }
 
         /// <summary>
@@ -93,14 +108,14 @@ namespace DegreeQuest
                 Exit();
 
             // TODO: Add your update logic here
-            previousKeyboardState = currentKeyboardState;
-            currentKeyboardState = Keyboard.GetState();
-            UpdatePlayer(gameTime);
+            //previousKeyboardState = currentKeyboardState;
+            //currentKeyboardState = Keyboard.GetState();
+            //UpdatePlayer(gameTime);
 
             base.Update(gameTime);
         }
 
-
+        /*
         private void UpdatePlayer(GameTime gameTime)
         {
             if (currentKeyboardState.IsKeyDown(Keys.Left))
@@ -117,7 +132,7 @@ namespace DegreeQuest
 
             pc.Position.X = MathHelper.Clamp(pc.Position.X, 0, GraphicsDevice.Viewport.Width - pc.Width);
             pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 0, GraphicsDevice.Viewport.Height - pc.Height);
-        }
+        }*/
 
 
         /// <summary>
@@ -131,10 +146,24 @@ namespace DegreeQuest
             // TODO: Add your drawing code here
 
             // start drawing
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
+            int sizeOfSprite = 64;
+             foreach(Cell cell in _map.GetAllCells())
+            {
+                if(cell.IsWalkable)
+                {
+                    var position = new Vector2(cell.X * sizeOfSprite, cell.Y * sizeOfSprite);
+                    spriteBatch.Draw(_floor, position, Color.White);
+                }
+                else
+                {
+                    var position = new Vector2(cell.X * sizeOfSprite, cell.Y * sizeOfSprite);
+                    spriteBatch.Draw(_wall, position, Color.White);
+                }
+            }
 
             //draw player
-            pc.Draw(spriteBatch);
+            //pc.Draw(spriteBatch);
 
             base.Draw(gameTime);
 
