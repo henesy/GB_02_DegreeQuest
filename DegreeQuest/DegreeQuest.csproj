@@ -45,6 +45,7 @@
     <Compile Include="Actor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Server\DQServer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="OpenTK">
