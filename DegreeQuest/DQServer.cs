@@ -6,12 +6,19 @@ using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Collections;
 using System.Threading;
+using Microsoft.Xna.Framework;
 
 namespace DegreeQuest
 {
     class DQServer
     {
         ClientList clients;
+        PC pc;
+
+        public DQServer(PC mainPC)
+        {
+            pc = mainPC;
+        }
 
         public void DQSInit()
         {
@@ -25,7 +32,7 @@ namespace DegreeQuest
             {
                 TcpClient client = srv.AcceptTcpClient();
                 clients.Add(client);
-                Handler h = new Handler(client);
+                Handler h = new Handler(client, pc);
 
                 //handle concurrently 
                 Thread handler = new Thread(new ThreadStart(h.ThreadRun));
@@ -50,12 +57,11 @@ namespace DegreeQuest
 
         public void ThreadRun()
         {
-            DQServer srv = new DQServer();
-            srv.DQSInit();
+            this.DQSInit();
         }
 
         /* Post player locations to all clients */
-        public void WriteAll(int x, int y)
+        public void WriteAll(Vector2 pos)
         {
             int i;
             for(i = 0; i < clients.Length(); i++)
@@ -68,15 +74,17 @@ namespace DegreeQuest
 
     }
 
-
+    
     class Handler
     {
         TcpClient c;
+        PC pc;
 
         //threading and locks on clients variable 
-        public Handler(TcpClient client)
+        public Handler(TcpClient client, PC mainPC)
         {
             c = client;
+            pc = mainPC;
         }
 
         public void ThreadRun()
@@ -88,16 +96,20 @@ namespace DegreeQuest
                 try
                 {
                     NetworkStream networkStream = c.GetStream();
-                    Byte[] byt = System.Text.Encoding.ASCII.GetBytes("This is a test...");
+                    //needs to be PC position
+                    Vector2 position = pc.Position;
+                    string str = (new Location(position).ToString());
+                    Byte[] byt = Encoding.ASCII.GetBytes(str);
                     networkStream.Write(byt, 0, byt.Length);
                     networkStream.Flush();
-                    Console.WriteLine(">>> WROTE TEST!");
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.ToString());
                     break;
                 }
+
+                Thread.Sleep(100);
             }
 
             Console.WriteLine(">>> Handler Ending! ");

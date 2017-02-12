@@ -59,34 +59,36 @@ namespace DegreeQuest
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            pc = new PC();
 
-            // server init logic
-            serverMode = true;
+            // server init logic ;; always serving atm
+            string config = System.IO.File.ReadAllText(@"config.txt");
+            if (config.Contains("server=true"))
+                serverMode = true;
 
             if (serverMode)
             {
-                srv = new DQServer();
+                srv = new DQServer(pc);
 
                 Thread srvThread = new Thread(new ThreadStart(srv.ThreadRun));
                 srvThread.Start();
                 //srvThread.Join();
-                Console.WriteLine("> Server Initialistion Complete!");
+                Console.WriteLine("> Server Initialistion Compl3ete!");
             }
 
-            // client init logic
-            clientMode = true;
+            Console.Write("File had: " + config);
+            if (config.Contains("client=true"))
+                clientMode = true;
 
+            // client init logic
             if (clientMode)
             {
-                client = new DQClient();
+                client = new DQClient(pc);
 
                 Thread clientThread = new Thread(new ThreadStart(client.ThreadRun));
                 clientThread.Start();
                 Console.WriteLine("> Client Initialisation Complete!");
             }
-
-            //initialize the player
-            pc = new PC();
 
             playerMoveSpeed = 8.0f;      
 
@@ -131,10 +133,13 @@ namespace DegreeQuest
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
-            previousKeyboardState = currentKeyboardState;
-            currentKeyboardState = Keyboard.GetState();
-            UpdatePlayer(gameTime);
+            if (!clientMode)
+            {
+                // TODO: Add your update logic here
+                previousKeyboardState = currentKeyboardState;
+                currentKeyboardState = Keyboard.GetState();
+                UpdatePlayer(gameTime);
+            }
 
             base.Update(gameTime);
         }
@@ -181,9 +186,56 @@ namespace DegreeQuest
             spriteBatch.End();
         }
 
-        public Vector2 GetPCPos()
+        
+    }
+
+    class Location
+    {
+        public float X;
+        public float Y;
+
+        public Location(float x, float y)
         {
-            return pc.Position;
+            X = x;
+            Y = y;
+        }
+
+        public Location(Vector2 v)
+        {
+            X = v.X;
+            Y = v.Y;
+        }
+
+        public Location(string s)
+        {
+            string[] str = s.Split(';');
+            if(str.GetLength(0) != 2)
+            {
+                Console.WriteLine("Error converting string to Location!");
+                X = 1;
+                Y = 1;
+            }
+            else
+            {
+                X = float.Parse(str[0]);
+                Y = float.Parse(str[1]);
+            }
+        }
+
+        public override string ToString()
+        {
+            string str = "";
+            str += X.ToString();
+            str += ";";
+            str += Y.ToString();
+
+            return str;
+        }
+
+        public Vector2 toVector2()
+        {
+            Vector2 v = new Vector2(X, Y);
+            return v;
         }
     }
 }
