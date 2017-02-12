@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using DegreeQuest;
+using System;
+using System.Threading;
 
 namespace DegreeQuest
 {
@@ -12,6 +14,11 @@ namespace DegreeQuest
     /// </summary>
     public class DegreeQuest : Game
     {
+        DQServer srv = null;
+        DQClient client = null;
+        bool clientMode = false;
+        bool serverMode = false;
+
         /* Through trial and error, puts you at the "root" project directory (with the .sln, etc.) */
         public string root = System.AppDomain.CurrentDomain.BaseDirectory + "..\\..\\..\\..";
 
@@ -52,6 +59,31 @@ namespace DegreeQuest
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+
+            // server init logic
+            serverMode = true;
+
+            if (serverMode)
+            {
+                srv = new DQServer();
+
+                Thread srvThread = new Thread(new ThreadStart(srv.ThreadRun));
+                srvThread.Start();
+                //srvThread.Join();
+                Console.WriteLine("> Server Initialistion Complete!");
+            }
+
+            // client init logic
+            clientMode = true;
+
+            if (clientMode)
+            {
+                client = new DQClient();
+
+                Thread clientThread = new Thread(new ThreadStart(client.ThreadRun));
+                clientThread.Start();
+                Console.WriteLine("> Client Initialisation Complete!");
+            }
 
             //initialize the player
             pc = new PC();
@@ -147,6 +179,11 @@ namespace DegreeQuest
 
             //stop draw
             spriteBatch.End();
+        }
+
+        public Vector2 GetPCPos()
+        {
+            return pc.Position;
         }
     }
 }
