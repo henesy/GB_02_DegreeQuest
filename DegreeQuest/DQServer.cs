@@ -165,4 +165,11 @@ namespace DegreeQuest
             return (clients.ToArray().Length);
         }
     }
+
+
+    /* Manages communications with a client on port :13338 for movement/deltas and changes and such */
+    class PostHandler
+    {
+
+    }
 }

@@ -66,6 +66,7 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DBReader.cs" />
     <Compile Include="DQClient.cs" />
     <Compile Include="Room.cs" />
     <Compile Include="PC.cs" />
@@ -98,9 +99,7 @@
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Server\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="DegreeQuest_TemporaryKey.pfx" />
   </ItemGroup>
