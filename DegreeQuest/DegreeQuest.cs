@@ -12,6 +12,7 @@ namespace DegreeQuest
     /// By Sean, Zach B., Zach T., and Dennis
     /// Team 102
     /// </summary>
+
     public class DegreeQuest : Game
     {
         DQServer srv = null;

@@ -13,8 +13,14 @@ namespace DegreeQuest
         [STAThread]
         static void Main()
         {
+            //TODO change properties back to Windows application
+            MySql test = new MySql("tests");
+            test.readT("'john'");
+            Console.WriteLine("lol");
+            /*
             using (var game = new DegreeQuest())
                 game.Run();
+            */
         }
     }
 }
