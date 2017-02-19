@@ -167,9 +167,89 @@ namespace DegreeQuest
     }
 
 
+    class PostSrv
+    {
+        ClientList clients;
+
+        public PostSrv()
+        {
+
+        }
+
+        public void PostInit()
+        {
+            TcpListener srv = new TcpListener(13338);
+            clients = new ClientList();
+
+            srv.Start();
+            Console.WriteLine(">>> POST Server Started");
+
+            while (true)
+            {
+                TcpClient client = srv.AcceptTcpClient();
+                clients.Add(client);
+                PostHandler h = new PostHandler(client);
+
+                //handle concurrently 
+                Thread handler = new Thread(new ThreadStart(h.ThreadRun));
+
+                try
+                {
+                    handler.Start();
+                    //handler.Join();
+                }
+                catch (ThreadStateException e)
+                {
+                    Console.WriteLine(e);
+                }
+                catch (ThreadInterruptedException e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+
+            Console.WriteLine(">>> DQSInit Ending!");
+        }
+
+        public void ThreadRun()
+        {
+            this.PostInit();
+        }
+    }
+
     /* Manages communications with a client on port :13338 for movement/deltas and changes and such */
     class PostHandler
     {
+        TcpClient c;
 
+        public PostHandler(TcpClient client)
+        {
+            c = client;
+        }
+
+        public void ThreadRun()
+        {
+            Console.WriteLine(">>> POST Handler Thread Started!");
+
+            while (true)
+            {
+                try
+                {
+                    NetworkStream networkStream = c.GetStream();
+                    //do things here
+                    networkStream.Flush();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                    break;
+                }
+
+                Thread.Sleep(100);
+            }
+
+            Console.WriteLine(">>> POST Handler Ending! ");
+        }
+    }
     }
 }
