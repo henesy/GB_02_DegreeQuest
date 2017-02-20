@@ -253,6 +253,7 @@ namespace DegreeQuest
             Byte[] byt =  DegreeQuest.stb(new Location(cc.Position).ToString());
             cStream.Write(byt, 0, byt.Length);
             cStream.Flush();
+            Console.WriteLine(">>> POST Handler Entering Primary Loop!");
 
             while (true)
             {
@@ -261,9 +262,10 @@ namespace DegreeQuest
 
                     //do things here
                     //katie was here
+                    inStream = new byte[100];
                     cStream.Read(inStream, 0, 100);
                     string usrin = DegreeQuest.bts(inStream);
-                    Console.WriteLine("Got usrin: " + usrin);
+                    Console.WriteLine("Got usrin: " + usrin + "\n");
 
                     if(usrin.Contains("MOVE"))
                     {

@@ -53,12 +53,12 @@ namespace DegreeQuest
         TcpClient c = new TcpClient();
         Vector2 pos;
         PC pc;
-        string la;
+        DegreeQuest dq;
 
-        public DQPostClient(PC mainPC, string lastAct)
+        public DQPostClient(PC mainPC, DegreeQuest mainDQ)
         {
             pc = mainPC;
-            la = lastAct;
+            dq = mainDQ;
         }
 
         public void ThreadRun()
@@ -89,15 +89,31 @@ namespace DegreeQuest
             while (true)
             {
                 byte[] inStream = new byte[100];
-                switch(la)
+                Byte[] byt2;
+
+                //the problem is last action
+                string la = "nil";
+
+                if(dq.actions.ToArray().Length > 0)
+                {
+                    la = (string)dq.actions.Dequeue();
+                }
+
+                Console.WriteLine(">>> Processing action: " + la);
+
+                switch (la)
                 {
                     case "MOVE":
-                        srvStream.Write(DegreeQuest.stb("MOVE " + new Location(pc.Position).ToString()), 0, 100);
+                        byt2 = DegreeQuest.stb("MOVE " + new Location(pc.Position).ToString());
+                        srvStream.Write(byt2, 0, byt2.Length);
                         srvStream.Flush();
                         //srvStream.Read(inStream, 0, 100);
                         //pos = new Location(DegreeQuest.bts(inStream)).toVector2();
                         break;
                     default:
+                        byt2 = DegreeQuest.stb(la);
+                        srvStream.Write(byt2, 0, byt2.Length);
+                        srvStream.Flush();
                         break;
                 }
 

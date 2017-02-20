@@ -5,6 +5,7 @@ using DegreeQuest;
 using System;
 using System.Threading;
 using System.Text;
+using System.Collections;
 
 namespace DegreeQuest
 {
@@ -19,7 +20,8 @@ namespace DegreeQuest
         DQClient client = null;
         bool clientMode = false;
         bool serverMode = false;
-        string lastAct = "nil";
+        //public string lastAct = "nil";
+        public Queue actions = new Queue();
         DQPostClient pclient = null;
         DQPostSrv psrv = null;
 
@@ -108,7 +110,7 @@ namespace DegreeQuest
                 */
 
                 //post
-                pclient = new DQPostClient(pc, lastAct);
+                pclient = new DQPostClient(pc, this);
 
                 Thread pclientThread = new Thread(new ThreadStart(pclient.ThreadRun));
                 pclientThread.Start();
@@ -178,25 +180,25 @@ namespace DegreeQuest
             if (currentKeyboardState.IsKeyDown(Keys.Left))
             {
                 pc.Position.X -= playerMoveSpeed;
-                lastAct = "Move";
+                actions.Enqueue("MOVE");
             }
 
             if (currentKeyboardState.IsKeyDown(Keys.Right))
             {
                 pc.Position.X += playerMoveSpeed;
-                lastAct = "Move";
+                actions.Enqueue("MOVE");
             }
 
             if (currentKeyboardState.IsKeyDown(Keys.Up))
             {
                 pc.Position.Y -= playerMoveSpeed;
-                lastAct = "Move";
+                actions.Enqueue("MOVE");
             }
 
             if (currentKeyboardState.IsKeyDown(Keys.Down))
             {
                 pc.Position.Y += playerMoveSpeed;
-                lastAct = "MOVE";
+                actions.Enqueue("MOVE");
             }
 
             pc.Position.X = MathHelper.Clamp(pc.Position.X, 0, GraphicsDevice.Viewport.Width - pc.Width);
