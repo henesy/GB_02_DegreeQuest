@@ -45,4 +45,63 @@ namespace DegreeQuest
             }
         }
     }
+
+
+    class DQPostClient
+    {
+        TcpClient c = new TcpClient();
+        Vector2 pos;
+        PC pc;
+        string la;
+
+        public DQPostClient(PC mainPC, string lastAct)
+        {
+            pc = mainPC;
+            la = lastAct;
+        }
+
+        public void ThreadRun()
+        {
+            c.Connect("127.0.0.1", 13338);
+            Console.WriteLine(">>> Client Connected!");
+            NetworkStream srvStream = c.GetStream();
+
+            if (c == null)
+            {
+                Console.WriteLine("CLIENT IS NULL!");
+            }
+
+
+            //initial position
+            srvStream.Write(DegreeQuest.stb("OPEN " + pc.Name), 0, 100);
+            srvStream.Flush();
+
+            byte[] initB = new byte[100];
+            srvStream.Read(initB, 0, 100);
+            pos = new Location(DegreeQuest.bts(initB)).toVector2();
+
+            pc.Position = pos;
+
+            while (true)
+            {
+                byte[] inStream = new byte[100];
+                switch(la)
+                {
+                    case "MOVE":
+                        srvStream.Write(DegreeQuest.stb("MOVE " + new Location(pc.Position).ToString()), 0, 100);
+                        srvStream.Flush();
+                        srvStream.Read(inStream, 0, 100);
+                        pos = new Location(DegreeQuest.bts(inStream)).toVector2();
+                        break;
+                    default:
+                        break;
+                }
+
+                //wrap up
+                
+                pc.Position = pos;
+                Thread.Sleep(100);
+            }
+        }
+    }
 }
