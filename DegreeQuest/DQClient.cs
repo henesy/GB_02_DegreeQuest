@@ -39,6 +39,7 @@ namespace DegreeQuest
                 serverStream.Read(inStream, 0, 100);
                 //need to get PC Position
                 //Vector2 pos = pc.Position;
+                Console.WriteLine("Reading location! ");
                 pos = (new Location(System.Text.Encoding.ASCII.GetString(inStream))).toVector2();
                 pc.Position = pos;
                 Thread.Sleep(100);
@@ -63,17 +64,18 @@ namespace DegreeQuest
         public void ThreadRun()
         {
             c.Connect("127.0.0.1", 13338);
-            Console.WriteLine(">>> Client Connected!");
+            Console.WriteLine(">>> POST Client Connected!");
             NetworkStream srvStream = c.GetStream();
 
             if (c == null)
             {
-                Console.WriteLine("CLIENT IS NULL!");
+                Console.WriteLine("POST CLIENT IS NULL!");
             }
 
 
             //initial position
-            srvStream.Write(DegreeQuest.stb("OPEN " + pc.Name), 0, 100);
+            Byte[] byt = DegreeQuest.stb("OPEN " + pc.Name);
+            srvStream.Write(byt, 0, byt.Length);
             srvStream.Flush();
 
             byte[] initB = new byte[100];

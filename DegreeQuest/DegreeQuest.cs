@@ -70,7 +70,7 @@ namespace DegreeQuest
             room.members.Add(pc);
 
             // server init logic ;; always serving atm
-            string config = System.IO.File.ReadAllText(@"config.txt");
+            string config = System.IO.File.ReadAllText(root + @"/config.txt");
             if (config.Contains("server=true"))
                 serverMode = true;
 
@@ -108,7 +108,7 @@ namespace DegreeQuest
                 //post
                 pclient = new DQPostClient(pc, lastAct);
 
-                Thread pclientThread = new Thread(new ThreadStart(client.ThreadRun));
+                Thread pclientThread = new Thread(new ThreadStart(pclient.ThreadRun));
                 pclientThread.Start();
                 Console.WriteLine("> POST Client Initialisation Complete!");
             }
