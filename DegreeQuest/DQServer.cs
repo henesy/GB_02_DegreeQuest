@@ -236,6 +236,7 @@ namespace DegreeQuest
         public void ThreadRun()
         {
             Console.WriteLine(">>> POST Handler Thread Started!");
+            cc = new PC();
 
             NetworkStream cStream = c.GetStream();
             byte[] inStream = new byte[100];
@@ -245,12 +246,12 @@ namespace DegreeQuest
             cc.Name = nameMsg.Substring(5);
 
             //establish locations/init client "player" object
-            cc = new PC();
             id = srvDQ.room.members.Add(cc);
 
             srvDQ.LoadPC(cc);
 
-            cStream.Write(DegreeQuest.stb(new Location(cc.Position).ToString()), 0, 100);
+            Byte[] byt =  DegreeQuest.stb(new Location(cc.Position).ToString());
+            cStream.Write(byt, 0, byt.Length);
             cStream.Flush();
 
             while (true)
@@ -262,13 +263,15 @@ namespace DegreeQuest
                     //katie was here
                     cStream.Read(inStream, 0, 100);
                     string usrin = DegreeQuest.bts(inStream);
+                    Console.WriteLine("Got usrin: " + usrin);
 
                     if(usrin.Contains("MOVE"))
                     {
-                        ((PC)srvDQ.room.members.ToArray()[id]).Position = new Location(usrin.Substring(5)).toVector2();
+                        cc.Position = new Location(usrin.Substring(5)).toVector2();
                         //checks would occur here to see if there is a valid move
 
-                        cStream.Write(DegreeQuest.stb((new Location(((PC)srvDQ.room.members.ToArray()[id]).Position)).ToString()), 0, 100);
+                        //Byte[] byt2 = DegreeQuest.stb((new Location(((PC)srvDQ.room.members.ToArray()[id]).Position)).ToString());
+                        //cStream.Write(byt2, 0, byt2.Length);
                     }
                     
 

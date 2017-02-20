@@ -99,11 +99,13 @@ namespace DegreeQuest
             // client init logic
             if (clientMode)
             {
+                /* temporary while overhauling :13337
                 client = new DQClient(pc);
 
                 Thread clientThread = new Thread(new ThreadStart(client.ThreadRun));
                 clientThread.Start();
                 Console.WriteLine("> Client Initialisation Complete!");
+                */
 
                 //post
                 pclient = new DQPostClient(pc, lastAct);
@@ -171,7 +173,7 @@ namespace DegreeQuest
 
         private void UpdatePlayer(GameTime gameTime)
         {
-            lastAct = "nil";
+            //lastAct = "nil";
 
             if (currentKeyboardState.IsKeyDown(Keys.Left))
             {

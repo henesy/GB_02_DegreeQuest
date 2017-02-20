@@ -84,6 +84,8 @@ namespace DegreeQuest
 
             pc.Position = pos;
 
+            Console.WriteLine(">>> POST Client Entering Primary Loop!");
+
             while (true)
             {
                 byte[] inStream = new byte[100];
@@ -92,8 +94,8 @@ namespace DegreeQuest
                     case "MOVE":
                         srvStream.Write(DegreeQuest.stb("MOVE " + new Location(pc.Position).ToString()), 0, 100);
                         srvStream.Flush();
-                        srvStream.Read(inStream, 0, 100);
-                        pos = new Location(DegreeQuest.bts(inStream)).toVector2();
+                        //srvStream.Read(inStream, 0, 100);
+                        //pos = new Location(DegreeQuest.bts(inStream)).toVector2();
                         break;
                     default:
                         break;
@@ -101,7 +103,7 @@ namespace DegreeQuest
 
                 //wrap up
                 
-                pc.Position = pos;
+                //pc.Position = pos;
                 Thread.Sleep(100);
             }
         }
