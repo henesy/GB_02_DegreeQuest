@@ -55,21 +55,15 @@ namespace DegreeQuest
                 //populate rooms
                 //List<Vector2> vl = new List<Vector2>();
 
+                dq.room.members = new List<Actor>();
+
                 int i;
                 for (i = 0; i < locations.Length - 1; i++)
                 {
-                    //this whole thing is broken and needs re-written to properly update the correct entires ;; see also: changing client movement to orders to server would work (probably)
-                    if (i < dq.room.members.ToArray().Length)
-                    {
-                        dq.room.members.ToArray()[i].Position = new Location(locations[i]).toVector2();
-                    }
-                    else
-                    {
-                        PC apc = new PC();
-                        dq.LoadPC(apc);
-                        apc.Position = new Location(locations[i]).toVector2();
-                        dq.room.members.Add(apc);
-                    }
+                    PC lc = new PC();
+                    dq.LoadPC(lc);
+                    lc.Position = new Location(locations[i]).toVector2();
+                    dq.room.members.Add(lc);
                 }
 
                 Thread.Sleep(5);
