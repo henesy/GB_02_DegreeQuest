@@ -7,21 +7,17 @@ using System.Net.Sockets;
 using System.Collections;
 using System.Threading;
 using Microsoft.Xna.Framework;
-using System.Web.Script.Serialization;
-using System.Runtime.Serialization.Json;
-using System.Runtime.Serialization;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace DegreeQuest
 {
     class DQServer
     {
         ClientList clients;
-        DegreeQuest dq;
+        PC pc;
 
-        public DQServer(DegreeQuest mainDQ)
+        public DQServer(PC mainPC)
         {
-            dq = mainDQ;
+            pc = mainPC;
         }
 
         public void DQSInit()
@@ -32,11 +28,11 @@ namespace DegreeQuest
             srv.Start();
             Console.WriteLine(">>> Server Started");
 
-            while (true)
+            while(true)
             {
                 TcpClient client = srv.AcceptTcpClient();
                 clients.Add(client);
-                Handler h = new Handler(client, dq);
+                Handler h = new Handler(client, pc);
 
                 //handle concurrently 
                 Thread handler = new Thread(new ThreadStart(h.ThreadRun));
@@ -68,7 +64,7 @@ namespace DegreeQuest
         public void WriteAll(Vector2 pos)
         {
             int i;
-            for (i = 0; i < clients.Length(); i++)
+            for(i = 0; i < clients.Length(); i++)
             {
                 TcpClient c = clients.Get(i);
 
@@ -78,58 +74,33 @@ namespace DegreeQuest
 
     }
 
-
+    
     class Handler
     {
         TcpClient c;
-        DegreeQuest dq;
+        PC pc;
 
         //threading and locks on clients variable 
-        public Handler(TcpClient client, DegreeQuest mainDQ)
+        public Handler(TcpClient client, PC mainPC)
         {
             c = client;
-            dq = mainDQ;
+            pc = mainPC;
         }
 
         public void ThreadRun()
         {
             Console.WriteLine(">>> Handler Thread Started!");
-            //Type[] knownTypes = new Type[] {typeof(Vector2), typeof(Actor), typeof(AType), typeof(List<PC>)};
-            //DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(List<PC>), knownTypes);
-
-
-            //var ser = new JavaScriptSerializer();
-
 
             while (true)
             {
-                string str = "";
-
-                int i;
-                for (i = 0; i < dq.room.members.ToArray().Length; i++)
-                {
-                    str += ((new Location(dq.room.members.ToArray()[i].Position)).ToString()) + "@";
-                }
-
-                NetworkStream networkStream = c.GetStream();
-                //needs to be PC position
-
-                Console.WriteLine(">>> Writing Room!");
-
-                //ser.WriteObject(networkStream, dq.room.members);
-                //string json = ser.Serialize(vl);
-                Byte[] byt2 = DegreeQuest.stb(str);
-                networkStream.Write(byt2, 0, byt2.Length);
-
-                networkStream.Flush();
-                /*
                 try
                 {
                     NetworkStream networkStream = c.GetStream();
                     //needs to be PC position
-
-                    Console.WriteLine(">>> Writing Room!");
-                    ser.WriteObject(networkStream, dq.room.members);
+                    Vector2 position = pc.Position;
+                    string str = (new Location(position).ToString());
+                    Byte[] byt = Encoding.ASCII.GetBytes(str);
+                    networkStream.Write(byt, 0, byt.Length);
                     networkStream.Flush();
                 }
                 catch (Exception e)
@@ -137,8 +108,8 @@ namespace DegreeQuest
                     Console.WriteLine(e.ToString());
                     break;
                 }
-                */
-                Thread.Sleep(5);
+
+                Thread.Sleep(100);
             }
 
             Console.WriteLine(">>> Handler Ending! ");
@@ -164,14 +135,14 @@ namespace DegreeQuest
             TcpClient s = default(TcpClient);
 
 
-            lock (this)
+            lock(this)
             {
                 //do things here
-                s = ((TcpClient)clients.ToArray()[i]);
+                s = ((TcpClient) clients.ToArray()[i]);
 
                 Monitor.Pulse(this);   // Pulse tells we are done reading
             }
-            
+
             return s;
         }
 
@@ -179,14 +150,12 @@ namespace DegreeQuest
         {
             int size = this.Length();
 
-            lock (this)
+            lock(this)
             {
                 clients.Add(s);
 
                 Monitor.Pulse(this);
             }
-            //inserts client address
-            DBReader.insertRecord("ClientList_Test", new string[1] {"client_name"}, new string[1] { s.ToString() });
 
             return size;
         }
@@ -255,7 +224,7 @@ namespace DegreeQuest
         TcpClient c;
         PC cc; //client character
         DegreeQuest srvDQ;
-        //Int32 id;
+        Int32 id;
 
         public PostHandler(TcpClient client, DegreeQuest hostDQ)
         {
@@ -277,11 +246,11 @@ namespace DegreeQuest
             cc.Name = nameMsg.Substring(5);
 
             //establish locations/init client "player" object
-            srvDQ.room.members.Add(cc);
+            id = srvDQ.room.members.Add(cc);
 
             srvDQ.LoadPC(cc);
 
-            Byte[] byt = DegreeQuest.stb(new Location(cc.Position).ToString());
+            Byte[] byt =  DegreeQuest.stb(new Location(cc.Position).ToString());
             cStream.Write(byt, 0, byt.Length);
             cStream.Flush();
             Console.WriteLine(">>> POST Handler Entering Primary Loop!");
@@ -298,42 +267,15 @@ namespace DegreeQuest
                     string usrin = DegreeQuest.bts(inStream);
                     Console.WriteLine("Got usrin: " + usrin + "\n");
 
-                    if (usrin.Contains("MOVE"))
+                    if(usrin.Contains("MOVE"))
                     {
-                        //cc.Position = new Location(usrin.Substring(5)).toVector2();
+                        cc.Position = new Location(usrin.Substring(5)).toVector2();
                         //checks would occur here to see if there is a valid move
 
                         //Byte[] byt2 = DegreeQuest.stb((new Location(((PC)srvDQ.room.members.ToArray()[id]).Position)).ToString());
                         //cStream.Write(byt2, 0, byt2.Length);
-
-                        string[] order = usrin.Split(' ');
-                        float playerMoveSpeed = float.Parse(order[1]);
-                        cc.MoveSpeed = playerMoveSpeed;
-                        int i;
-                        for (i = 2; i < order.Length; i++)
-                        {
-                            //movement logistics from DegreeQuest
-                            if (order[i].Contains("N"))
-                            {
-                                cc.Position.Y -= playerMoveSpeed;
-                            }
-                            if (order[i].Contains("E"))
-                            {
-                                cc.Position.X += playerMoveSpeed;
-                            }
-                            if (order[i].Contains("S"))
-                            {
-                                cc.Position.Y += playerMoveSpeed;
-                            }
-                            if (order[i].Contains("W"))
-                            {
-                                cc.Position.X -= playerMoveSpeed;
-                            }
-
-
-                        }
                     }
-
+                    
 
                     cStream.Flush();
                 }
@@ -343,7 +285,7 @@ namespace DegreeQuest
                     break;
                 }
 
-                Thread.Sleep(5);
+                Thread.Sleep(100);
             }
 
             Console.WriteLine(">>> POST Handler Ending! ");
