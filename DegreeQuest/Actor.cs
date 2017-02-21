@@ -14,11 +14,13 @@ namespace DegreeQuest
     *   Exists to provide a placeholder within which a player or a Monster can be placed without mutual exclusion 
     *   to implement you must use "MyClass : Actor" this is equivalent to the Java "MyClass implements Actor"
     */
-    interface Actor
+    public interface Actor
     {
         /* Provides "type" of object filling the interface */
         AType GetAType();
 
         Vector2 GetPos();
+
+        void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch);
     }
 }
