@@ -30,7 +30,7 @@ namespace DegreeQuest
             Console.WriteLine(">>> Client Connected!");
             NetworkStream serverStream = c.GetStream();
 
-            if(c == null)
+            if (c == null)
             {
                 Console.WriteLine("CLIENT IS NULL!");
             }
@@ -56,13 +56,14 @@ namespace DegreeQuest
                 //List<Vector2> vl = new List<Vector2>();
 
                 int i;
-                for(i = 0; i < locations.Length; i++)
+                for (i = 0; i < locations.Length - 1; i++)
                 {
                     //this whole thing is broken and needs re-written to properly update the correct entires ;; see also: changing client movement to orders to server would work (probably)
                     if (i < dq.room.members.ToArray().Length)
                     {
                         dq.room.members.ToArray()[i].Position = new Location(locations[i]).toVector2();
-                    } else
+                    }
+                    else
                     {
                         PC apc = new PC();
                         dq.LoadPC(apc);
@@ -70,8 +71,8 @@ namespace DegreeQuest
                         dq.room.members.Add(apc);
                     }
                 }
-                
-                Thread.Sleep(100);
+
+                Thread.Sleep(5);
             }
         }
     }
@@ -123,33 +124,32 @@ namespace DegreeQuest
                 //the problem is last action
                 string la = "nil";
 
-                if(dq.actions.ToArray().Length > 0)
+                if (dq.actions.ToArray().Length > 0)
                 {
                     la = (string)dq.actions.Dequeue();
                 }
 
                 //Console.WriteLine(">>> Processing action: " + la);
 
-                switch (la)
+                if(la.Contains("MOVE"))
                 {
-                    case "MOVE":
-                        byt2 = DegreeQuest.stb("MOVE " + new Location(pc.Position).ToString());
-                        srvStream.Write(byt2, 0, byt2.Length);
-                        srvStream.Flush();
-                        //srvStream.Read(inStream, 0, 100);
-                        //pos = new Location(DegreeQuest.bts(inStream)).toVector2();
-                        break;
-                    default:
-                        byt2 = DegreeQuest.stb(la);
-                        srvStream.Write(byt2, 0, byt2.Length);
-                        srvStream.Flush();
-                        break;
+                    byt2 = DegreeQuest.stb(la);
+                    srvStream.Write(byt2, 0, byt2.Length);
+                    srvStream.Flush();
+                    //srvStream.Read(inStream, 0, 100);
+                    //pos = new Location(DegreeQuest.bts(inStream)).toVector2();
+                }
+                else
+                {
+                    byt2 = DegreeQuest.stb(la);
+                    srvStream.Write(byt2, 0, byt2.Length);
+                    srvStream.Flush();
                 }
 
                 //wrap up
-                
+
                 //pc.Position = pos;
-                Thread.Sleep(100);
+                Thread.Sleep(5);
             }
         }
     }

@@ -40,7 +40,7 @@ namespace DegreeQuest
         KeyboardState previousKeyboardState;
 
         //movement speed of player
-        //to Actor
+        float playerMoveSpeed;
 
         /** End Variables **/
 
@@ -78,7 +78,7 @@ namespace DegreeQuest
 
             if (serverMode)
             {
-                srv = new DQServer(this);
+                srv = new DQServer(pc);
 
                 Thread srvThread = new Thread(new ThreadStart(srv.ThreadRun));
                 srvThread.Start();
@@ -101,11 +101,13 @@ namespace DegreeQuest
             // client init logic
             if (clientMode)
             {
-                client = new DQClient(this);
+                /* temporary while overhauling :13337
+                client = new DQClient(pc);
 
                 Thread clientThread = new Thread(new ThreadStart(client.ThreadRun));
                 clientThread.Start();
                 Console.WriteLine("> Client Initialisation Complete!");
+                */
 
                 //post
                 pclient = new DQPostClient(pc, this);
@@ -115,7 +117,7 @@ namespace DegreeQuest
                 Console.WriteLine("> POST Client Initialisation Complete!");
             }
 
-            pc.MoveSpeed = 8.0f;
+            playerMoveSpeed = 8.0f;      
 
             base.Initialize();
         }
@@ -158,7 +160,7 @@ namespace DegreeQuest
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-
+            
             // TODO: Add your update logic here
 
             //rather than disabling, should do a clientmode check here to queue keypresses/keyboard state as a request to the server
@@ -174,92 +176,33 @@ namespace DegreeQuest
         private void UpdatePlayer(GameTime gameTime)
         {
             //lastAct = "nil";
-            if (!clientMode)
+
+            if (currentKeyboardState.IsKeyDown(Keys.Left))
             {
-                if (currentKeyboardState.IsKeyDown(Keys.Left))
-                {
-                    pc.Position.X -= pc.MoveSpeed;
-                    //actions.Enqueue("MOVE");
-                }
-
-                if (currentKeyboardState.IsKeyDown(Keys.Right))
-                {
-                    pc.Position.X += pc.MoveSpeed;
-                    //actions.Enqueue("MOVE");
-                }
-
-                if (currentKeyboardState.IsKeyDown(Keys.Up))
-                {
-                    pc.Position.Y -= pc.MoveSpeed;
-                    //actions.Enqueue("MOVE");
-                }
-
-                if (currentKeyboardState.IsKeyDown(Keys.Down))
-                {
-                    pc.Position.Y += pc.MoveSpeed;
-                    //actions.Enqueue("MOVE");
-                }
-
-                // clamp might need to be done server-side for clients
-                pc.Position.X = MathHelper.Clamp(pc.Position.X, 0, GraphicsDevice.Viewport.Width - pc.Width);
-                pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 0, GraphicsDevice.Viewport.Height - pc.Height);
+                pc.Position.X -= playerMoveSpeed;
+                actions.Enqueue("MOVE");
             }
-            else
+
+            if (currentKeyboardState.IsKeyDown(Keys.Right))
             {
-                //if clientmode == true
-                string str = "";
-                bool n = false, s = false, e = false, w = false;
-
-                if (currentKeyboardState.IsKeyDown(Keys.Left))
-                {
-                    //pc.Position.X -= pc.MoveSpeed;
-                    w = true;
-                }
-
-                if (currentKeyboardState.IsKeyDown(Keys.Right))
-                {
-                    //pc.Position.X += pc.MoveSpeed;
-                    e = true;
-                }
-
-                if (currentKeyboardState.IsKeyDown(Keys.Up))
-                {
-                    //pc.Position.Y -= pc.MoveSpeed;
-                    n = true;
-                }
-
-                if (currentKeyboardState.IsKeyDown(Keys.Down))
-                {
-                    //pc.Position.Y += pc.MoveSpeed;
-                    s = true;
-                }
-
-                if (n || s || e || w)
-                {
-                    str = "MOVE " + pc.MoveSpeed.ToString();
-                }
-                if (n)
-                {
-                    str += " N";
-                }
-                if (s)
-                {
-                    str += " S";
-                }
-                if (e)
-                {
-                    str += " E";
-                }
-                if (w)
-                {
-                    str += " W";
-                }
-                if (n || s || e || w)
-                {
-                    actions.Enqueue(str);
-                }
-
+                pc.Position.X += playerMoveSpeed;
+                actions.Enqueue("MOVE");
             }
+
+            if (currentKeyboardState.IsKeyDown(Keys.Up))
+            {
+                pc.Position.Y -= playerMoveSpeed;
+                actions.Enqueue("MOVE");
+            }
+
+            if (currentKeyboardState.IsKeyDown(Keys.Down))
+            {
+                pc.Position.Y += playerMoveSpeed;
+                actions.Enqueue("MOVE");
+            }
+
+            pc.Position.X = MathHelper.Clamp(pc.Position.X, 0, GraphicsDevice.Viewport.Width - pc.Width);
+            pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 0, GraphicsDevice.Viewport.Height - pc.Height);
         }
 
 
@@ -281,7 +224,7 @@ namespace DegreeQuest
             int i;
             for (i = 0; i < room.members.ToArray().Length; i++)
             {
-                ((PC)room.members.ToArray()[i]).Draw(spriteBatch);
+                ((PC) room.members.ToArray()[i]).Draw(spriteBatch);
             }
 
             base.Draw(gameTime);
@@ -332,7 +275,7 @@ namespace DegreeQuest
         public Location(string s)
         {
             string[] str = s.Split(';');
-            if (str.GetLength(0) != 2)
+            if(str.GetLength(0) != 2)
             {
                 Console.WriteLine("Error converting string to Location!");
                 X = 1;
