@@ -79,7 +79,7 @@ namespace DegreeQuest
 
             if (serverMode)
             {
-                srv = new DQServer(pc);
+                srv = new DQServer(this);
 
                 Thread srvThread = new Thread(new ThreadStart(srv.ThreadRun));
                 srvThread.Start();
@@ -102,13 +102,11 @@ namespace DegreeQuest
             // client init logic
             if (clientMode)
             {
-                /* temporary while overhauling :13337
-                client = new DQClient(pc);
+                client = new DQClient(this);
 
                 Thread clientThread = new Thread(new ThreadStart(client.ThreadRun));
                 clientThread.Start();
                 Console.WriteLine("> Client Initialisation Complete!");
-                */
 
                 //post
                 pclient = new DQPostClient(pc, this);

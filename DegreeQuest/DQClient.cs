@@ -1,23 +1,27 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 
 namespace DegreeQuest
 {
     class DQClient
     {
         TcpClient c = new TcpClient();
-        Vector2 pos;
-        PC pc;
+        DegreeQuest dq;
 
-        public DQClient(PC mainPC)
+        public DQClient(DegreeQuest mainDQ)
         {
-            pc = mainPC;
+            dq = mainDQ;
         }
 
         public void ThreadRun()
@@ -32,16 +36,41 @@ namespace DegreeQuest
             }
 
             //Int32 size = c.ReceiveBufferSize;
+            //Type[] knownTypes = new Type[] {typeof(Vector2), typeof(Actor), typeof(AType), typeof(List<PC>) };
+            //DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(List<PC>), knownTypes);
+            //var ser = new JavaScriptSerializer();
 
             while (true)
             {
-                byte[] inStream = new byte[100];
-                serverStream.Read(inStream, 0, 100);
-                //need to get PC Position
-                //Vector2 pos = pc.Position;
-                Console.WriteLine("Reading location! ");
-                pos = (new Location(System.Text.Encoding.ASCII.GetString(inStream))).toVector2();
-                pc.Position = pos;
+                Console.WriteLine(">>> Reading Room!");
+
+                //right now only runs this once
+                //dq.room.members = (List<PC>)ser.ReadObject(serverStream);
+                Byte[] byt2 = new Byte[10000];
+                serverStream.Read(byt2, 0, 10000);
+                string json = DegreeQuest.bts(byt2);
+                //List<string> vl = ser.Deserialize<List<string>>(json);
+                string[] locations = json.Split('@');
+
+                //populate rooms
+                //List<Vector2> vl = new List<Vector2>();
+
+                int i;
+                for(i = 0; i < locations.Length; i++)
+                {
+                    //this whole thing is broken and needs re-written to properly update the correct entires ;; see also: changing client movement to orders to server would work (probably)
+                    if (i < dq.room.members.ToArray().Length)
+                    {
+                        dq.room.members.ToArray()[i].Position = new Location(locations[i]).toVector2();
+                    } else
+                    {
+                        PC apc = new PC();
+                        dq.LoadPC(apc);
+                        apc.Position = new Location(locations[i]).toVector2();
+                        dq.room.members.Add(apc);
+                    }
+                }
+                
                 Thread.Sleep(100);
             }
         }
@@ -99,7 +128,7 @@ namespace DegreeQuest
                     la = (string)dq.actions.Dequeue();
                 }
 
-                Console.WriteLine(">>> Processing action: " + la);
+                //Console.WriteLine(">>> Processing action: " + la);
 
                 switch (la)
                 {
