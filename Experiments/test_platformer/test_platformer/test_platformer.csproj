@@ -39,6 +39,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Animations.cs" />
+    <Compile Include="Class1.cs" />
     <Compile Include="FadeAnimation.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameScreen.cs" />
@@ -52,6 +53,15 @@
     <Compile Include="TitleScreen.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="MongoDB.Bson">
+      <HintPath>..\..\..\..\Documents\Visual Studio 2015\net45\MongoDB.Bson.dll</HintPath>
+    </Reference>
+    <Reference Include="MongoDB.Driver">
+      <HintPath>..\..\..\..\Documents\Visual Studio 2015\net45\MongoDB.Driver.dll</HintPath>
+    </Reference>
+    <Reference Include="MongoDB.Driver.Core">
+      <HintPath>..\..\..\..\Documents\Visual Studio 2015\net45\MongoDB.Driver.Core.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTK">
       <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\OpenTK.dll</HintPath>
     </Reference>
