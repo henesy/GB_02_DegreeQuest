@@ -55,15 +55,20 @@ namespace DegreeQuest
                 //populate rooms
                 //List<Vector2> vl = new List<Vector2>();
 
-                dq.room.members = new List<Actor>();
+                //this is bad and unsafe and can cause crashes
+                lock (dq.room.members) {
 
-                int i;
-                for (i = 0; i < locations.Length - 1; i++)
-                {
-                    PC lc = new PC();
-                    dq.LoadPC(lc);
-                    lc.Position = new Location(locations[i]).toVector2();
-                    dq.room.members.Add(lc);
+                    /** this entire block should be replaced with a server-side ID that re-writes the members array once at start and then just uses server id's to write to the members array **/
+                    dq.room.members = new List<Actor>();
+
+                    int i;
+                    for (i = 0; i < locations.Length - 1; i++)
+                    {
+                        PC lc = new PC();
+                        dq.LoadPC(lc);
+                        lc.Position = new Location(locations[i]).toVector2();
+                        dq.room.members.Add(lc);
+                    }
                 }
 
                 Thread.Sleep(5);

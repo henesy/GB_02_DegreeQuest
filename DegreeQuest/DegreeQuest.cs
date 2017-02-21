@@ -276,12 +276,15 @@ namespace DegreeQuest
             // start drawing
             spriteBatch.Begin();
 
-            //draw player
-            //pc.Draw(spriteBatch);
-            int i;
-            for (i = 0; i < room.members.ToArray().Length; i++)
+            lock (room.members)
             {
-                ((PC)room.members.ToArray()[i]).Draw(spriteBatch);
+                //draw player
+                //pc.Draw(spriteBatch);
+                int i;
+                for (i = 0; i < room.members.ToArray().Length; i++)
+                {
+                    ((PC)room.members.ToArray()[i]).Draw(spriteBatch);
+                }
             }
 
             base.Draw(gameTime);
