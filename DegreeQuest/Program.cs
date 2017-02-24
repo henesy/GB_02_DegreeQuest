@@ -19,10 +19,10 @@ namespace DegreeQuest
             //testDB();
             
             
-            
+            /*
             using (var game = new DegreeQuest())
                 game.Run();
-            
+            */
         }
 
         static void testDB()
