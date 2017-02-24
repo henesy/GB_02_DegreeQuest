@@ -9,21 +9,28 @@ using System.Threading.Tasks;
 namespace DegreeQuest
 {
     /* Generic NPC class type */
-    [Serializable]
     class NPC : Actor
     {
-        //Vector2 Position;
+        Vector2 Position;
 
-        public Texture2D PlayerTexture { get; private set; }        
+        // Current and maximum amount of hit points
+        public int HP, HPMax;
+
+        // Current and maximum amount of energy (mana)
+        public int EP, EPMax;
+
+        public int Subject;
+
+        public Texture2D PlayerTexture { get; private set; }
 
         /* As per Actor */
-        public override AType GetAType()
+        public AType GetAType()
         { return AType.NPC; }
 
-        public override Vector2 GetPos()
+        public Vector2 GetPos()
         { return Position; }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(PlayerTexture, Position, null, Color.White, 0f, Vector2.Zero, 1f,
                 SpriteEffects.None, 0f);

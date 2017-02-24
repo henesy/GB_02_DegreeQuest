@@ -6,28 +6,53 @@ using System.Threading.Tasks;
 /* below are added for MonoGame purposes */
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Runtime.Serialization;
 
 namespace DegreeQuest
 {
+
     /* Player class to manage to user */
-    [Serializable()]
     public class PC : Actor
     {
+        public readonly int PC_BASE_HP= 100;
+        public readonly int PC_BASE_EP = 100;
+        public readonly int PC_BASE_DEBT = 10000;
+        public readonly int[] PC_BASE_STATS = { 0, 0, 0, 0, 0 };
         // Animation representing the player
-        [NonSerialized] public Texture2D PlayerTexture;
+        public Texture2D PlayerTexture;
 
         // Position of the Player relative to the upper left side of the screen
-        // in Actor
+        public Vector2 Position;
 
         // State of the player
         public bool Active;
 
-        // Amount of hit points that player has
-        public int Health;
+        // Current and maximum amount of hit points that player has
+        public int HP, HPMax;
+
+        // Current and maximum amount of energy (mana) the player has
+        public int EP, EPMax;
+
+        // Total and currently available amount of debt for player
+        public int Debt, DebtTotal;
 
         // Title/Name
         public string Name;
+
+        //Players current stat levels
+        public int[] Stats;
+
+        //Default Constructor
+        public PC()
+        {
+            Position = new Vector2(-1, -1);
+            Active = false;
+            HP = HPMax = PC_BASE_HP;
+            EP = EPMax = PC_BASE_EP;
+            Stats = PC_BASE_STATS;
+            Debt = DebtTotal = PC_BASE_DEBT;
+            Name = "Paul Chaser";
+
+        }
 
         // Get the width of the player ship
         public int Width       
@@ -42,6 +67,7 @@ namespace DegreeQuest
         }
 
 
+
         public void Initialize(Texture2D texture, Vector2 position)
         {
             PlayerTexture = texture;
@@ -53,7 +79,7 @@ namespace DegreeQuest
             Active = true;
 
             // Set the player health (from tutorial, will move to separate class later or something)
-            Health = 100;
+            HP = HPMax = PC_BASE_HP;
 
         }
 
@@ -62,17 +88,17 @@ namespace DegreeQuest
 
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(PlayerTexture, Position, null, Color.White, 0f, Vector2.Zero, 1f,
                 SpriteEffects.None, 0f);
         }
 
         /* As per Actor */
-        public override AType GetAType()
+        public AType GetAType()
         { return AType.PC; }
 
-        public override Vector2 GetPos()
+        public Vector2 GetPos()
         { return Position; }
     }
 }
