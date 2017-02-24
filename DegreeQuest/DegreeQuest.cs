@@ -279,7 +279,7 @@ namespace DegreeQuest
             // start drawing
             spriteBatch.Begin();
 
-            lock (room.members)
+            lock (room)
             {
                 //draw player
                 //pc.Draw(spriteBatch);
