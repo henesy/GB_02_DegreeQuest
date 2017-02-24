@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Input;
 using DegreeQuest;
 using System;
 using System.Threading;
+using System.Text;
+using System.Collections;
 
 namespace DegreeQuest
 {
@@ -19,6 +21,10 @@ namespace DegreeQuest
         DQClient client = null;
         bool clientMode = false;
         bool serverMode = false;
+        //public string lastAct = "nil";
+        public Queue actions = new Queue();
+        DQPostClient pclient = null;
+        DQPostSrv psrv = null;
 
         /* Through trial and error, puts you at the "root" project directory (with the .sln, etc.) */
         public string root = System.AppDomain.CurrentDomain.BaseDirectory + "..\\..\\..\\..";
@@ -27,6 +33,8 @@ namespace DegreeQuest
         SpriteBatch spriteBatch;
 
         PC pc;
+
+        public Room room;
 
         //states to determine keypresses
         KeyboardState currentKeyboardState;
@@ -61,9 +69,11 @@ namespace DegreeQuest
         {
             // TODO: Add your initialization logic here
             pc = new PC();
+            room = new Room();
+            room.members.Add(pc);
 
             // server init logic ;; always serving atm
-            string config = System.IO.File.ReadAllText(@"config.txt");
+            string config = System.IO.File.ReadAllText(root + @"/config.txt");
             if (config.Contains("server=true"))
                 serverMode = true;
 
@@ -74,7 +84,15 @@ namespace DegreeQuest
                 Thread srvThread = new Thread(new ThreadStart(srv.ThreadRun));
                 srvThread.Start();
                 //srvThread.Join();
-                Console.WriteLine("> Server Initialistion Compl3ete!");
+                Console.WriteLine("> Server Initialistion Complete!");
+
+                //post
+                psrv = new DQPostSrv(this);
+
+                Thread psrvThread = new Thread(new ThreadStart(psrv.ThreadRun));
+                psrvThread.Start();
+                Console.WriteLine("> POST Server Initialisation Complete!");
+
             }
 
             Console.Write("File had: " + config);
@@ -84,11 +102,20 @@ namespace DegreeQuest
             // client init logic
             if (clientMode)
             {
+                /* temporary while overhauling :13337
                 client = new DQClient(pc);
 
                 Thread clientThread = new Thread(new ThreadStart(client.ThreadRun));
                 clientThread.Start();
                 Console.WriteLine("> Client Initialisation Complete!");
+                */
+
+                //post
+                pclient = new DQPostClient(pc, this);
+
+                Thread pclientThread = new Thread(new ThreadStart(pclient.ThreadRun));
+                pclientThread.Start();
+                Console.WriteLine("> POST Client Initialisation Complete!");
             }
 
             playerMoveSpeed = 8.0f;      
@@ -134,13 +161,14 @@ namespace DegreeQuest
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            if (!clientMode)
-            {
-                // TODO: Add your update logic here
-                previousKeyboardState = currentKeyboardState;
-                currentKeyboardState = Keyboard.GetState();
-                UpdatePlayer(gameTime);
-            }
+            
+            // TODO: Add your update logic here
+
+            //rather than disabling, should do a clientmode check here to queue keypresses/keyboard state as a request to the server
+
+            previousKeyboardState = currentKeyboardState;
+            currentKeyboardState = Keyboard.GetState();
+            UpdatePlayer(gameTime);
 
             base.Update(gameTime);
         }
@@ -148,17 +176,31 @@ namespace DegreeQuest
 
         private void UpdatePlayer(GameTime gameTime)
         {
+            //lastAct = "nil";
+
             if (currentKeyboardState.IsKeyDown(Keys.Left))
+            {
                 pc.Position.X -= playerMoveSpeed;
+                actions.Enqueue("MOVE");
+            }
 
             if (currentKeyboardState.IsKeyDown(Keys.Right))
+            {
                 pc.Position.X += playerMoveSpeed;
+                actions.Enqueue("MOVE");
+            }
 
             if (currentKeyboardState.IsKeyDown(Keys.Up))
+            {
                 pc.Position.Y -= playerMoveSpeed;
+                actions.Enqueue("MOVE");
+            }
 
             if (currentKeyboardState.IsKeyDown(Keys.Down))
+            {
                 pc.Position.Y += playerMoveSpeed;
+                actions.Enqueue("MOVE");
+            }
 
             pc.Position.X = MathHelper.Clamp(pc.Position.X, 0, GraphicsDevice.Viewport.Width - pc.Width);
             pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 0, GraphicsDevice.Viewport.Height - pc.Height);
@@ -179,7 +221,12 @@ namespace DegreeQuest
             spriteBatch.Begin();
 
             //draw player
-            pc.Draw(spriteBatch);
+            //pc.Draw(spriteBatch);
+            int i;
+            for (i = 0; i < room.members.ToArray().Length; i++)
+            {
+                ((PC) room.members.ToArray()[i]).Draw(spriteBatch);
+            }
 
             base.Draw(gameTime);
 
@@ -187,7 +234,26 @@ namespace DegreeQuest
             spriteBatch.End();
         }
 
-        
+        public static byte[] stb(string str)
+        {
+            return Encoding.ASCII.GetBytes(str);
+        }
+
+        public static string bts(byte[] b)
+        {
+            return Encoding.ASCII.GetString(b);
+        }
+
+        /* loads another PC in */
+        public void LoadPC(PC c)
+        {
+            // TODO: use this.Content to load your game content here
+
+            Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X,
+                GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
+
+            c.Initialize(Content.Load<Texture2D>(root + "\\Content\\Graphics\\player"), playerPosition);
+        }
     }
 
     class Location
@@ -238,5 +304,6 @@ namespace DegreeQuest
             Vector2 v = new Vector2(X, Y);
             return v;
         }
+
     }
 }

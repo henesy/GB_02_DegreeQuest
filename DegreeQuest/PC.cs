@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace DegreeQuest
 {
     /* Player clsas to manage to user */
-    class PC : Actor
+    public class PC : Actor
     {
         // Animation representing the player
         public Texture2D PlayerTexture;
@@ -23,6 +23,9 @@ namespace DegreeQuest
 
         // Amount of hit points that player has
         public int Health;
+
+        // Title/Name
+        public string Name;
 
         // Get the width of the player ship
         public int Width       

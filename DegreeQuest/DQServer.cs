@@ -165,4 +165,130 @@ namespace DegreeQuest
             return (clients.ToArray().Length);
         }
     }
+
+
+    class DQPostSrv
+    {
+        ClientList clients;
+        DegreeQuest srvDQ;
+
+        public DQPostSrv(DegreeQuest hostDQ)
+        {
+            srvDQ = hostDQ;
+        }
+
+        public void PostInit()
+        {
+            TcpListener srv = new TcpListener(13338);
+            clients = new ClientList();
+
+            srv.Start();
+            Console.WriteLine(">>> POST Server Started");
+
+            while (true)
+            {
+                TcpClient client = srv.AcceptTcpClient();
+                clients.Add(client);
+                PostHandler h = new PostHandler(client, srvDQ);
+
+                //handle concurrently 
+                Thread handler = new Thread(new ThreadStart(h.ThreadRun));
+
+                try
+                {
+                    handler.Start();
+                    //handler.Join();
+                }
+                catch (ThreadStateException e)
+                {
+                    Console.WriteLine(e);
+                }
+                catch (ThreadInterruptedException e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+
+            Console.WriteLine(">>> DQSInit Ending!");
+        }
+
+        public void ThreadRun()
+        {
+            this.PostInit();
+        }
+    }
+
+    /* Manages communications with a client on port :13338 for movement/deltas and changes and such */
+    class PostHandler
+    {
+        TcpClient c;
+        PC cc; //client character
+        DegreeQuest srvDQ;
+        Int32 id;
+
+        public PostHandler(TcpClient client, DegreeQuest hostDQ)
+        {
+            c = client;
+            cc = null;
+            srvDQ = hostDQ;
+        }
+
+        public void ThreadRun()
+        {
+            Console.WriteLine(">>> POST Handler Thread Started!");
+            cc = new PC();
+
+            NetworkStream cStream = c.GetStream();
+            byte[] inStream = new byte[100];
+
+            cStream.Read(inStream, 0, 100);
+            string nameMsg = DegreeQuest.bts(inStream);
+            cc.Name = nameMsg.Substring(5);
+
+            //establish locations/init client "player" object
+            id = srvDQ.room.members.Add(cc);
+
+            srvDQ.LoadPC(cc);
+
+            Byte[] byt =  DegreeQuest.stb(new Location(cc.Position).ToString());
+            cStream.Write(byt, 0, byt.Length);
+            cStream.Flush();
+            Console.WriteLine(">>> POST Handler Entering Primary Loop!");
+
+            while (true)
+            {
+                try
+                {
+
+                    //do things here
+                    //katie was here
+                    inStream = new byte[100];
+                    cStream.Read(inStream, 0, 100);
+                    string usrin = DegreeQuest.bts(inStream);
+                    Console.WriteLine("Got usrin: " + usrin + "\n");
+
+                    if(usrin.Contains("MOVE"))
+                    {
+                        cc.Position = new Location(usrin.Substring(5)).toVector2();
+                        //checks would occur here to see if there is a valid move
+
+                        //Byte[] byt2 = DegreeQuest.stb((new Location(((PC)srvDQ.room.members.ToArray()[id]).Position)).ToString());
+                        //cStream.Write(byt2, 0, byt2.Length);
+                    }
+                    
+
+                    cStream.Flush();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                    break;
+                }
+
+                Thread.Sleep(100);
+            }
+
+            Console.WriteLine(">>> POST Handler Ending! ");
+        }
+    }
 }

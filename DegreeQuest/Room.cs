@@ -7,11 +7,15 @@ using System.Collections;
 
 namespace DegreeQuest
 {
-    class Room
+    public class Room
     {
         /* Populate actors by looping over members and getting X/Y values on location in Room */
         public ArrayList members;
 
+        public Room()
+        {
+            members = new ArrayList();
+        }
 
     }
 }
