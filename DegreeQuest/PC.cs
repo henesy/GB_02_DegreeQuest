@@ -13,10 +13,13 @@ namespace DegreeQuest
     /* Player class to manage to user */
     public class PC : Actor
     {
-        public readonly int PC_BASE_HP= 100;
-        public readonly int PC_BASE_EP = 100;
-        public readonly int PC_BASE_DEBT = 10000;
-        public readonly int[] PC_BASE_STATS = { 0, 0, 0, 0, 0 };
+
+        //Base values and constants related to PCs
+        public readonly uint PC_BASE_HP= 100;
+        public readonly uint PC_BASE_EP = 100;
+        public readonly uint PC_BASE_DEBT = 10000;
+        public readonly uint[] PC_BASE_STATS = { 0, 0, 0, 0, 0 };
+
         // Animation representing the player
         public Texture2D PlayerTexture;
 
@@ -27,19 +30,19 @@ namespace DegreeQuest
         public bool Active;
 
         // Current and maximum amount of hit points that player has
-        public int HP, HPMax;
+        public uint HP, HPMax;
 
         // Current and maximum amount of energy (mana) the player has
-        public int EP, EPMax;
+        public uint EP, EPMax;
 
         // Total and currently available amount of debt for player
-        public int Debt, DebtTotal;
+        public uint Debt, DebtTotal;
 
         // Title/Name
         public string Name;
 
         //Players current stat levels
-        public int[] Stats;
+        public uint[] Stats;
 
         //Default Constructor
         public PC()
