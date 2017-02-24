@@ -56,18 +56,27 @@ namespace DegreeQuest
                 //List<Vector2> vl = new List<Vector2>();
 
                 //this is bad and unsafe and can cause crashes
-                lock (dq.room.members) {
+                lock (dq.room) {
 
                     /** this entire block should be replaced with a server-side ID that re-writes the members array once at start and then just uses server id's to write to the members array **/
-                    dq.room.members = new List<Actor>();
+                    //dq.room.members = new List<Actor
+
+                    if(dq.room.members.ToArray().Length < locations.Length-1)
+                    {
+                        //need to expand
+                        int j;
+                        for(j = 0; j < Math.Abs((locations.Length - 1)- dq.room.members.ToArray().Length); j++)
+                        {
+                            PC tc = new PC();
+                            dq.LoadPC(tc);
+                            dq.room.members.Add(tc);
+                        }
+                    }
 
                     int i;
                     for (i = 0; i < locations.Length - 1; i++)
                     {
-                        PC lc = new PC();
-                        dq.LoadPC(lc);
-                        lc.Position = new Location(locations[i]).toVector2();
-                        dq.room.members.Add(lc);
+                        dq.room.members.ToArray()[i].Position = new Location(locations[i]).toVector2();
                     }
                 }
 
