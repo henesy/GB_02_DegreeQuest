@@ -142,7 +142,7 @@ namespace DegreeQuest
 
                 Monitor.Pulse(this);   // Pulse tells we are done reading
             }
-
+            
             return s;
         }
 
@@ -156,6 +156,8 @@ namespace DegreeQuest
 
                 Monitor.Pulse(this);
             }
+            //inserts client address
+            DBReader.insertRecord("ClientList_Test", new string[1] {"client_name"}, new string[1] { s.ToString() });
 
             return size;
         }
