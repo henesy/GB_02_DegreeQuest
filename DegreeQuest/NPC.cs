@@ -13,6 +13,14 @@ namespace DegreeQuest
     {
         Vector2 Position;
 
+        // Current and maximum amount of hit points
+        public int HP, HPMax;
+
+        // Current and maximum amount of energy (mana)
+        public int EP, EPMax;
+
+        public int Subject;
+
         public Texture2D PlayerTexture { get; private set; }
 
         /* As per Actor */

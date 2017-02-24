@@ -9,9 +9,14 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DegreeQuest
 {
-    /* Player clsas to manage to user */
+
+    /* Player class to manage to user */
     public class PC : Actor
     {
+        public readonly int PC_BASE_HP= 100;
+        public readonly int PC_BASE_EP = 100;
+        public readonly int PC_BASE_DEBT = 10000;
+        public readonly int[] PC_BASE_STATS = { 0, 0, 0, 0, 0 };
         // Animation representing the player
         public Texture2D PlayerTexture;
 
@@ -21,11 +26,33 @@ namespace DegreeQuest
         // State of the player
         public bool Active;
 
-        // Amount of hit points that player has
-        public int Health;
+        // Current and maximum amount of hit points that player has
+        public int HP, HPMax;
+
+        // Current and maximum amount of energy (mana) the player has
+        public int EP, EPMax;
+
+        // Total and currently available amount of debt for player
+        public int Debt, DebtTotal;
 
         // Title/Name
         public string Name;
+
+        //Players current stat levels
+        public int[] Stats;
+
+        //Default Constructor
+        public PC()
+        {
+            Position = new Vector2(-1, -1);
+            Active = false;
+            HP = HPMax = PC_BASE_HP;
+            EP = EPMax = PC_BASE_EP;
+            Stats = PC_BASE_STATS;
+            Debt = DebtTotal = PC_BASE_DEBT;
+            Name = "Paul Chaser";
+
+        }
 
         // Get the width of the player ship
         public int Width       
@@ -40,6 +67,7 @@ namespace DegreeQuest
         }
 
 
+
         public void Initialize(Texture2D texture, Vector2 position)
         {
             PlayerTexture = texture;
@@ -51,7 +79,7 @@ namespace DegreeQuest
             Active = true;
 
             // Set the player health (from tutorial, will move to separate class later or something)
-            Health = 100;
+            HP = HPMax = PC_BASE_HP;
 
         }
 
