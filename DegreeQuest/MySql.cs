@@ -22,19 +22,33 @@ namespace DegreeQuest
             this.conn = conn;
            
         }
-        public MySql(String dbName)
+        public MySql(string dbName)
         {
             string connStr = "server=localhost;user=root;database=" + dbName + ";port=3306;password=testdb";
             this.conn = new MySqlConnection(connStr);
 
         }
     
-        public void createDB(String tName)
+        public void createT(string tName, string columns)
         {
-
+            try
+            {
+                string mkT = "CREATE TABLE " + tName + " (" + columns + ")";
+                MySqlCommand cmd = new MySqlCommand(mkT, conn);
+                conn.Open();
+                cmd.ExecuteReader();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            finally
+            {
+                conn.Close();
+            }
         }
 
-        public void readT(String name)
+        public void readT(string name)
         {
             try
             {
@@ -64,29 +78,28 @@ namespace DegreeQuest
             }
         }
 
-        public void write(String tName)
-        {
-
-        }
-
-        public void testConn()
+        public void write(string bName, string name, DateTime birthdate)
         {
             try
             {
+                string write = "INSERT INOT inf(name, boss, birthdate) VALUES (@name, @boss, @birthdate)";
+                MySqlCommand cmd = new MySqlCommand(write, conn);
                 conn.Open();
-                MySqlCommand cmd = new MySqlCommand();
-                cmd.Connection = conn;
-
+                cmd.Parameters.AddWithValue("@name", name);
+                cmd.Parameters.AddWithValue("@boss", bName);
+                cmd.Parameters.AddWithValue("@birthdate", birthdate);
+                cmd.ExecuteNonQuery();
             }
             catch (Exception e)
             {
-                Console.Write(e.ToString());
-                Console.Read();
+                Console.WriteLine(e.ToString());
             }
             finally
             {
                 conn.Close();
             }
+
         }
+
     }
 }
