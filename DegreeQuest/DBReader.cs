@@ -93,5 +93,27 @@ namespace DegreeQuest
             conn.Close();
         }
 
+       public static void updateRow(String tableName, String[] colmnNames, String[] values, String colmnID, String key)
+        {
+            try
+            {
+                conn.Open();
+                String sSQL = "UPDATE " + tableName + " SET ";
+                sSQL = sSQL + colmnNames[0] + " = " + values[0] + ", ";
+                for (int i = 1; i < colmnNames.Length; i++)
+                {
+                    sSQL = sSQL + ", " +colmnNames[i] + " = " + values[i];
+                }
+                sSQL = sSQL + " WHERE " + colmnID + " = " + key;
+                MySqlCommand cmd = new MySqlCommand(sSQL, conn);
+                cmd.ExecuteNonQuery();
+            }
+            catch (MySqlException ex)
+            {
+                Console.WriteLine(ex.ToString());
+            } 
+            conn.Close();
+            
+        }
     }
 }

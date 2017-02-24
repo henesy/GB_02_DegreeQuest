@@ -112,7 +112,8 @@ namespace DegreeQuest
 
                 //post
                 pclient = new DQPostClient(pc, this);
-
+                DBReader.insertRecord("player_loc", new String[] { "name", "pos_x", "pos_y" }, new String[] { "john", "0", "0" });
+                DBReader.updateRow("player_loc", new String[] { "pos_x", "pos_y" }, new String[] { "23", "12" }, "idplayer_loc", "1");
                 Thread pclientThread = new Thread(new ThreadStart(pclient.ThreadRun));
                 pclientThread.Start();
                 Console.WriteLine("> POST Client Initialisation Complete!");
