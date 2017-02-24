@@ -13,6 +13,7 @@ namespace DegreeQuest
         [STAThread]
         static void Main()
         {
+            NPCTemplate.update();
             using (var game = new DegreeQuest())
                 game.Run();
         }

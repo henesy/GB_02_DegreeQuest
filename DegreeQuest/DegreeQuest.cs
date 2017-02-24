@@ -26,7 +26,7 @@ namespace DegreeQuest
         DQPostSrv psrv = null;
 
         /* Through trial and error, puts you at the "root" project directory (with the .sln, etc.) */
-        public string root = System.AppDomain.CurrentDomain.BaseDirectory + "..\\..\\..\\..";
+        public static string root = System.AppDomain.CurrentDomain.BaseDirectory + "..\\..\\..\\..";
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;

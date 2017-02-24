@@ -19,7 +19,7 @@ namespace DegreeQuest
         // Current and maximum amount of energy (mana)
         public uint EP, EPMax;
 
-        public Subject Subject;
+        public int subject;
 
         public Texture2D Texture { get; private set; }
         
@@ -28,7 +28,7 @@ namespace DegreeQuest
         {
             HP = HPMax = 100;
             EP = EPMax = 0;
-            Subject = Subject.None;
+            subject = Subject.NONE;
             Position = new Vector2(-1,-1);
         }
 
