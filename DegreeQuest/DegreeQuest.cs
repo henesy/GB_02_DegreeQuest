@@ -81,6 +81,7 @@ namespace DegreeQuest
                 srv = new DQServer(pc);
 
                 Thread srvThread = new Thread(new ThreadStart(srv.ThreadRun));
+               srvThread.IsBackground = true;
                 srvThread.Start();
                 //srvThread.Join();
                 Console.WriteLine("> Server Initialistion Complete!");
@@ -89,6 +90,7 @@ namespace DegreeQuest
                 psrv = new DQPostSrv(this);
 
                 Thread psrvThread = new Thread(new ThreadStart(psrv.ThreadRun));
+               psrvThread.IsBackground = true;
                 psrvThread.Start();
                 Console.WriteLine("> POST Server Initialisation Complete!");
 
@@ -233,16 +235,7 @@ namespace DegreeQuest
             spriteBatch.End();
         }
 
-        public static byte[] stb(string str)
-        {
-            return Encoding.ASCII.GetBytes(str);
-        }
-
-        public static string bts(byte[] b)
-        {
-            return Encoding.ASCII.GetString(b);
-        }
-
+        
         /* loads another PC in */
         public void LoadPC(PC c)
         {

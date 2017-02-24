@@ -14,14 +14,29 @@ namespace DegreeQuest
         Vector2 Position;
 
         // Current and maximum amount of hit points
-        public int HP, HPMax;
+        public uint HP, HPMax;
 
         // Current and maximum amount of energy (mana)
-        public int EP, EPMax;
+        public uint EP, EPMax;
 
-        public int Subject;
+        public Subject Subject;
 
-        public Texture2D PlayerTexture { get; private set; }
+        public Texture2D Texture { get; private set; }
+        
+        //Current default constructor
+        public NPC()
+        {
+            HP = HPMax = 100;
+            EP = EPMax = 0;
+            Subject = Subject.None;
+            Position = new Vector2(-1,-1);
+        }
+
+        public NPC(NPCTemplate temp)
+        {
+            HP = HPMax = (uint)temp.HP.roll();
+            EP = EPMax = (uint)temp.EP.roll();
+        }
 
         /* As per Actor */
         public AType GetAType()
@@ -32,7 +47,7 @@ namespace DegreeQuest
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(PlayerTexture, Position, null, Color.White, 0f, Vector2.Zero, 1f,
+            spriteBatch.Draw(Texture, Position, null, Color.White, 0f, Vector2.Zero, 1f,
                 SpriteEffects.None, 0f);
         }
     }

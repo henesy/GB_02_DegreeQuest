@@ -8,10 +8,11 @@ using MySql.Data.MySqlClient;
 namespace DegreeQuest
 {
     /* Database communication abstraction */
-    class DBReader
+    public class DBReader
     {
-        static String myConnectionString = "server=10.25.71.66;uid=dbu309gb2;pwd=ODcxNjc3ZGI4;database=db309gb2;";
-        static MySqlConnection conn = new MySqlConnection(myConnectionString);
+        public static readonly String myConnectionString = "server=10.25.71.66;uid=dbu309gb2;pwd=ODcxNjc3ZGI4;database=db309gb2;";
+        public static readonly MySqlConnection conn = new MySqlConnection(myConnectionString);
+
         /*
          * current purpose is to test the connection by query the whole table and printing out everything in the table 
          */
@@ -40,12 +41,12 @@ namespace DegreeQuest
          * this function takes in the table name the colmn name and a unique key and finds the record 
          * associated with that key and deletes it.
          */
-        public static void deleteRecordUsingKey(String tableName, String colomnName, String key)
+        public static void deleteRecordUsingKey(String tableName, String columnName, String key)
         {
             try
             {
                 conn.Open();
-                String sSQL = "DELETE FROM " + tableName + "WHERE " + colomnName + "='" + key + "'";
+                String sSQL = "DELETE FROM " + tableName + "WHERE " + columnName + "='" + key + "'";
                 MySqlCommand cmd = new MySqlCommand(sSQL, conn);
                 cmd.ExecuteNonQuery();
             }
