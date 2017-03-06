@@ -69,7 +69,7 @@ namespace DegreeQuest
             // TODO: Add your initialization logic here
             pc = new PC();
             room = new Room();
-            room.members.Add(pc);
+            room.Add(pc);
 
             // server init logic ;; always serving atm
             string config = System.IO.File.ReadAllText(root + @"/config.txt");
@@ -281,9 +281,9 @@ namespace DegreeQuest
                 //draw player
                 //pc.Draw(spriteBatch);
                 int i;
-                for (i = 0; i < room.members.ToArray().Length; i++)
+                for (i = 0; i < room.num; i++)
                 {
-                    ((PC)room.members.ToArray()[i]).Draw(spriteBatch);
+                    ((PC)room.members[i]).Draw(spriteBatch);
                 }
             }
 

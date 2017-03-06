@@ -106,9 +106,9 @@ namespace DegreeQuest
                 string str = "";
 
                 int i;
-                for (i = 0; i < dq.room.members.ToArray().Length; i++)
+                for (i = 0; i < dq.room.num; i++)
                 {
-                    str += ((new Location(dq.room.members.ToArray()[i].Position)).ToString()) + "@";
+                    str += ((new Location(dq.room.members[i].Position)).ToString()) + "@";
                 }
 
                 NetworkStream networkStream = c.GetStream();
@@ -275,7 +275,7 @@ namespace DegreeQuest
             cc.Name = nameMsg.Substring(5);
 
             //establish locations/init client "player" object
-            srvDQ.room.members.Add(cc);
+            srvDQ.room.Add(cc);
 
             srvDQ.LoadPC(cc);
 

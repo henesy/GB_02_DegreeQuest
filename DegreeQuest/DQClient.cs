@@ -60,23 +60,22 @@ namespace DegreeQuest
 
                     /** this entire block should be replaced with a server-side ID that re-writes the members array once at start and then just uses server id's to write to the members array **/
                     //dq.room.members = new List<Actor
+                    dq.room.num = locations.Length - 1;
 
-                    if(dq.room.members.ToArray().Length < locations.Length-1)
+                  
+                    //need to expand
+                    int j;
+                    for(j = 0; j < dq.room.num; j++)
                     {
-                        //need to expand
-                        int j;
-                        for(j = 0; j < Math.Abs((locations.Length - 1)- dq.room.members.ToArray().Length); j++)
-                        {
-                            PC tc = new PC();
-                            dq.LoadPC(tc);
-                            dq.room.members.Add(tc);
-                        }
+                        PC tc = new PC();
+                        dq.LoadPC(tc);
+                        dq.room.members[j] = tc;
                     }
 
                     int i;
-                    for (i = 0; i < locations.Length - 1; i++)
+                    for (i = 0; i < dq.room.num; i++)
                     {
-                        dq.room.members.ToArray()[i].Position = new Location(locations[i]).toVector2();
+                        dq.room.members[i].Position = new Location(locations[i]).toVector2();
                     }
                 }
 
