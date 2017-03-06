@@ -271,7 +271,7 @@ namespace DegreeQuest
             byte[] inStream = new byte[100];
 
             cStream.Read(inStream, 0, 100);
-            string nameMsg = DegreeQuest.bts(inStream);
+            string nameMsg = Util.bts(inStream);
             cc.Name = nameMsg.Substring(5);
 
             //establish locations/init client "player" object
@@ -279,7 +279,11 @@ namespace DegreeQuest
 
             srvDQ.LoadPC(cc);
 
+<<<<<<< HEAD
             Byte[] byt = DegreeQuest.stb(new Location(cc.Position).ToString());
+=======
+            Byte[] byt = Util.stb(new Location(cc.Position).ToString());
+>>>>>>> 3dba11d38804096bb258c56c317f40526bec3805
             cStream.Write(byt, 0, byt.Length);
             cStream.Flush();
             Console.WriteLine(">>> POST Handler Entering Primary Loop!");
@@ -293,7 +297,7 @@ namespace DegreeQuest
                     //katie was here
                     inStream = new byte[100];
                     cStream.Read(inStream, 0, 100);
-                    string usrin = DegreeQuest.bts(inStream);
+                    string usrin = Util.bts(inStream);
                     Console.WriteLine("Got usrin: " + usrin + "\n");
 
                     if (usrin.Contains("MOVE"))

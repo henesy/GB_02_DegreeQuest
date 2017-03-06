@@ -111,13 +111,13 @@ namespace DegreeQuest
 
 
             //initial position
-            Byte[] byt = DegreeQuest.stb("OPEN " + pc.Name);
+            Byte[] byt = Util.stb("OPEN " + pc.Name);
             srvStream.Write(byt, 0, byt.Length);
             srvStream.Flush();
 
             byte[] initB = new byte[100];
             srvStream.Read(initB, 0, 100);
-            pos = new Location(DegreeQuest.bts(initB)).toVector2();
+            pos = new Location(Util.bts(initB)).toVector2();
 
             pc.Position = pos;
 
@@ -140,6 +140,7 @@ namespace DegreeQuest
 
                 if(la.Contains("MOVE"))
                 {
+<<<<<<< HEAD
                     byt2 = DegreeQuest.stb(la);
                     srvStream.Write(byt2, 0, byt2.Length);
                     srvStream.Flush();
@@ -151,6 +152,20 @@ namespace DegreeQuest
                     byt2 = DegreeQuest.stb(la);
                     srvStream.Write(byt2, 0, byt2.Length);
                     srvStream.Flush();
+=======
+                    case "MOVE":
+                        byt2 = Util.stb("MOVE " + new Location(pc.Position).ToString());
+                        srvStream.Write(byt2, 0, byt2.Length);
+                        srvStream.Flush();
+                        //srvStream.Read(inStream, 0, 100);
+                        //pos = new Location(DegreeQuest.bts(inStream)).toVector2();
+                        break;
+                    default:
+                        byt2 = Util.stb(la);
+                        srvStream.Write(byt2, 0, byt2.Length);
+                        srvStream.Flush();
+                        break;
+>>>>>>> 3dba11d38804096bb258c56c317f40526bec3805
                 }
 
                 //wrap up
