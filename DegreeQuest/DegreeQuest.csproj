@@ -99,12 +99,9 @@
       <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-<<<<<<< HEAD
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web.Extensions" />
-=======
     <Reference Include="System.Data" />
->>>>>>> 3dba11d38804096bb258c56c317f40526bec3805
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
