@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 /* below are added for MonoGame purposes */
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Runtime.Serialization;
 
 namespace DegreeQuest
 {
+    /* Player class to manage to user */
+    [Serializable()]
 
     /* Player class to manage to user */
     public class PC : Actor
@@ -21,10 +24,10 @@ namespace DegreeQuest
         public readonly uint[] PC_BASE_STATS = { 0, 0, 0, 0, 0 };
 
         // Animation representing the player
-        public Texture2D PlayerTexture;
+        [NonSerialized] public Texture2D PlayerTexture;
 
         // Position of the Player relative to the upper left side of the screen
-        public Vector2 Position;
+        // in Actor
 
         // State of the player
         public bool Active;
@@ -91,17 +94,17 @@ namespace DegreeQuest
 
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(PlayerTexture, Position, null, Color.White, 0f, Vector2.Zero, 1f,
                 SpriteEffects.None, 0f);
         }
 
         /* As per Actor */
-        public AType GetAType()
+        public override AType GetAType()
         { return AType.PC; }
 
-        public Vector2 GetPos()
+        public override Vector2 GetPos()
         { return Position; }
     }
 }

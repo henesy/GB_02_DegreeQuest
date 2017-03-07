@@ -42,13 +42,13 @@ namespace DegreeQuest
 
             while (true)
             {
-                Console.WriteLine(">>> Reading Room!");
+                //Console.WriteLine(">>> Reading Room!");
 
                 //right now only runs this once
                 //dq.room.members = (List<PC>)ser.ReadObject(serverStream);
                 Byte[] byt2 = new Byte[10000];
                 serverStream.Read(byt2, 0, 10000);
-                string json = DegreeQuest.bts(byt2);
+                string json = Util.bts(byt2);
                 //List<string> vl = ser.Deserialize<List<string>>(json);
                 string[] locations = json.Split('@');
 
@@ -111,13 +111,13 @@ namespace DegreeQuest
 
 
             //initial position
-            Byte[] byt = DegreeQuest.stb("OPEN " + pc.Name);
+            Byte[] byt = Util.stb("OPEN " + pc.Name);
             srvStream.Write(byt, 0, byt.Length);
             srvStream.Flush();
 
             byte[] initB = new byte[100];
             srvStream.Read(initB, 0, 100);
-            pos = new Location(DegreeQuest.bts(initB)).toVector2();
+            pos = new Location(Util.bts(initB)).toVector2();
 
             pc.Position = pos;
 
@@ -138,9 +138,9 @@ namespace DegreeQuest
 
                 //Console.WriteLine(">>> Processing action: " + la);
 
-                if(la.Contains("MOVE"))
+                if (la.Contains("MOVE"))
                 {
-                    byt2 = DegreeQuest.stb(la);
+                    byt2 = Util.stb(la);
                     srvStream.Write(byt2, 0, byt2.Length);
                     srvStream.Flush();
                     //srvStream.Read(inStream, 0, 100);
@@ -148,7 +148,7 @@ namespace DegreeQuest
                 }
                 else
                 {
-                    byt2 = DegreeQuest.stb(la);
+                    byt2 = Util.stb(la);
                     srvStream.Write(byt2, 0, byt2.Length);
                     srvStream.Flush();
                 }
