@@ -42,13 +42,13 @@ namespace DegreeQuest
 
             while (true)
             {
-                Console.WriteLine(">>> Reading Room!");
+                //Console.WriteLine(">>> Reading Room!");
 
                 //right now only runs this once
                 //dq.room.members = (List<PC>)ser.ReadObject(serverStream);
                 Byte[] byt2 = new Byte[10000];
                 serverStream.Read(byt2, 0, 10000);
-                string json = DegreeQuest.bts(byt2);
+                string json = Util.bts(byt2);
                 //List<string> vl = ser.Deserialize<List<string>>(json);
                 string[] locations = json.Split('@');
 
@@ -138,10 +138,9 @@ namespace DegreeQuest
 
                 //Console.WriteLine(">>> Processing action: " + la);
 
-                if(la.Contains("MOVE"))
+                if (la.Contains("MOVE"))
                 {
-<<<<<<< HEAD
-                    byt2 = DegreeQuest.stb(la);
+                    byt2 = Util.stb(la);
                     srvStream.Write(byt2, 0, byt2.Length);
                     srvStream.Flush();
                     //srvStream.Read(inStream, 0, 100);
@@ -149,23 +148,9 @@ namespace DegreeQuest
                 }
                 else
                 {
-                    byt2 = DegreeQuest.stb(la);
+                    byt2 = Util.stb(la);
                     srvStream.Write(byt2, 0, byt2.Length);
                     srvStream.Flush();
-=======
-                    case "MOVE":
-                        byt2 = Util.stb("MOVE " + new Location(pc.Position).ToString());
-                        srvStream.Write(byt2, 0, byt2.Length);
-                        srvStream.Flush();
-                        //srvStream.Read(inStream, 0, 100);
-                        //pos = new Location(DegreeQuest.bts(inStream)).toVector2();
-                        break;
-                    default:
-                        byt2 = Util.stb(la);
-                        srvStream.Write(byt2, 0, byt2.Length);
-                        srvStream.Flush();
-                        break;
->>>>>>> 3dba11d38804096bb258c56c317f40526bec3805
                 }
 
                 //wrap up

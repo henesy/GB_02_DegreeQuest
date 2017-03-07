@@ -10,13 +10,10 @@ using System.Runtime.Serialization;
 
 namespace DegreeQuest
 {
-<<<<<<< HEAD
     /* Player class to manage to user */
     [Serializable()]
-=======
 
     /* Player class to manage to user */
->>>>>>> 3dba11d38804096bb258c56c317f40526bec3805
     public class PC : Actor
     {
 

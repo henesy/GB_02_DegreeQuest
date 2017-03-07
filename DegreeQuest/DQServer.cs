@@ -118,7 +118,7 @@ namespace DegreeQuest
 
                 //ser.WriteObject(networkStream, dq.room.members);
                 //string json = ser.Serialize(vl);
-                Byte[] byt2 = DegreeQuest.stb(str);
+                Byte[] byt2 = Util.stb(str);
                 networkStream.Write(byt2, 0, byt2.Length);
 
                 networkStream.Flush();
@@ -279,11 +279,8 @@ namespace DegreeQuest
 
             srvDQ.LoadPC(cc);
 
-<<<<<<< HEAD
-            Byte[] byt = DegreeQuest.stb(new Location(cc.Position).ToString());
-=======
+            //Byte[] byt = DegreeQuest.stb(new Location(cc.Position).ToString());
             Byte[] byt = Util.stb(new Location(cc.Position).ToString());
->>>>>>> 3dba11d38804096bb258c56c317f40526bec3805
             cStream.Write(byt, 0, byt.Length);
             cStream.Flush();
             Console.WriteLine(">>> POST Handler Entering Primary Loop!");

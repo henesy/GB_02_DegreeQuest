@@ -14,9 +14,7 @@ namespace DegreeQuest
     {
         //Vector2 Position;
 
-<<<<<<< HEAD
         public Texture2D PlayerTexture { get; private set; }        
-=======
         // Current and maximum amount of hit points
         public uint HP, HPMax;
 
@@ -41,7 +39,6 @@ namespace DegreeQuest
             HP = HPMax = (uint)temp.HP.roll();
             EP = EPMax = (uint)temp.EP.roll();
         }
->>>>>>> 3dba11d38804096bb258c56c317f40526bec3805
 
         /* As per Actor */
         public override AType GetAType()
