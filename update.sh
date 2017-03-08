@@ -5,7 +5,7 @@
 cp -R /var/www/html/* ./
 git add *
 #time=$(date +%s)
-time=$(`date --rfc-3339=seconds`)
+time=`date --rfc-3339=seconds`
 msg="Server updating site archive on: "
 commit=$msg$time
 git commit -m "$commit"
