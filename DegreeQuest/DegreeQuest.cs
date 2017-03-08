@@ -51,8 +51,8 @@ namespace DegreeQuest
 
             /* window resize code */
             graphics.IsFullScreen = false;
-            graphics.PreferredBackBufferWidth = 1280;
-            graphics.PreferredBackBufferHeight = 1024;
+            graphics.PreferredBackBufferWidth = 1600;
+            graphics.PreferredBackBufferHeight = 900;
             graphics.ApplyChanges();
 
             Content.RootDirectory = "Content";
@@ -112,8 +112,6 @@ namespace DegreeQuest
 
                 //post
                 pclient = new DQPostClient(pc, this);
-                DBReader.insertRecord("player_loc", new String[] { "name", "pos_x", "pos_y" }, new String[] { "john", "0", "0" });
-                DBReader.updateRow("player_loc", new String[] { "pos_x", "pos_y" }, new String[] { "23", "12" }, "idplayer_loc", "1");
                 Thread pclientThread = new Thread(new ThreadStart(pclient.ThreadRun));
                 pclientThread.Start();
                 Console.WriteLine("> POST Client Initialisation Complete!");

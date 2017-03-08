@@ -13,9 +13,10 @@ namespace DegreeQuest
         public static readonly String myConnectionString = "server=10.25.71.66;uid=dbu309gb2;pwd=ODcxNjc3ZGI4;database=db309gb2;";
         public static readonly MySqlConnection conn = new MySqlConnection(myConnectionString);
 
-        /*
-         * current purpose is to test the connection by query the whole table and printing out everything in the table 
-         */
+        /// <summary>
+        /// current purpose is to test the connection by query the whole table and printing out everything in the table
+        /// </summary>
+        /// <param name="tableName">the name of the table that is to be queried</param>
         public static void queryAll(String tableName)
         {
             try
@@ -33,14 +34,14 @@ namespace DegreeQuest
             }
             conn.Close();
         }
-        
-        /*
-         * @param TableName is the name of the table in MySQL
-         * @param colomnName is the name of the colomn that contains the primary key
-         * @param key is the string value of the primary key that wants to be deleted
-         * this function takes in the table name the colmn name and a unique key and finds the record 
-         * associated with that key and deletes it.
-         */
+
+        /// <summary>
+        /// this function takes in the table name the colmn name and a unique key and finds the record 
+        /// associated with that key and deletes it.
+        /// </summary>
+        /// <param name="tableName">the name of the table in MySQL</param>
+        /// <param name="columnName">the name of the colomn that contains the primary key</param>
+        /// <param name="key">the string value of the primary key that wants to be deleted</param>
         public static void deleteRecordUsingKey(String tableName, String columnName, String key)
         {
             try
@@ -57,10 +58,13 @@ namespace DegreeQuest
             conn.Close();
         }
 
-        /*
-         * takes in the table name the name of the colomns that the values go into
-         * and the values as parameters and creates a new record and inserts it into the table
-         */
+        /// <summary>
+        ///takes in the table name the name of the colomns that the values go into
+        ///and the values as parameters and creates a new record and inserts it into the table
+        /// </summary>
+        /// <param name="tableName">the name of the table that is to be inserted into</param>
+        /// <param name="colmnNames">the colomn names that of the table</param>
+        /// <param name="values">the values to insert into the colomns</param>
         public static void insertRecord(String tableName, String[] colmnNames, String[] values)
         {
             try
@@ -93,13 +97,27 @@ namespace DegreeQuest
             conn.Close();
         }
 
-       public static void updateRow(String tableName, String[] colmnNames, String[] values, String colmnID, String key)
+        ///<summary>
+        ///This function updates parts of the table.
+        /// </summary>
+        ///<param name="tableName">the name of the table that is changed.</param>
+        ///<param name="colmnNames">the list of column names that are changed.</param>
+        ///<param name="values">the list of values that colmnNames are changed to.</param>
+        ///<param name="colmnID">the column name that is used as the key.</param>
+        ///<param name="key">the key that the program uses to find which row it will change.</param>
+        public static void updateRow(String tableName, String[] colmnNames, String[] values, String colmnID, String key)
         {
+            //incase nothing is passed into colmnNames
+            if (colmnNames.Length <= 0)
+                throw new System.ArgumentNullException("colmnNames", "There is nothing in the array of colmnNames");
+            if(colmnNames.Length != values.Length)
+                throw new System.ArgumentException("The vales array is not the same length as the colmnNames array", "values");
+
             try
             {
                 conn.Open();
                 String sSQL = "UPDATE " + tableName + " SET ";
-                sSQL = sSQL + colmnNames[0] + " = " + values[0] + ", ";
+                sSQL = sSQL + colmnNames[0] + " = '" + values[0] + "' ";
                 for (int i = 1; i < colmnNames.Length; i++)
                 {
                     sSQL = sSQL + ", " +colmnNames[i] + " = " + values[i];
@@ -114,6 +132,69 @@ namespace DegreeQuest
             } 
             conn.Close();
             
+        }
+
+        /// <summary>
+        /// This is a general method that returns a string of what has been found from the query.
+        /// </summary>
+        /// <param name="tableName">the name of the table to be queried.</param>
+        /// <param name="colmnNames">the name of the colomns that data is wanted from.</param>
+        /// <param name="colmnConditionID">the id of the colomn that is to be checked.</param>
+        /// <param name="condition">the condition that the colomn id needs to be met.</param>
+        /// <returns></returns>
+        public static String selectQuery(String tableName, String[] colmnNames, String colmnConditionID, String condition)
+        {
+            //incase nothing is passed into the funciton
+            if (colmnNames.Length <= 0)
+                throw new System.ArgumentNullException("colmnNames", "There is nothing in the colmnNames array");
+            String readed = "";
+            try
+            {
+                conn.Open();
+                String query = "SELECT " + colmnNames[0];
+                for(int i = 1; i < colmnNames.Length; i++)
+                {
+                    query = query + ", " + colmnNames[i];
+                }
+                query = query + " WHERE " + colmnConditionID + "=" + condition;
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                readed = interpetReader(cmd.ExecuteReader());
+            }
+            catch(MySqlException e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            finally
+            {
+                conn.Close();
+            }
+            return readed; 
+        }
+        /*
+         *Helper method that takes a MySqlDataReader object and returns a string that 
+         * is what is in the reader object 
+         */
+        private static String interpetReader(MySqlDataReader reader)
+        {
+            String values = "";
+            try
+            {
+            
+                while (reader.Read())
+                {
+                    values = values + reader.GetString(0);
+                }
+  
+            }
+            catch(MySqlException e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            finally
+            {
+                reader.Close();
+            }
+            return values;
         }
     }
 }
