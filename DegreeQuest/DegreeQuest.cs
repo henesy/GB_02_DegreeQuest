@@ -50,8 +50,9 @@ namespace DegreeQuest
 
             /* window resize code */
             graphics.IsFullScreen = false;
-            graphics.PreferredBackBufferWidth = 1280;
-            graphics.PreferredBackBufferHeight = 1024;
+            graphics.PreferredBackBufferWidth = 1600;
+            graphics.PreferredBackBufferHeight = 900;
+            
             graphics.ApplyChanges();
 
             Content.RootDirectory = "Content";
@@ -136,7 +137,7 @@ namespace DegreeQuest
 
             // TODO: use this.Content to load your game content here
 
-            Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X,
+            Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2,
                 GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
 
             pc.Initialize(Content.Load<Texture2D>(root + "\\Content\\Graphics\\player"), playerPosition);
@@ -203,8 +204,8 @@ namespace DegreeQuest
                 actions.Enqueue("MOVE");
             }
 
-            pc.Position.X = MathHelper.Clamp(pc.Position.X, 0, GraphicsDevice.Viewport.Width - pc.Width);
-            pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 0, GraphicsDevice.Viewport.Height - pc.Height);
+            pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - pc.Width);
+            pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 90, 810 - pc.Height);
         }
 
 
@@ -220,6 +221,14 @@ namespace DegreeQuest
 
             // start drawing
             spriteBatch.Begin();
+            //draw the actual screen where the player moves in
+            Texture2D rect = new Texture2D(graphics.GraphicsDevice, 1280, 720);
+            Vector2 coor = new Vector2(160, 90);
+            Color[] data = new Color[1280 * 720];
+            int j;
+            for(j = 0; j < data.Length; j++) data[j] = Color.Chocolate;
+            rect.SetData(data);
+            spriteBatch.Draw(rect, coor, Color.White);
 
             //draw player
             //pc.Draw(spriteBatch);
@@ -241,8 +250,8 @@ namespace DegreeQuest
         {
             // TODO: use this.Content to load your game content here
 
-            Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X,
-                GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
+            Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.Width / 2,
+                GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
 
             c.Initialize(Content.Load<Texture2D>(root + "\\Content\\Graphics\\player"), playerPosition);
         }
