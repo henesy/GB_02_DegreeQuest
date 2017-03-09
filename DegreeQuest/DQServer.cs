@@ -122,22 +122,7 @@ namespace DegreeQuest
                 networkStream.Write(byt2, 0, byt2.Length);
 
                 networkStream.Flush();
-                /*
-                try
-                {
-                    NetworkStream networkStream = c.GetStream();
-                    //needs to be PC position
 
-                    Console.WriteLine(">>> Writing Room!");
-                    ser.WriteObject(networkStream, dq.room.members);
-                    networkStream.Flush();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.ToString());
-                    break;
-                }
-                */
                 Thread.Sleep(5);
             }
 
