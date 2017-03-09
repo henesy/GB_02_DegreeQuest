@@ -134,7 +134,7 @@ namespace DegreeQuest
 
             // TODO: use this.Content to load your game content here
 
-            Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X,
+            Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2,
                 GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
 
             pc.Initialize(Content.Load<Texture2D>(root + "\\Content\\Graphics\\player"), playerPosition);
@@ -203,8 +203,8 @@ namespace DegreeQuest
                 }
 
                 // clamp might need to be done server-side for clients
-                pc.Position.X = MathHelper.Clamp(pc.Position.X, 0, GraphicsDevice.Viewport.Width - pc.Width);
-                pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 0, GraphicsDevice.Viewport.Height - pc.Height);
+                pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - pc.Width);
+                pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 90, 810 - pc.Height);
             }
             else
             {
@@ -278,6 +278,12 @@ namespace DegreeQuest
             // start drawing
             spriteBatch.Begin();
 
+            Texture2D rect = new Texture2D(graphics.GraphicsDevice, 1280, 720);
+            Color[] data = new Color[1280 * 720];
+            for (int j = 0; j < data.Length; j++) data[j] = Color.Green;
+            rect.SetData(data);
+            spriteBatch.Draw(rect, new Vector2(160, 90), Color.White);
+
             lock (room)
             {
                 //draw player
@@ -301,7 +307,7 @@ namespace DegreeQuest
         {
             // TODO: use this.Content to load your game content here
 
-            Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X,
+            Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2,
                 GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
 
             c.Initialize(Content.Load<Texture2D>(root + "\\Content\\Graphics\\player"), playerPosition);
