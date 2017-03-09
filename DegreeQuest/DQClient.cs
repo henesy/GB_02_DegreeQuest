@@ -1,23 +1,27 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 
 namespace DegreeQuest
 {
     class DQClient
     {
         TcpClient c = new TcpClient();
-        Vector2 pos;
-        PC pc;
+        DegreeQuest dq;
 
-        public DQClient(PC mainPC)
+        public DQClient(DegreeQuest mainDQ)
         {
-            pc = mainPC;
+            dq = mainDQ;
         }
 
         public void ThreadRun()
@@ -26,23 +30,56 @@ namespace DegreeQuest
             Console.WriteLine(">>> Client Connected!");
             NetworkStream serverStream = c.GetStream();
 
-            if(c == null)
+            if (c == null)
             {
                 Console.WriteLine("CLIENT IS NULL!");
             }
 
             //Int32 size = c.ReceiveBufferSize;
+            //Type[] knownTypes = new Type[] {typeof(Vector2), typeof(Actor), typeof(AType), typeof(List<PC>) };
+            //DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(List<PC>), knownTypes);
+            //var ser = new JavaScriptSerializer();
 
             while (true)
             {
-                byte[] inStream = new byte[100];
-                serverStream.Read(inStream, 0, 100);
-                //need to get PC Position
-                //Vector2 pos = pc.Position;
-                Console.WriteLine("Reading location! ");
-                pos = (new Location(System.Text.Encoding.ASCII.GetString(inStream))).toVector2();
-                pc.Position = pos;
-                Thread.Sleep(100);
+                //Console.WriteLine(">>> Reading Room!");
+
+                //right now only runs this once
+                //dq.room.members = (List<PC>)ser.ReadObject(serverStream);
+                Byte[] byt2 = new Byte[10000];
+                serverStream.Read(byt2, 0, 10000);
+                string json = Util.bts(byt2);
+                //List<string> vl = ser.Deserialize<List<string>>(json);
+                string[] locations = json.Split('@');
+
+                //populate rooms
+                //List<Vector2> vl = new List<Vector2>();
+
+                //this is bad and unsafe and can cause crashes
+                lock (dq.room) {
+
+                    /** this entire block should be replaced with a server-side ID that re-writes the members array once at start and then just uses server id's to write to the members array **/
+                    //dq.room.members = new List<Actor
+                    dq.room.num = locations.Length - 1;
+
+                  
+                    //need to expand
+                    int j;
+                    for(j = 0; j < dq.room.num; j++)
+                    {
+                        PC tc = new PC();
+                        dq.LoadPC(tc);
+                        dq.room.members[j] = tc;
+                    }
+
+                    int i;
+                    for (i = 0; i < dq.room.num; i++)
+                    {
+                        dq.room.members[i].Position = new Location(locations[i]).toVector2();
+                    }
+                }
+
+                Thread.Sleep(5);
             }
         }
     }
@@ -94,33 +131,32 @@ namespace DegreeQuest
                 //the problem is last action
                 string la = "nil";
 
-                if(dq.actions.ToArray().Length > 0)
+                if (dq.actions.ToArray().Length > 0)
                 {
                     la = (string)dq.actions.Dequeue();
                 }
 
-                Console.WriteLine(">>> Processing action: " + la);
+                //Console.WriteLine(">>> Processing action: " + la);
 
-                switch (la)
+                if (la.Contains("MOVE"))
                 {
-                    case "MOVE":
-                        byt2 = Util.stb("MOVE " + new Location(pc.Position).ToString());
-                        srvStream.Write(byt2, 0, byt2.Length);
-                        srvStream.Flush();
-                        //srvStream.Read(inStream, 0, 100);
-                        //pos = new Location(DegreeQuest.bts(inStream)).toVector2();
-                        break;
-                    default:
-                        byt2 = Util.stb(la);
-                        srvStream.Write(byt2, 0, byt2.Length);
-                        srvStream.Flush();
-                        break;
+                    byt2 = Util.stb(la);
+                    srvStream.Write(byt2, 0, byt2.Length);
+                    srvStream.Flush();
+                    //srvStream.Read(inStream, 0, 100);
+                    //pos = new Location(DegreeQuest.bts(inStream)).toVector2();
+                }
+                else
+                {
+                    byt2 = Util.stb(la);
+                    srvStream.Write(byt2, 0, byt2.Length);
+                    srvStream.Flush();
                 }
 
                 //wrap up
-                
+
                 //pc.Position = pos;
-                Thread.Sleep(100);
+                Thread.Sleep(5);
             }
         }
     }

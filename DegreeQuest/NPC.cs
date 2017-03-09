@@ -9,10 +9,12 @@ using System.Threading.Tasks;
 namespace DegreeQuest
 {
     /* Generic NPC class type */
+    [Serializable]
     class NPC : Actor
     {
-        Vector2 Position;
+        //Vector2 Position;
 
+        public Texture2D PlayerTexture { get; private set; }        
         // Current and maximum amount of hit points
         public uint HP, HPMax;
 
@@ -39,13 +41,13 @@ namespace DegreeQuest
         }
 
         /* As per Actor */
-        public AType GetAType()
+        public override AType GetAType()
         { return AType.NPC; }
 
-        public Vector2 GetPos()
+        public override Vector2 GetPos()
         { return Position; }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(Texture, Position, null, Color.White, 0f, Vector2.Zero, 1f,
                 SpriteEffects.None, 0f);
