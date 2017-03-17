@@ -1,35 +1,26 @@
-# public class PC : Actor
+# public class Dice
 <!--'></!-->
 
-Class coresponding to player characters.
+Represents a rolling of a certain number and size of dice with an ap
 
 ## Fields
 
 | Type | Name | Description |
 |---|---|---|
-| Texture2D | PlayerTexture | Player's visual Sprite |
-| Vector2 | Postions | (x,y) position relative to upper left corner |
-| bool  | Active  | current state |
-| uint | HP | current HitPoints |
-| uint | HPMax | maximum HitPoints |
-| uint | EP | current EnergyPoints |
-| uint | EPMax | maximum EnergyPoints |
-| uint | Debt | current Debt|
-| uint | DebtTotal | total Debt|
-| string | Name | |
-| uint[] | Stats | array of stats for each subject|
+| private int | mod | modifier or base value |
+| private int | num | number of dice to roll |
+| private int | sides | number of sides on dice |
 
 ## Constructors
 
 | Modifier | Constructor | Description |
 |---|---|---|
-|public|PC()| default constructor with base values|
- 
+|public|Dice(int mod, uint num, uint sides)| creates a dice with given values. Requires non-negative num and sides|
+|public|Dice(String s)| creates a dice object from string|
+|public|Dice(int mod)| creates a dice object with flat output mod|
+
 ## Methods
 
 | Type | Method | Description |
 |---|---|---|
-|public int |Width| width of the texture|
-|public int |Height| height of the texture|
-|public void| Initialize(Texture2D texture, Vector2 postion)| initializes a player in a given position|
-
+|public int| roll()| gives output of a roll of the dice|

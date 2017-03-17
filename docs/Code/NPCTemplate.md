@@ -1,35 +1,32 @@
-# public class PC : Actor
+# public class NPCTemplate
 <!--'></!-->
 
-Class coresponding to player characters.
+A template for an NPC character. Allows generated NPCs with slight variance.
 
 ## Fields
 
 | Type | Name | Description |
 |---|---|---|
-| Texture2D | PlayerTexture | Player's visual Sprite |
-| Vector2 | Postions | (x,y) position relative to upper left corner |
-| bool  | Active  | current state |
-| uint | HP | current HitPoints |
-| uint | HPMax | maximum HitPoints |
-| uint | EP | current EnergyPoints |
-| uint | EPMax | maximum EnergyPoints |
+| public static readonly String | NPC_FILE | pathname for the txt file for Templates |
+| public static String[] | columns | names of the item columns in the database|
+|public String| name |  |
+| public Dice | HP | dice to generate HP |
+| public Dice | EP | dice to generate EP |
+| public BitVector32 | subjects| possible subjects for this NPC|
+| Texture2D | texture | maximum EnergyPoints |
 | uint | Debt | current Debt|
-| uint | DebtTotal | total Debt|
-| string | Name | |
-| uint[] | Stats | array of stats for each subject|
 
 ## Constructors
 
 | Modifier | Constructor | Description |
 |---|---|---|
-|public|PC()| default constructor with base values|
- 
+|public|NPCTemplate(String name, Dice HP, Dice EP,BitVector32 subjects)| manual constructor|
+|public NPCTemplate(String name, Dice HP, Dice EP, int subjects)|manual with subjects taken in as int|
+
 ## Methods
 
 | Type | Method | Description |
 |---|---|---|
-|public int |Width| width of the texture|
-|public int |Height| height of the texture|
-|public void| Initialize(Texture2D texture, Vector2 postion)| initializes a player in a given position|
+|public NPC |create()| creates a new NPC off this template|
+|public static void| update()|updates the database from the txt file|
 

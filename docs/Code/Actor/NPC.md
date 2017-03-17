@@ -1,35 +1,27 @@
-# public class PC : Actor
+# public class NPC : Actor
 <!--'></!-->
 
-Class coresponding to player characters.
+Any game character that is not controlled by a player.
 
 ## Fields
 
 | Type | Name | Description |
 |---|---|---|
-| Texture2D | PlayerTexture | Player's visual Sprite |
-| Vector2 | Postions | (x,y) position relative to upper left corner |
-| bool  | Active  | current state |
+| public Texture2D | Texture | visual texture |
+| vector2 | Postion | (x,y) position relative to upper left corner |
 | uint | HP | current HitPoints |
 | uint | HPMax | maximum HitPoints |
 | uint | EP | current EnergyPoints |
 | uint | EPMax | maximum EnergyPoints |
-| uint | Debt | current Debt|
-| uint | DebtTotal | total Debt|
+| int| subject| |
 | string | Name | |
-| uint[] | Stats | array of stats for each subject|
 
 ## Constructors
 
 | Modifier | Constructor | Description |
 |---|---|---|
-|public|PC()| default constructor with base values|
- 
-## Methods
+|public|NPC()| default constructor with base values|
+|public| NPC(NPCTemplate temp)| constructor based on a template| 
 
-| Type | Method | Description |
-|---|---|---|
-|public int |Width| width of the texture|
-|public int |Height| height of the texture|
-|public void| Initialize(Texture2D texture, Vector2 postion)| initializes a player in a given position|
+## Methods
 

@@ -1,35 +1,17 @@
-# public class PC : Actor
+# public static class Subject
 <!--'></!-->
 
-Class coresponding to player characters.
+Stores information on subjects
 
 ## Fields
 
 | Type | Name | Description |
 |---|---|---|
-| Texture2D | PlayerTexture | Player's visual Sprite |
-| Vector2 | Postions | (x,y) position relative to upper left corner |
-| bool  | Active  | current state |
-| uint | HP | current HitPoints |
-| uint | HPMax | maximum HitPoints |
-| uint | EP | current EnergyPoints |
-| uint | EPMax | maximum EnergyPoints |
-| uint | Debt | current Debt|
-| uint | DebtTotal | total Debt|
-| string | Name | |
-| uint[] | Stats | array of stats for each subject|
+|public static String[]|Subjects| string list of all subjects|
 
-## Constructors
-
-| Modifier | Constructor | Description |
-|---|---|---|
-|public|PC()| default constructor with base values|
- 
 ## Methods
 
-| Type | Method | Description |
-|---|---|---|
-|public int |Width| width of the texture|
-|public int |Height| height of the texture|
-|public void| Initialize(Texture2D texture, Vector2 postion)| initializes a player in a given position|
+|Type | Name| Description|
+|---|---|---
+|public static BitVector32|listToVect(String list)| converts a string of subjects into a bitvector|
 
