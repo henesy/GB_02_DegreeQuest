@@ -26,8 +26,7 @@ namespace DegreeQuest
         DQPostClient pclient = null;
         DQPostSrv psrv = null;
 
-        /* Through trial and error, puts you at the "root" project directory (with the .sln, etc.) */
-        public string root = System.AppDomain.CurrentDomain.BaseDirectory + "..\\..\\..\\..";
+        string root = System.AppDomain.CurrentDomain.BaseDirectory + "..\\..\\..\\..";
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -73,8 +72,9 @@ namespace DegreeQuest
             room.Add(pc);
 
             // server init logic ;; always serving atm
-            string config = System.IO.File.ReadAllText(root + @"/config.txt");
-            if (config.Contains("server=true"))
+            Config conf = new Config();
+
+            if (conf.bget("server"))
                 serverMode = true;
 
             if (serverMode)
@@ -97,8 +97,8 @@ namespace DegreeQuest
 
             }
 
-            Console.Write("File had: " + config);
-            if (config.Contains("client=true"))
+            
+            if (conf.bget("client"))
                 clientMode = true;
 
             // client init logic
