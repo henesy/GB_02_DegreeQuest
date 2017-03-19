@@ -170,6 +170,7 @@ namespace DegreeQuest
             }
             return readed; 
         }
+
         /*
          *Helper method that takes a MySqlDataReader object and returns a string that 
          * is what is in the reader object 

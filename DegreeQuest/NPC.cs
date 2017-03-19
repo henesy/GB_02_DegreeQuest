@@ -11,10 +11,7 @@ namespace DegreeQuest
     /* Generic NPC class type */
     [Serializable]
     class NPC : Actor
-    {
-        //Vector2 Position;
-
-        public Texture2D PlayerTexture { get; private set; }        
+    {   
         // Current and maximum amount of hit points
         public uint HP, HPMax;
 
@@ -32,6 +29,9 @@ namespace DegreeQuest
             EP = EPMax = 0;
             Subject = Subject.None;
             Position = new Vector2(-1,-1);
+
+            //changeme
+            //Texture = "player";
         }
 
         public NPC(NPCTemplate temp)
@@ -47,10 +47,5 @@ namespace DegreeQuest
         public override Vector2 GetPos()
         { return Position; }
 
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(Texture, Position, null, Color.White, 0f, Vector2.Zero, 1f,
-                SpriteEffects.None, 0f);
-        }
     }
 }
