@@ -31,7 +31,7 @@ namespace DegreeQuest
             Position = new Vector2(-1,-1);
 
             //changeme
-            TextureString = "player";
+            //Texture = "player";
         }
 
         public NPC(NPCTemplate temp)
@@ -46,12 +46,6 @@ namespace DegreeQuest
 
         public override Vector2 GetPos()
         { return Position; }
-
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(Texture, Position, null, Color.White, 0f, Vector2.Zero, 1f,
-                SpriteEffects.None, 0f);
-        }
 
     }
 }

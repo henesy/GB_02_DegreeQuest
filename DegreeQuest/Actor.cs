@@ -22,11 +22,13 @@ namespace DegreeQuest
     */
     public abstract class Actor
     {
+        public bool Active;
+
         //float Position { get; set; }
 
-        public string TextureString { get; set; }
+        public string Texture { get; set; }
 
-        public Texture2D Texture { get; set; }
+        //public Texture2D Texture { get; set; }
 
         public Vector2 Position;
 
@@ -37,8 +39,21 @@ namespace DegreeQuest
 
         public abstract  Vector2 GetPos();
 
-        public abstract void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch);
+        //public abstract void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch);
 
-        //public abstract Microsoft.Xna.Framework.Graphics.Texture2D getTexture();
+        public void Initialize(string texture, Vector2 position)
+        {
+            Texture = texture;
+
+            //Set the starting position of the player around the middle of the screen and to the back
+            Position = position;
+
+            // Set the player to be active
+            Active = true;
+
+            // Stats would be set here...
+
+        }
+
     }
 }

@@ -30,7 +30,7 @@ namespace DegreeQuest
         // in Actor
 
         // State of the player
-        public bool Active;
+        //public bool Active;
 
         // Current and maximum amount of hit points that player has
         public uint HP, HPMax;
@@ -60,44 +60,9 @@ namespace DegreeQuest
 
         }
 
-        // Get the width of the player ship
-        public int Width       
-        {
-            get { return Texture.Width; }
-        }
-
-        // Get the height of the player ship
-        public int Height
-        {
-            get { return Texture.Height; }
-        }
-
-
-
-        public void Initialize(Texture2D texture, Vector2 position)
-        {
-            Texture = texture;
-
-            //Set the starting position of the player around the middle of the screen and to the back
-            Position = position;
-
-            // Set the player to be active
-            Active = true;
-
-            // Set the player health (from tutorial, will move to separate class later or something)
-            HP = HPMax = PC_BASE_HP;
-
-        }
-
         public void Update()
         {
 
-        }
-
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(Texture, Position, null, Color.White, 0f, Vector2.Zero, 1f,
-                SpriteEffects.None, 0f);
         }
 
         /* As per Actor */

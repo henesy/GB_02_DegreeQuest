@@ -137,7 +137,7 @@ namespace DegreeQuest
             Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X,
                 GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
 
-            pc.Initialize(Content.Load<Texture2D>(root + "\\Content\\Graphics\\" + pc.TextureString), playerPosition);
+            pc.Initialize("player", playerPosition);
         }
 
         /// <summary>
@@ -203,8 +203,8 @@ namespace DegreeQuest
                 }
 
                 // clamp might need to be done server-side for clients
-                pc.Position.X = MathHelper.Clamp(pc.Position.X, 0, GraphicsDevice.Viewport.Width - pc.Width);
-                pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 0, GraphicsDevice.Viewport.Height - pc.Height);
+                pc.Position.X = MathHelper.Clamp(pc.Position.X, 0, GraphicsDevice.Viewport.Width - LoadTexture(pc).Width);
+                pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 0, GraphicsDevice.Viewport.Height - LoadTexture(pc).Height);
             }
             else
             {
@@ -285,7 +285,8 @@ namespace DegreeQuest
                 int i;
                 for (i = 0; i < room.num; i++)
                 {
-                    ((PC)room.members[i]).Draw(spriteBatch);
+                    //((PC)room.members[i]).Draw(spriteBatch);
+                    DrawSprite(room.members[i], spriteBatch);
                 }
             }
 
@@ -304,8 +305,35 @@ namespace DegreeQuest
             Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X,
                 GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
 
-            c.Initialize(Content.Load<Texture2D>(root + "\\Content\\Graphics\\" + c.TextureString), playerPosition);
+            c.Initialize("player", playerPosition);
         }
+
+
+        /* fetches the relevant Texture2D for a Texture string */
+        public Texture2D LoadTexture(Actor a)
+        {
+            //this works, probably
+            return Content.Load<Texture2D>(root + "\\Content\\Graphics\\" + a.Texture);
+        }
+
+        /* acquires width of a sprite */
+        public int Width(Actor a)
+        {
+            return LoadTexture(a).Width;
+        }
+
+        /* acquires width of a sprite */
+        public int Height(Actor a)
+        {
+            return LoadTexture(a).Height;
+        }
+
+        /* Draw method for a Sprite */
+        public void DrawSprite(Actor a, SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(LoadTexture(a), a.Position, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+        }
+
     }
 
     class Location
