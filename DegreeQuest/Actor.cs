@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,9 @@ namespace DegreeQuest
     [DataContract]
     public enum AType {PC, NPC, Item, Object, Static};
 
+    /* For identification of the sprite to use, add more as needed. Note: Texture2D is the MonoGame texture identification ;; might not be necessary */
+    //public enum Texture {Generic_PC, Generic_NPC};
+
     /*
     *   Exists to provide a placeholder within which a player or a Monster can be placed without mutual exclusion 
     *   to implement you must use "MyClass : Actor" this is equivalent to the Java "MyClass implements Actor"
@@ -19,6 +23,10 @@ namespace DegreeQuest
     public abstract class Actor
     {
         //float Position { get; set; }
+
+        public string TextureString { get; set; }
+
+        public Texture2D Texture { get; set; }
 
         public Vector2 Position;
 
@@ -30,5 +38,7 @@ namespace DegreeQuest
         public abstract  Vector2 GetPos();
 
         public abstract void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch);
+
+        //public abstract Microsoft.Xna.Framework.Graphics.Texture2D getTexture();
     }
 }

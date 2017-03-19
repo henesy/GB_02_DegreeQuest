@@ -26,7 +26,7 @@ namespace DegreeQuest
         DQPostClient pclient = null;
         DQPostSrv psrv = null;
 
-        string root = System.AppDomain.CurrentDomain.BaseDirectory + "..\\..\\..\\..";
+        public static string root = System.AppDomain.CurrentDomain.BaseDirectory + "..\\..\\..\\..";
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -137,7 +137,7 @@ namespace DegreeQuest
             Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X,
                 GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
 
-            pc.Initialize(Content.Load<Texture2D>(root + "\\Content\\Graphics\\player"), playerPosition);
+            pc.Initialize(Content.Load<Texture2D>(root + "\\Content\\Graphics\\" + pc.TextureString), playerPosition);
         }
 
         /// <summary>
@@ -304,7 +304,7 @@ namespace DegreeQuest
             Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X,
                 GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
 
-            c.Initialize(Content.Load<Texture2D>(root + "\\Content\\Graphics\\player"), playerPosition);
+            c.Initialize(Content.Load<Texture2D>(root + "\\Content\\Graphics\\" + c.TextureString), playerPosition);
         }
     }
 
