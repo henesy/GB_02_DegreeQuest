@@ -203,8 +203,8 @@ namespace DegreeQuest
                 }
 
                 // clamp might need to be done server-side for clients
-                pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - pc.Width);
-                pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 90, 810 - pc.Height);
+                pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - LoadTexture(pc).Width);
+                pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 90, 810 - LoadTexture(pc).Height);
                 //pc.Position.X = MathHelper.Clamp(pc.Position.X, 0, GraphicsDevice.Viewport.Width - LoadTexture(pc).Width);
                 //pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 0, GraphicsDevice.Viewport.Height - LoadTexture(pc).Height);
             }
@@ -306,14 +306,14 @@ namespace DegreeQuest
 
 
         /* loads another PC in */
-        public void LoadPC(PC c)
+        public void LoadPC(PC c, string texture)
         {
             // TODO: use this.Content to load your game content here
 
             Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2,
                 GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
 
-            c.Initialize("player", playerPosition);
+            c.Initialize(texture, playerPosition);
         }
 
 

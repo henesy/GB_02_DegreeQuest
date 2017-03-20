@@ -68,14 +68,17 @@ namespace DegreeQuest
                     for(j = 0; j < dq.room.num; j++)
                     {
                         PC tc = new PC();
-                        dq.LoadPC(tc);
+                        dq.LoadPC(tc, tc.Texture);
                         dq.room.members[j] = tc;
                     }
 
                     int i;
                     for (i = 0; i < dq.room.num; i++)
                     {
-                        dq.room.members[i].Position = new Location(locations[i]).toVector2();
+                        string[] sub = locations[i].Split('*');
+
+                        dq.room.members[i].Position = new Location(sub[0]).toVector2();
+                        dq.room.members[i].Texture = sub[1];
                     }
                 }
 
@@ -113,6 +116,10 @@ namespace DegreeQuest
             //initial position
             Byte[] byt = Util.stb("OPEN " + pc.Name);
             srvStream.Write(byt, 0, byt.Length);
+            srvStream.Flush();
+
+            Byte[] byt3 = Util.stb("TEXT " + pc.Texture);
+            srvStream.Write(byt3, 0, byt3.Length);
             srvStream.Flush();
 
             byte[] initB = new byte[100];

@@ -108,7 +108,7 @@ namespace DegreeQuest
                 int i;
                 for (i = 0; i < dq.room.num; i++)
                 {
-                    str += ((new Location(dq.room.members[i].Position)).ToString()) + "@";
+                    str += ((new Location(dq.room.members[i].Position)).ToString()) + "*" + dq.room.members[i].Texture + "@";
                 }
 
                 NetworkStream networkStream = c.GetStream();
@@ -259,10 +259,14 @@ namespace DegreeQuest
             string nameMsg = Util.bts(inStream);
             cc.Name = nameMsg.Substring(5);
 
+            cStream.Read(inStream, 0, 100);
+            string textMsg = Util.bts(inStream);
+            cc.Texture = textMsg.Substring(5);
+
             //establish locations/init client "player" object
             srvDQ.room.Add(cc);
 
-            srvDQ.LoadPC(cc);
+            srvDQ.LoadPC(cc, cc.Texture);
 
             //Byte[] byt = DegreeQuest.stb(new Location(cc.Position).ToString());
             Byte[] byt = Util.stb(new Location(cc.Position).ToString());
