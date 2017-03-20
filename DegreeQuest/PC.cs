@@ -58,6 +58,8 @@ namespace DegreeQuest
             Debt = DebtTotal = PC_BASE_DEBT;
             Name = "Paul Chaser";
 
+            //changeme
+            Texture = "player";
         }
 
         public void Update()

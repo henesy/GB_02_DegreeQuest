@@ -76,6 +76,7 @@ namespace DegreeQuest
                     for (i = 0; i < dq.room.num; i++)
                     {
                         string[] sub = locations[i].Split('*');
+                        Console.WriteLine(">>>SUB STRING: " + sub[0] + " then " + sub[1]);
 
                         dq.room.members[i].Position = new Location(sub[0]).toVector2();
                         dq.room.members[i].Texture = sub[1];

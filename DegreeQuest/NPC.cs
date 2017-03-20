@@ -20,7 +20,7 @@ namespace DegreeQuest
 
         public Subject Subject;
 
-        public Texture2D Texture { get; private set; }
+        //public Texture2D Texture { get; private set; }
         
         //Current default constructor
         public NPC()
@@ -31,7 +31,7 @@ namespace DegreeQuest
             Position = new Vector2(-1,-1);
 
             //changeme
-            //Texture = "player";
+            Texture = "player";
         }
 
         public NPC(NPCTemplate temp)

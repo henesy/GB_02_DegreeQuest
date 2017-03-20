@@ -114,7 +114,7 @@ namespace DegreeQuest
                 NetworkStream networkStream = c.GetStream();
                 //needs to be PC position
 
-                Console.WriteLine(">>> Writing Room!");
+                //Console.WriteLine(">>> Writing Room!");
 
                 //ser.WriteObject(networkStream, dq.room.members);
                 //string json = ser.Serialize(vl);
