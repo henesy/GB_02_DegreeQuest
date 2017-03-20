@@ -75,7 +75,7 @@ namespace DegreeQuest
                     int i;
                     for (i = 0; i < dq.room.num; i++)
                     {
-                        string[] sub = locations[i].Split('*');
+                        string[] sub = locations[i].Split('#');
                         Console.WriteLine(">>>SUB STRING: " + sub[0] + " then " + sub[1]);
 
                         dq.room.members[i].Position = new Location(sub[0]).toVector2();
@@ -119,9 +119,12 @@ namespace DegreeQuest
             srvStream.Write(byt, 0, byt.Length);
             srvStream.Flush();
 
-            Byte[] byt3 = Util.stb("TEXT " + pc.Texture);
+            /* this breaks things?
+            Byte[] byt3 = new Byte[100];
+            byt3 = Util.stb("TEXT " + pc.Texture);
             srvStream.Write(byt3, 0, byt3.Length);
             srvStream.Flush();
+            */
 
             byte[] initB = new byte[100];
             srvStream.Read(initB, 0, 100);

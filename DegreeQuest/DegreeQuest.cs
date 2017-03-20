@@ -74,6 +74,9 @@ namespace DegreeQuest
             // server init logic ;; always serving atm
             Config conf = new Config();
 
+            //clientMode = conf.bget("client");
+            //serverMode = conf.bget("server");
+
             if (conf.bget("server"))
                 serverMode = true;
 

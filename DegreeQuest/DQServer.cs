@@ -108,8 +108,10 @@ namespace DegreeQuest
                 int i;
                 for (i = 0; i < dq.room.num; i++)
                 {
-                    str += ((new Location(dq.room.members[i].Position)).ToString()) + "*" + dq.room.members[i].Texture + "@";
+                    str += ((new Location(dq.room.members[i].Position)).ToString()) + "#" + dq.room.members[i].Texture + "@";
                 }
+
+                //Console.WriteLine(">>> STR IS: " + str);
 
                 NetworkStream networkStream = c.GetStream();
                 //needs to be PC position
@@ -258,10 +260,15 @@ namespace DegreeQuest
             cStream.Read(inStream, 0, 100);
             string nameMsg = Util.bts(inStream);
             cc.Name = nameMsg.Substring(5);
+            Console.WriteLine(">>> READ NAME!");
 
+            /* this breaks things?
+            inStream = new byte[100];
             cStream.Read(inStream, 0, 100);
             string textMsg = Util.bts(inStream);
-            cc.Texture = textMsg.Substring(5);
+            cc.Texture = textMsg.Substring(5).Trim();
+            Console.WriteLine(">>> READ TEXTURE!");
+            */
 
             //establish locations/init client "player" object
             srvDQ.room.Add(cc);
@@ -272,6 +279,8 @@ namespace DegreeQuest
             Byte[] byt = Util.stb(new Location(cc.Position).ToString());
             cStream.Write(byt, 0, byt.Length);
             cStream.Flush();
+            Console.WriteLine(">>> WROTE POSITION!");
+
             Console.WriteLine(">>> POST Handler Entering Primary Loop!");
 
             while (true)
