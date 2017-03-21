@@ -6,12 +6,13 @@ using System;
 using System.Threading;
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace DegreeQuest
 {
     /// <summary>
     /// 2D rogue-like game for CS 309 with Mitra
-    /// By Sean, Zach B., Zach T., and Dennis
+    /// By Sean Hinchee, Zach Boe, Zach Turley, and Dennis Xhu
     /// Team 102
     /// </summary>
 
@@ -21,27 +22,25 @@ namespace DegreeQuest
         DQClient client = null;
         bool clientMode = false;
         bool serverMode = false;
-        //public string lastAct = "nil";
         public Queue actions = new Queue();
         DQPostClient pclient = null;
         DQPostSrv psrv = null;
+        Dictionary<string, Texture2D> Textures = new Dictionary<string, Texture2D>();
 
-        /* Through trial and error, puts you at the "root" project directory (with the .sln, etc.) */
-        public string root = System.AppDomain.CurrentDomain.BaseDirectory + "..\\..\\..\\..";
+        public static string root = System.AppDomain.CurrentDomain.BaseDirectory + "..\\..\\..\\..";
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
         PC pc;
 
-        public Room room;
+        public volatile Room room;
 
         //states to determine keypresses
         KeyboardState currentKeyboardState;
         KeyboardState previousKeyboardState;
 
-        //movement speed of player
-        //to Actor
+        int lastNum = -1;
 
         /** End Variables **/
 
@@ -72,10 +71,27 @@ namespace DegreeQuest
             room = new Room();
             room.Add(pc);
 
+            // initialise texture index
+
+            string[] files = System.IO.Directory.GetFiles(root + "\\Content\\Graphics");
+
+            Console.WriteLine("Loading Textures...");
+            foreach(string fname in files)
+            {
+                //Console.WriteLine(fname);
+                var s = fname.Split('\\');
+                var n = s[s.Length - 1].Split('.');
+                var t = Content.Load<Texture2D>(root + "\\Content\\Graphics\\" + n[0]);
+                Textures.Add(n[0], t);
+            }
+            Console.WriteLine("Done loading Textures...");
+
+
             // server init logic ;; always serving atm
-            string config = System.IO.File.ReadAllText(root + @"/config.txt");
-            if (config.Contains("server=true"))
-                serverMode = true;
+            Config conf = new Config();
+
+            serverMode = conf.bget("server");
+            clientMode = !serverMode;
 
             if (serverMode)
             {
@@ -96,10 +112,6 @@ namespace DegreeQuest
                 Console.WriteLine("> POST Server Initialisation Complete!");
 
             }
-
-            Console.Write("File had: " + config);
-            if (config.Contains("client=true"))
-                clientMode = true;
 
             // client init logic
             if (clientMode)
@@ -134,10 +146,10 @@ namespace DegreeQuest
 
             // TODO: use this.Content to load your game content here
 
-            Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X,
+            Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2,
                 GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
 
-            pc.Initialize(Content.Load<Texture2D>(root + "\\Content\\Graphics\\player"), playerPosition);
+            pc.Initialize("player", playerPosition);
         }
 
         /// <summary>
@@ -156,14 +168,12 @@ namespace DegreeQuest
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
-        {
+        {            
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+                Halt();
 
 
             // TODO: Add your update logic here
-
-            //rather than disabling, should do a clientmode check here to queue keypresses/keyboard state as a request to the server
 
             previousKeyboardState = currentKeyboardState;
             currentKeyboardState = Keyboard.GetState();
@@ -175,93 +185,54 @@ namespace DegreeQuest
 
         private void UpdatePlayer(GameTime gameTime)
         {
-            //lastAct = "nil";
-            if (!clientMode)
+            if (currentKeyboardState.IsKeyDown(Keys.Left))
             {
-                if (currentKeyboardState.IsKeyDown(Keys.Left))
-                {
-                    pc.Position.X -= pc.MoveSpeed;
-                    //actions.Enqueue("MOVE");
-                }
-
-                if (currentKeyboardState.IsKeyDown(Keys.Right))
-                {
-                    pc.Position.X += pc.MoveSpeed;
-                    //actions.Enqueue("MOVE");
-                }
-
-                if (currentKeyboardState.IsKeyDown(Keys.Up))
-                {
-                    pc.Position.Y -= pc.MoveSpeed;
-                    //actions.Enqueue("MOVE");
-                }
-
-                if (currentKeyboardState.IsKeyDown(Keys.Down))
-                {
-                    pc.Position.Y += pc.MoveSpeed;
-                    //actions.Enqueue("MOVE");
-                }
-
-                // clamp might need to be done server-side for clients
-                pc.Position.X = MathHelper.Clamp(pc.Position.X, 0, GraphicsDevice.Viewport.Width - pc.Width);
-                pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 0, GraphicsDevice.Viewport.Height - pc.Height);
+                pc.Position.X -= pc.MoveSpeed;
             }
-            else
+
+            if (currentKeyboardState.IsKeyDown(Keys.Right))
             {
-                //if clientmode == true
-                string str = "";
-                bool n = false, s = false, e = false, w = false;
-
-                if (currentKeyboardState.IsKeyDown(Keys.Left))
-                {
-                    //pc.Position.X -= pc.MoveSpeed;
-                    w = true;
-                }
-
-                if (currentKeyboardState.IsKeyDown(Keys.Right))
-                {
-                    //pc.Position.X += pc.MoveSpeed;
-                    e = true;
-                }
-
-                if (currentKeyboardState.IsKeyDown(Keys.Up))
-                {
-                    //pc.Position.Y -= pc.MoveSpeed;
-                    n = true;
-                }
-
-                if (currentKeyboardState.IsKeyDown(Keys.Down))
-                {
-                    //pc.Position.Y += pc.MoveSpeed;
-                    s = true;
-                }
-
-                if (n || s || e || w)
-                {
-                    str = "MOVE " + pc.MoveSpeed.ToString();
-                }
-                if (n)
-                {
-                    str += " N";
-                }
-                if (s)
-                {
-                    str += " S";
-                }
-                if (e)
-                {
-                    str += " E";
-                }
-                if (w)
-                {
-                    str += " W";
-                }
-                if (n || s || e || w)
-                {
-                    actions.Enqueue(str);
-                }
-
+                pc.Position.X += pc.MoveSpeed;
             }
+
+            if (currentKeyboardState.IsKeyDown(Keys.Up))
+            {
+                pc.Position.Y -= pc.MoveSpeed;
+            }
+
+            if (currentKeyboardState.IsKeyDown(Keys.Down))
+            {
+                pc.Position.Y += pc.MoveSpeed;
+            }
+
+            // toggle player and npc sprites (for testing)
+            if (currentKeyboardState.IsKeyDown(Keys.F5) && !previousKeyboardState.IsKeyDown(Keys.F5))
+            {
+                if (pc.Texture == "player")
+                    pc.Texture = "npc";
+                else
+                    pc.Texture = "player";
+            }
+
+
+            pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - LoadTexture(pc).Width);
+            pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 90, 810 - LoadTexture(pc).Height);
+
+            /* system checks */
+            if(serverMode)
+            {
+                if(psrv._halt || srv._halt)
+                {
+                    Halt();
+                }
+            } else if(clientMode)
+            {
+                if(pclient._halt || client._halt)
+                {
+                    Halt();
+                }
+            }
+            
         }
 
 
@@ -278,14 +249,21 @@ namespace DegreeQuest
             // start drawing
             spriteBatch.Begin();
 
+            Texture2D rect = new Texture2D(graphics.GraphicsDevice, 1280, 720);
+            Color[] data = new Color[1280 * 720];
+            for (int j = 0; j < data.Length; j++) data[j] = Color.Green;
+            rect.SetData(data);
+            spriteBatch.Draw(rect, new Vector2(160, 90), Color.White);
+
             lock (room)
             {
                 //draw player
                 //pc.Draw(spriteBatch);
                 int i;
-                for (i = 0; i < room.num; i++)
+                for (i = 0; i < room.num && i < room.members.Length; i++)
                 {
-                    ((PC)room.members[i]).Draw(spriteBatch);
+                    //((PC)room.members[i]).Draw(spriteBatch);
+                    DrawSprite(room.members[i], spriteBatch);
                 }
             }
 
@@ -295,20 +273,80 @@ namespace DegreeQuest
             spriteBatch.End();
         }
 
-        
+
+        /* Performs the shutdown routines */
+        public void Halt()
+        {
+            
+            if(serverMode)
+            {
+                psrv.Halt();
+                srv.Halt();
+            }
+            if(clientMode)
+            {
+                client.Halt();
+                pclient.Halt();
+            }
+            
+
+            Exit();
+        }
+
+
         /* loads another PC in */
-        public void LoadPC(PC c)
+        public void LoadPC(PC c, string texture)
         {
             // TODO: use this.Content to load your game content here
 
-            Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X,
-                GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
+            Vector2 playerPosition;
 
-            c.Initialize(Content.Load<Texture2D>(root + "\\Content\\Graphics\\player"), playerPosition);
+            try
+            {
+                playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2,
+                GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
+            } catch (NullReferenceException e)
+            {
+                Console.WriteLine("Faulty LoadPC, null exception, not loading requested PC...");
+                return;
+            }
+
+            
+
+            c.Initialize(texture, playerPosition);
         }
+
+
+        /* fetches the relevant Texture2D for a Texture string */
+        public Texture2D LoadTexture(Actor a)
+        {
+            //this works, probably
+            //return Content.Load<Texture2D>(root + "\\Content\\Graphics\\" + a.Texture);
+            return Textures[a.Texture];
+        }
+
+        /* acquires width of a sprite */
+        public int Width(Actor a)
+        {
+            return LoadTexture(a).Width;
+        }
+
+        /* acquires width of a sprite */
+        public int Height(Actor a)
+        {
+            return LoadTexture(a).Height;
+        }
+
+        /* Draw method for a Sprite */
+        public void DrawSprite(Actor a, SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(LoadTexture(a), a.Position.toVector2(), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+        }
+
     }
 
-    class Location
+    [Serializable()]
+    public class Location
     {
         public float X;
         public float Y;

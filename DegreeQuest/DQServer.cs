@@ -11,6 +11,7 @@ using System.Web.Script.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Runtime.Serialization;
 using Microsoft.Xna.Framework.Graphics;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace DegreeQuest
 {
@@ -18,6 +19,8 @@ namespace DegreeQuest
     {
         ClientList clients;
         DegreeQuest dq;
+        public volatile Boolean _halt = false;
+        TcpListener srv;
 
         public DQServer(DegreeQuest mainDQ)
         {
@@ -26,17 +29,28 @@ namespace DegreeQuest
 
         public void DQSInit()
         {
-            TcpListener srv = new TcpListener(13337);
+            srv = new TcpListener(13337);
             clients = new ClientList();
 
             srv.Start();
-            Console.WriteLine(">>> Server Started");
+            Console.WriteLine(">>> Server started");
 
-            while (true)
+            while (!_halt)
             {
-                TcpClient client = srv.AcceptTcpClient();
+                TcpClient client;
+                try
+                {
+                    client = srv.AcceptTcpClient();
+                } catch(SocketException e)
+                {
+                    Console.WriteLine(">>> Server got Socket Exception on Accept...probably Halt message...Server ending...");
+                    _halt = true;
+                    return;
+                }
+
+
                 clients.Add(client);
-                Handler h = new Handler(client, dq);
+                Handler h = new Handler(client, dq, _halt);
 
                 //handle concurrently 
                 Thread handler = new Thread(new ThreadStart(h.ThreadRun));
@@ -56,6 +70,7 @@ namespace DegreeQuest
                 }
             }
 
+            _halt = true;
             Console.WriteLine(">>> DQSInit Ending!");
         }
 
@@ -76,6 +91,12 @@ namespace DegreeQuest
             }
         }
 
+        public void Halt()
+        {
+            _halt = true;
+            srv.Stop();
+        }
+
     }
 
 
@@ -83,50 +104,57 @@ namespace DegreeQuest
     {
         TcpClient c;
         DegreeQuest dq;
+        public volatile Boolean _halt2 = false;
 
         //threading and locks on clients variable 
-        public Handler(TcpClient client, DegreeQuest mainDQ)
+        public Handler(TcpClient client, DegreeQuest mainDQ, Boolean _halt)
         {
             c = client;
             dq = mainDQ;
+            _halt2 = _halt;
         }
 
         public void ThreadRun()
         {
             Console.WriteLine(">>> Handler Thread Started!");
-            //Type[] knownTypes = new Type[] {typeof(Vector2), typeof(Actor), typeof(AType), typeof(List<PC>)};
-            //DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(List<PC>), knownTypes);
 
-
-            //var ser = new JavaScriptSerializer();
-
-
-            while (true)
+            while (!_halt2)
             {
                 string str = "";
 
                 int i;
                 for (i = 0; i < dq.room.num; i++)
                 {
-                    str += ((new Location(dq.room.members[i].Position)).ToString()) + "@";
+                    str += dq.room.members[i].Position.ToString() + "#" + dq.room.members[i].Texture + "@";
                 }
 
+                //Console.WriteLine(">>> STR IS: " + str);
+
                 NetworkStream networkStream = c.GetStream();
-                //needs to be PC position
-
-                Console.WriteLine(">>> Writing Room!");
-
-                //ser.WriteObject(networkStream, dq.room.members);
-                //string json = ser.Serialize(vl);
+ 
                 Byte[] byt2 = Util.stb(str);
-                networkStream.Write(byt2, 0, byt2.Length);
 
-                networkStream.Flush();
+                try
+                {
+                    networkStream.Write(byt2, 0, byt2.Length);
+
+                    networkStream.Flush();
+                } catch(Exception e)
+                {
+                    Console.WriteLine(">>> Exception on write, client disconnected...ending Handler...");
+                    break;
+                }
 
                 Thread.Sleep(5);
             }
 
             Console.WriteLine(">>> Handler Ending! ");
+        }
+
+        public void Halt()
+        {
+            _halt2 = true;
+            c.Close();
         }
     }
 
@@ -185,6 +213,8 @@ namespace DegreeQuest
     {
         ClientList clients;
         DegreeQuest srvDQ;
+        public volatile Boolean _halt = false;
+        TcpListener srv;
 
         public DQPostSrv(DegreeQuest hostDQ)
         {
@@ -193,17 +223,28 @@ namespace DegreeQuest
 
         public void PostInit()
         {
-            TcpListener srv = new TcpListener(13338);
+            srv = new TcpListener(13338);
             clients = new ClientList();
 
             srv.Start();
             Console.WriteLine(">>> POST Server Started");
 
-            while (true)
+            while (!_halt)
             {
-                TcpClient client = srv.AcceptTcpClient();
+                TcpClient client;
+                try
+                {
+                    client = srv.AcceptTcpClient();
+                }
+                catch (SocketException e)
+                {
+                    Console.WriteLine(">>> POST Server got Socket Exception on Accept...probably Halt message...POST Server ending...");
+                    _halt = true;
+                    return;
+                }
+
                 clients.Add(client);
-                PostHandler h = new PostHandler(client, srvDQ);
+                PostHandler h = new PostHandler(client, srvDQ, _halt);
 
                 //handle concurrently 
                 Thread handler = new Thread(new ThreadStart(h.ThreadRun));
@@ -223,6 +264,7 @@ namespace DegreeQuest
                 }
             }
 
+            _halt = true;
             Console.WriteLine(">>> DQSInit Ending!");
         }
 
@@ -230,107 +272,89 @@ namespace DegreeQuest
         {
             this.PostInit();
         }
-    }
 
-    /* Manages communications with a client on port :13338 for movement/deltas and changes and such */
-    class PostHandler
-    {
-        TcpClient c;
-        PC cc; //client character
-        DegreeQuest srvDQ;
-        //Int32 id;
-
-        public PostHandler(TcpClient client, DegreeQuest hostDQ)
+        public void Halt()
         {
-            c = client;
-            cc = null;
-            srvDQ = hostDQ;
+            _halt = true;
+            srv.Stop();
         }
 
-        public void ThreadRun()
+        /* Manages communications with a client on port :13338 for movement/deltas and changes and such */
+        class PostHandler
         {
-            Console.WriteLine(">>> POST Handler Thread Started!");
-            cc = new PC();
+            TcpClient c;
+            PC cc; //client character
+            DegreeQuest srvDQ;
+            public volatile Boolean _halt2 = false;
 
-            NetworkStream cStream = c.GetStream();
-            byte[] inStream = new byte[100];
-
-            cStream.Read(inStream, 0, 100);
-            string nameMsg = Util.bts(inStream);
-            cc.Name = nameMsg.Substring(5);
-
-            //establish locations/init client "player" object
-            srvDQ.room.Add(cc);
-
-            srvDQ.LoadPC(cc);
-
-            //Byte[] byt = DegreeQuest.stb(new Location(cc.Position).ToString());
-            Byte[] byt = Util.stb(new Location(cc.Position).ToString());
-            cStream.Write(byt, 0, byt.Length);
-            cStream.Flush();
-            Console.WriteLine(">>> POST Handler Entering Primary Loop!");
-
-            while (true)
+            public PostHandler(TcpClient client, DegreeQuest hostDQ, Boolean _halt)
             {
-                try
-                {
-
-                    //do things here
-                    //katie was here
-                    inStream = new byte[100];
-                    cStream.Read(inStream, 0, 100);
-                    string usrin = Util.bts(inStream);
-                    Console.WriteLine("Got usrin: " + usrin + "\n");
-
-                    if (usrin.Contains("MOVE"))
-                    {
-                        //cc.Position = new Location(usrin.Substring(5)).toVector2();
-                        //checks would occur here to see if there is a valid move
-
-                        //Byte[] byt2 = DegreeQuest.stb((new Location(((PC)srvDQ.room.members.ToArray()[id]).Position)).ToString());
-                        //cStream.Write(byt2, 0, byt2.Length);
-
-                        string[] order = usrin.Split(' ');
-                        float playerMoveSpeed = float.Parse(order[1]);
-                        cc.MoveSpeed = playerMoveSpeed;
-                        int i;
-                        for (i = 2; i < order.Length; i++)
-                        {
-                            //movement logistics from DegreeQuest
-                            if (order[i].Contains("N"))
-                            {
-                                cc.Position.Y -= playerMoveSpeed;
-                            }
-                            if (order[i].Contains("E"))
-                            {
-                                cc.Position.X += playerMoveSpeed;
-                            }
-                            if (order[i].Contains("S"))
-                            {
-                                cc.Position.Y += playerMoveSpeed;
-                            }
-                            if (order[i].Contains("W"))
-                            {
-                                cc.Position.X -= playerMoveSpeed;
-                            }
-
-
-                        }
-                    }
-
-
-                    cStream.Flush();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.ToString());
-                    break;
-                }
-
-                Thread.Sleep(5);
+                c = client;
+                cc = null;
+                srvDQ = hostDQ;
+                _halt2 = _halt;
             }
 
-            Console.WriteLine(">>> POST Handler Ending! ");
+            public void ThreadRun()
+            {
+                Console.WriteLine(">>> POST Handler Thread Started!");
+                cc = new PC();
+
+
+
+                NetworkStream cStream = c.GetStream();
+                byte[] inStream = new byte[100];
+
+                //establish locations/init client "player" object
+                srvDQ.room.Add(cc);
+
+                srvDQ.LoadPC(cc, cc.Texture);
+
+
+
+                Console.WriteLine(">>> POST Handler Entering Primary Loop!");
+
+                var js = new JavaScriptSerializer();
+                BinaryFormatter bin = new BinaryFormatter();
+
+                while (!_halt2)
+                {
+                    try
+                    {
+
+                        //do things here
+                        //katie was here
+                        PC tc = (PC)bin.Deserialize(cStream);
+                        cc.Position = tc.Position;
+                        cc.Texture = tc.Texture;
+                        //cc = tc;
+
+                        /* read from client and then do processing things, probably with tc.LastAction */
+
+
+
+                        /* write the (potentially modified) temporary character back to the client */
+
+                        // disabled due to temporary performance issues
+                        //bin.Serialize(cStream, tc);
+
+                        cStream.Flush();
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.ToString());
+                        break;
+                    }
+
+                    Thread.Sleep(5);
+                }
+
+                srvDQ.room.Delete(cc);
+
+                Console.WriteLine(">>> POST Handler Ending! ");
+            }
+
         }
+        //danger?
     }
 }

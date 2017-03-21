@@ -16,6 +16,8 @@ namespace DegreeQuest
     /* Player class to manage to user */
     public class PC : Actor
     {
+        //action for server side usage
+        public string LastAction;
 
         //Base values and constants related to PCs
         public readonly uint PC_BASE_HP= 100;
@@ -24,13 +26,13 @@ namespace DegreeQuest
         public readonly uint[] PC_BASE_STATS = { 0, 0, 0, 0, 0 };
 
         // Animation representing the player
-        [NonSerialized] public Texture2D PlayerTexture;
+        //[NonSerialized] public Texture2D PlayerTexture;
 
         // Position of the Player relative to the upper left side of the screen
         // in Actor
 
         // State of the player
-        public bool Active;
+        //public bool Active;
 
         // Current and maximum amount of hit points that player has
         public uint HP, HPMax;
@@ -50,7 +52,7 @@ namespace DegreeQuest
         //Default Constructor
         public PC()
         {
-            Position = new Vector2(-1, -1);
+            Position = new Location(new Vector2(-1, -1));
             Active = false;
             HP = HPMax = PC_BASE_HP;
             EP = EPMax = PC_BASE_EP;
@@ -58,35 +60,11 @@ namespace DegreeQuest
             Debt = DebtTotal = PC_BASE_DEBT;
             Name = "Paul Chaser";
 
-        }
+            //changeme
+            Texture = "player";
 
-        // Get the width of the player ship
-        public int Width       
-        {
-            get { return PlayerTexture.Width; }
-        }
-
-        // Get the height of the player ship
-        public int Height
-        {
-            get { return PlayerTexture.Height; }
-        }
-
-
-
-        public void Initialize(Texture2D texture, Vector2 position)
-        {
-            PlayerTexture = texture;
-
-            //Set the starting position of the player around the middle of the screen and to the back
-            Position = position;
-
-            // Set the player to be active
-            Active = true;
-
-            // Set the player health (from tutorial, will move to separate class later or something)
-            HP = HPMax = PC_BASE_HP;
-
+            //for server-side use from a client
+            LastAction = "nil";
         }
 
         public void Update()
@@ -94,17 +72,11 @@ namespace DegreeQuest
 
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(PlayerTexture, Position, null, Color.White, 0f, Vector2.Zero, 1f,
-                SpriteEffects.None, 0f);
-        }
-
         /* As per Actor */
         public override AType GetAType()
         { return AType.PC; }
 
         public override Vector2 GetPos()
-        { return Position; }
+        { return Position.toVector2(); }
     }
 }
