@@ -7,7 +7,7 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{CB53C636-9745-4275-8434-FE84558410CC}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DegreeQuest</RootNamespace>
     <AssemblyName>DegreeQuest</AssemblyName>
@@ -65,6 +65,12 @@
   <PropertyGroup>
     <SignManifests>false</SignManifests>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="Dice.cs" />
@@ -80,6 +86,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DQServer.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="Stat.cs" />
     <Compile Include="Subject.cs" />
     <Compile Include="Util.cs" />
