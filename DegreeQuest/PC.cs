@@ -16,6 +16,8 @@ namespace DegreeQuest
     /* Player class to manage to user */
     public class PC : Actor
     {
+        //action for server side usage
+        public string LastAction;
 
         //Base values and constants related to PCs
         public readonly uint PC_BASE_HP= 100;
@@ -60,6 +62,9 @@ namespace DegreeQuest
 
             //changeme
             Texture = "player";
+
+            //for server-side use from a client
+            LastAction = "nil";
         }
 
         public void Update()

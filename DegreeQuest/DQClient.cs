@@ -27,7 +27,16 @@ namespace DegreeQuest
 
         public void ThreadRun()
         {
-            c.Connect("127.0.0.1", 13337);
+
+            try
+            {
+                c.Connect("127.0.0.1", 13337);
+            } catch(SocketException e)
+            {
+                Console.WriteLine("> Cannot connect to server on port :13337...ending Client...");
+                return;
+            }
+
             Console.WriteLine(">>> Client Connected!");
             NetworkStream serverStream = c.GetStream();
 
@@ -90,7 +99,15 @@ namespace DegreeQuest
 
         public void ThreadRun()
         {
-            c.Connect("127.0.0.1", 13338);
+            try
+            {
+                c.Connect("127.0.0.1", 13338);
+            } catch(SocketException e)
+            {
+                Console.WriteLine("> Cannot connect to server on port :13337...ending POST Client...");
+                return;
+            }
+            
             Console.WriteLine(">>> POST Client Connected!");
             NetworkStream srvStream = c.GetStream();
 
@@ -104,9 +121,23 @@ namespace DegreeQuest
 
             while (true)
             {
+                try
+                {
+                    bin.Serialize(srvStream, pc);
+                } catch(Exception e)
+                {
+                    Console.WriteLine(">>> Failed to serialize to server...ending POST Client...");
+                    return;
+                }
 
-                bin.Serialize(srvStream, pc);
                 srvStream.Flush();
+
+                /* submit to server and read back ;; update relevant fields */
+
+                //disabled due to performance issues
+                //PC tc = (PC)bin.Deserialize(srvStream);
+                //pc.Position = tc.Position;
+                //pc.Texture = tc.Texture;
 
                 //wrap up
 

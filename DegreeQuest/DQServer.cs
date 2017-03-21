@@ -111,9 +111,17 @@ namespace DegreeQuest
                 NetworkStream networkStream = c.GetStream();
  
                 Byte[] byt2 = Util.stb(str);
-                networkStream.Write(byt2, 0, byt2.Length);
 
-                networkStream.Flush();
+                try
+                {
+                    networkStream.Write(byt2, 0, byt2.Length);
+
+                    networkStream.Flush();
+                } catch(Exception e)
+                {
+                    Console.WriteLine(">>> Exception on write, client disconnected...ending Handler...");
+                    break;
+                }
 
                 Thread.Sleep(5);
             }
@@ -271,6 +279,15 @@ namespace DegreeQuest
                     cc.Position = tc.Position;
                     cc.Texture = tc.Texture;
                     //cc = tc;
+
+                    /* read from client and then do processing things, probably with tc.LastAction */
+
+
+
+                    /* write the (potentially modified) temporary character back to the client */
+
+                    // disabled due to temporary performance issues
+                    //bin.Serialize(cStream, tc);
 
                     cStream.Flush();
                 }

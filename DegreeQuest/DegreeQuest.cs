@@ -71,8 +71,8 @@ namespace DegreeQuest
             // server init logic ;; always serving atm
             Config conf = new Config();
 
-            clientMode = conf.bget("client");
             serverMode = conf.bget("server");
+            clientMode = !serverMode;
 
             if (serverMode)
             {
@@ -186,6 +186,7 @@ namespace DegreeQuest
                 pc.Position.Y += pc.MoveSpeed;
             }
 
+            // toggle player and npc sprites (for testing)
             if (currentKeyboardState.IsKeyDown(Keys.F5) && !previousKeyboardState.IsKeyDown(Keys.F5))
             {
                 if (pc.Texture == "player")
@@ -243,8 +244,19 @@ namespace DegreeQuest
         {
             // TODO: use this.Content to load your game content here
 
-            Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2,
+            Vector2 playerPosition;
+
+            try
+            {
+                playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2,
                 GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
+            } catch (NullReferenceException e)
+            {
+                Console.WriteLine("Faulty LoadPC, null exception, not loading requested PC...");
+                return;
+            }
+
+            
 
             c.Initialize(texture, playerPosition);
         }
