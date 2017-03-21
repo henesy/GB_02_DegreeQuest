@@ -10,8 +10,8 @@ namespace DegreeQuest
     public class Room
     {
         /* Populate actors by looping over members and getting X/Y values on location in Room */
-        public Actor[] members;
-        public int num;
+        public volatile Actor[] members;
+        public volatile int num;
 
         public Room()
         {
@@ -35,5 +35,44 @@ namespace DegreeQuest
             }
         }
 
+        public void Delete(Actor a)
+        {
+            lock (this)
+            {
+                a.Active = false;
+                ClientComparator comp = new ClientComparator();
+                Array.Sort(members, 0, this.num, comp);
+                num--;
+            }
+        }
+
+    }
+
+    class ClientComparator : IComparer
+    {
+        public int Compare(object x, object y)
+        {
+            if (x == null && y != null)
+                return 1;
+
+            if (y == null && x != null)
+                return -1;
+
+            if (y == null && x == null)
+                return 0;
+
+            if( ((Actor)x).Active && !((Actor)y).Active )
+            {
+                return -1;
+            }
+
+            if (!((Actor)x).Active && ((Actor)y).Active)
+            {
+                return 1;
+            }
+            
+            return 0;
+           
+        }
     }
 }

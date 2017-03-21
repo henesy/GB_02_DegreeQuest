@@ -12,7 +12,7 @@ namespace DegreeQuest
 {
     /// <summary>
     /// 2D rogue-like game for CS 309 with Mitra
-    /// By Sean, Zach B., Zach T., and Dennis
+    /// By Sean Hinchee, Zach Boe, Zach Turley, and Dennis Xhu
     /// Team 102
     /// </summary>
 
@@ -33,11 +33,13 @@ namespace DegreeQuest
 
         PC pc;
 
-        public Room room;
+        public volatile Room room;
 
         //states to determine keypresses
         KeyboardState currentKeyboardState;
         KeyboardState previousKeyboardState;
+
+        int lastNum = -1;
 
         /** End Variables **/
 
@@ -151,7 +153,7 @@ namespace DegreeQuest
         protected override void Update(GameTime gameTime)
         {            
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+                Halt();
 
 
             // TODO: Add your update logic here
@@ -198,6 +200,22 @@ namespace DegreeQuest
 
             pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - LoadTexture(pc).Width);
             pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 90, 810 - LoadTexture(pc).Height);
+
+            /* system checks */
+            if(serverMode)
+            {
+                if(psrv._halt || srv._halt)
+                {
+                    Halt();
+                }
+            } else if(clientMode)
+            {
+                if(pclient._halt || client._halt)
+                {
+                    Halt();
+                }
+            }
+            
         }
 
 
@@ -225,7 +243,7 @@ namespace DegreeQuest
                 //draw player
                 //pc.Draw(spriteBatch);
                 int i;
-                for (i = 0; i < room.num; i++)
+                for (i = 0; i < room.num && i < room.members.Length; i++)
                 {
                     //((PC)room.members[i]).Draw(spriteBatch);
                     DrawSprite(room.members[i], spriteBatch);
@@ -236,6 +254,26 @@ namespace DegreeQuest
 
             //stop draw
             spriteBatch.End();
+        }
+
+
+        /* Performs the shutdown routines */
+        public void Halt()
+        {
+            
+            if(serverMode)
+            {
+                psrv.Halt();
+                srv.Halt();
+            }
+            if(clientMode)
+            {
+                client.Halt();
+                pclient.Halt();
+            }
+            
+
+            Exit();
         }
 
 
