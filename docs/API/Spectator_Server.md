@@ -8,8 +8,10 @@ Communications are transmitted as follows...
 
 Server: Writes Room.num + @ + Room.members[0] + @ + Room.members[_n_]...
 
-Client: Reads and splits string on "@" setting Room.num to str[0] and populating _n_ Actors in Room.members to reflect server screen
+Client: Reads and splits string on "@" and then further upon "#".
 
+"@" split yields an index of Sprites to render with Room.num set to the length of the index-1. 
 
-_Note_: There is presently (`9b36d9fb`) no syntax to distinguish between sprites that should be printed, this is a planned feature.
+"#" sub-split yields two fields for a given Sprite with sub[0] being Position and sub[1] being Texture (as per Actor).
+
 

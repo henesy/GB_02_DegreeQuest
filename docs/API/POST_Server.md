@@ -7,35 +7,11 @@ Things of note:
 * cc: Client character, exists on the server-side
 * pc: Client character, exists on the client-side
 
-Communications are performed in the following order...
+All that presently occurs (`161f06eb`) is that the client serializes the PC to a binary stream that is then written and read from the server.
 
----
+After being read, the player character streamed to the server can be summarily processed server-side.
 
-Client: Writes "OPEN " + pc.Name
+For the processing there exists a PC string element "LastAction" which can be used for the aforementioned processing to pass client-side action requests or information to the server, this may be expanded in the future.
 
-Server: Reads from client and creates/initialises cc
-
-Server: Writes cc.Position
-
-Client: Reads cc.Position and sets the position for pc, respectively
-
-
-> Server could, but does not, respond past this point, could replace Spectator server in theory
-
-
-_Main loop begins ;; Preamble ends_
-
-Client writes: 
-
-* If the player inputs a directional key/command: "MOVE " + N & E & S & W
-* _Other commands to be added_
-
-Server reads: 
-
-_Decides if communication contains the following and then performs an action..._
-
-
-* "MOVE": Adjusts the cc any combination of North, East, South, or West as per the concatenated directions provided by the client
-* _Other commands to be added_
-
+Although presently (`161f06eb`) disabled, a system in which then serializes a modified PC back to the client for counter-processing.
 
