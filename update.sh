@@ -1,7 +1,9 @@
 #!/bin/bash
 # This script updates the site branch of DegreeQuest with the latest website files from http://proj-309-gb-2.cs.iastate.edu
 # The original site runs on RHEL with Apache 2.4.x and Werc 1.4.0 (as per http://werc.cat-v.org)
-
+git checkout master
+git pull
+git checkout site
 git pull
 cp -R /var/www/html/* ./
 #git pull
