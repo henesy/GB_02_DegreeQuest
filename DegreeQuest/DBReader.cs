@@ -51,7 +51,45 @@ namespace DegreeQuest
                 MySqlCommand cmd = new MySqlCommand(sSQL, conn);
                 cmd.ExecuteNonQuery();
             }
-            catch(MySqlException ex)
+            catch (MySqlException ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            conn.Close();
+        }
+
+        /// <summary>
+        /// this function takes in the table name the colmn names, type, and defaults and creates the table in the database.
+        /// destroys previous table if it exists.
+        /// completely unchecked.
+        /// </summary>
+        /// <param name="tableName">the name of the table in MySQL</param>
+        /// <param name="columnNames">the name of the colomns that contains the primary key</param>
+        /// <param name="types">the type for each column</param>
+        /// <param name="defaults">the default value for each column</param>
+        public static void createTable(String tableName, String[] colmnNames, String[] types, String[] defaults)
+        {
+            try
+            {
+                conn.Open();
+                String sSQL = "drop table if exists " + tableName;
+                MySqlCommand cmd = new MySqlCommand(sSQL, conn);
+                cmd.ExecuteNonQuery();
+
+                sSQL = "CREATE TABLE " + tableName + '(';
+                sSQL = sSQL + "id INT UNSIGNED NOT NULL AUTO_INCREMENT,";
+                for (int i = 0; i < colmnNames.Length; i++)
+                {
+                    sSQL = sSQL  + colmnNames[i] + " " + types[i] + " NOT NULL";
+                    if(!(defaults[i] == null))
+                        sSQL = sSQL + " DEFAULT '" + defaults[i];
+                    sSQL = sSQL + "' ,";
+                }
+                sSQL = sSQL + " PRIMARY KEY (id));";
+                cmd = new MySqlCommand(sSQL, conn);
+                cmd.ExecuteNonQuery();
+            }
+            catch (MySqlException ex)
             {
                 Console.WriteLine(ex.ToString());
             }

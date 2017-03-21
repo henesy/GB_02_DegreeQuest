@@ -1,0 +1,31 @@
+﻿Version 1.0.0
+
+FOLLOW THE GIVEN EXAMPLE(S) TO THE DOT. NO CHECKING IS DONE ON FORMAT. ITS ON YOU.
+NAME must come FIRST.
+EVERYTHING must be IN ORDER.
+BLANK Values must still have their line, and will default to default values.
+End with a BLANK LINE.
+
+Name: Thing 1
+Type: Pencil
+Effect: 1
+Value: 1
+Rarity: 0
+Logic: 0
+Life: 0
+Chem: 0
+Tech: 0
+
+Name: Thing 2
+Type: Hack
+Effect: 1
+Value: 999999
+Rarity: 99
+Logic: 0
+Life: 0
+Chem: 0
+Tech: 0
+
+
+THESE LINES MUST EXIST
+DO NOT DELETE

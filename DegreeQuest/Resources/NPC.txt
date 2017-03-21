@@ -1,8 +1,0 @@
-Version 1.0.0
-
-Name: Enemy1
-HP: 5
-EP: 0
-Subjects: MATH,BIO,CHEM
-
-
