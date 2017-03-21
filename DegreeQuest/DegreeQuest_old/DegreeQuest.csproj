@@ -66,13 +66,9 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Config.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="Dice.cs" />
     <Compile Include="json.cs" />
     <Compile Include="DBReader.cs" />
     <Compile Include="DQClient.cs" />
-    <Compile Include="NPCTemplate.cs" />
     <Compile Include="Room.cs" />
     <Compile Include="PC.cs" />
     <Compile Include="NPC.cs" />
@@ -81,15 +77,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DQServer.cs" />
-    <Compile Include="Stat.cs" />
-    <Compile Include="Subject.cs" />
-    <Compile Include="Util.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files (x86)\MySQL\Connector.NET 6.9\Assemblies\v4.5\MySql.Data.dll</HintPath>
-    </Reference>
     <Reference Include="OpenTK">
       <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\OpenTK.dll</HintPath>
     </Reference>
@@ -100,9 +89,6 @@
       <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>

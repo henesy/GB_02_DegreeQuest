@@ -1,2 +1,1 @@
-﻿client=false
-server=true
+﻿server=true

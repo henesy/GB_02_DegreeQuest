@@ -6,7 +6,6 @@ using System;
 using System.Threading;
 using System.Text;
 using System.Collections;
-using System.Collections.Generic;
 
 namespace DegreeQuest
 {
@@ -15,18 +14,19 @@ namespace DegreeQuest
     /// By Sean, Zach B., Zach T., and Dennis
     /// Team 102
     /// </summary>
-
     public class DegreeQuest : Game
     {
         DQServer srv = null;
         DQClient client = null;
         bool clientMode = false;
         bool serverMode = false;
+        //public string lastAct = "nil";
         public Queue actions = new Queue();
         DQPostClient pclient = null;
         DQPostSrv psrv = null;
 
-        public static string root = System.AppDomain.CurrentDomain.BaseDirectory + "..\\..\\..\\..";
+        /* Through trial and error, puts you at the "root" project directory (with the .sln, etc.) */
+        public string root = System.AppDomain.CurrentDomain.BaseDirectory + "..\\..\\..\\..";
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -39,6 +39,9 @@ namespace DegreeQuest
         KeyboardState currentKeyboardState;
         KeyboardState previousKeyboardState;
 
+        //movement speed of player
+        float playerMoveSpeed;
+
         /** End Variables **/
 
         public DegreeQuest()
@@ -47,8 +50,8 @@ namespace DegreeQuest
 
             /* window resize code */
             graphics.IsFullScreen = false;
-            graphics.PreferredBackBufferWidth = 1600;
-            graphics.PreferredBackBufferHeight = 900;
+            graphics.PreferredBackBufferWidth = 1280;
+            graphics.PreferredBackBufferHeight = 1024;
             graphics.ApplyChanges();
 
             Content.RootDirectory = "Content";
@@ -66,20 +69,18 @@ namespace DegreeQuest
             // TODO: Add your initialization logic here
             pc = new PC();
             room = new Room();
-            room.Add(pc);
+            room.members.Add(pc);
 
             // server init logic ;; always serving atm
-            Config conf = new Config();
-
-            serverMode = conf.bget("server");
-            clientMode = !serverMode;
+            string config = System.IO.File.ReadAllText(root + @"/config.txt");
+            if (config.Contains("server=true"))
+                serverMode = true;
 
             if (serverMode)
             {
-                srv = new DQServer(this);
+                srv = new DQServer(pc);
 
                 Thread srvThread = new Thread(new ThreadStart(srv.ThreadRun));
-               srvThread.IsBackground = true;
                 srvThread.Start();
                 //srvThread.Join();
                 Console.WriteLine("> Server Initialistion Complete!");
@@ -88,29 +89,35 @@ namespace DegreeQuest
                 psrv = new DQPostSrv(this);
 
                 Thread psrvThread = new Thread(new ThreadStart(psrv.ThreadRun));
-               psrvThread.IsBackground = true;
                 psrvThread.Start();
                 Console.WriteLine("> POST Server Initialisation Complete!");
 
             }
 
+            Console.Write("File had: " + config);
+            if (config.Contains("client=true"))
+                clientMode = true;
+
             // client init logic
             if (clientMode)
             {
-                client = new DQClient(this);
+                /* temporary while overhauling :13337
+                client = new DQClient(pc);
 
                 Thread clientThread = new Thread(new ThreadStart(client.ThreadRun));
                 clientThread.Start();
                 Console.WriteLine("> Client Initialisation Complete!");
+                */
 
                 //post
                 pclient = new DQPostClient(pc, this);
+
                 Thread pclientThread = new Thread(new ThreadStart(pclient.ThreadRun));
                 pclientThread.Start();
                 Console.WriteLine("> POST Client Initialisation Complete!");
             }
 
-            pc.MoveSpeed = 8.0f;
+            playerMoveSpeed = 8.0f;      
 
             base.Initialize();
         }
@@ -127,10 +134,10 @@ namespace DegreeQuest
 
             // TODO: use this.Content to load your game content here
 
-            Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2,
+            Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X,
                 GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
 
-            pc.Initialize("player", playerPosition);
+            pc.Initialize(Content.Load<Texture2D>(root + "\\Content\\Graphics\\player"), playerPosition);
         }
 
         /// <summary>
@@ -149,12 +156,14 @@ namespace DegreeQuest
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
-        {            
+        {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-
+            
             // TODO: Add your update logic here
+
+            //rather than disabling, should do a clientmode check here to queue keypresses/keyboard state as a request to the server
 
             previousKeyboardState = currentKeyboardState;
             currentKeyboardState = Keyboard.GetState();
@@ -166,38 +175,34 @@ namespace DegreeQuest
 
         private void UpdatePlayer(GameTime gameTime)
         {
+            //lastAct = "nil";
+
             if (currentKeyboardState.IsKeyDown(Keys.Left))
             {
-                pc.Position.X -= pc.MoveSpeed;
+                pc.Position.X -= playerMoveSpeed;
+                actions.Enqueue("MOVE");
             }
 
             if (currentKeyboardState.IsKeyDown(Keys.Right))
             {
-                pc.Position.X += pc.MoveSpeed;
+                pc.Position.X += playerMoveSpeed;
+                actions.Enqueue("MOVE");
             }
 
             if (currentKeyboardState.IsKeyDown(Keys.Up))
             {
-                pc.Position.Y -= pc.MoveSpeed;
+                pc.Position.Y -= playerMoveSpeed;
+                actions.Enqueue("MOVE");
             }
 
             if (currentKeyboardState.IsKeyDown(Keys.Down))
             {
-                pc.Position.Y += pc.MoveSpeed;
+                pc.Position.Y += playerMoveSpeed;
+                actions.Enqueue("MOVE");
             }
 
-            // toggle player and npc sprites (for testing)
-            if (currentKeyboardState.IsKeyDown(Keys.F5) && !previousKeyboardState.IsKeyDown(Keys.F5))
-            {
-                if (pc.Texture == "player")
-                    pc.Texture = "npc";
-                else
-                    pc.Texture = "player";
-            }
-
-
-            pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - LoadTexture(pc).Width);
-            pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 90, 810 - LoadTexture(pc).Height);
+            pc.Position.X = MathHelper.Clamp(pc.Position.X, 0, GraphicsDevice.Viewport.Width - pc.Width);
+            pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 0, GraphicsDevice.Viewport.Height - pc.Height);
         }
 
 
@@ -214,22 +219,12 @@ namespace DegreeQuest
             // start drawing
             spriteBatch.Begin();
 
-            Texture2D rect = new Texture2D(graphics.GraphicsDevice, 1280, 720);
-            Color[] data = new Color[1280 * 720];
-            for (int j = 0; j < data.Length; j++) data[j] = Color.Green;
-            rect.SetData(data);
-            spriteBatch.Draw(rect, new Vector2(160, 90), Color.White);
-
-            lock (room)
+            //draw player
+            //pc.Draw(spriteBatch);
+            int i;
+            for (i = 0; i < room.members.ToArray().Length; i++)
             {
-                //draw player
-                //pc.Draw(spriteBatch);
-                int i;
-                for (i = 0; i < room.num; i++)
-                {
-                    //((PC)room.members[i]).Draw(spriteBatch);
-                    DrawSprite(room.members[i], spriteBatch);
-                }
+                ((PC) room.members.ToArray()[i]).Draw(spriteBatch);
             }
 
             base.Draw(gameTime);
@@ -238,59 +233,29 @@ namespace DegreeQuest
             spriteBatch.End();
         }
 
+        public static byte[] stb(string str)
+        {
+            return Encoding.ASCII.GetBytes(str);
+        }
+
+        public static string bts(byte[] b)
+        {
+            return Encoding.ASCII.GetString(b);
+        }
 
         /* loads another PC in */
-        public void LoadPC(PC c, string texture)
+        public void LoadPC(PC c)
         {
             // TODO: use this.Content to load your game content here
 
-            Vector2 playerPosition;
-
-            try
-            {
-                playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2,
+            Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X,
                 GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
-            } catch (NullReferenceException e)
-            {
-                Console.WriteLine("Faulty LoadPC, null exception, not loading requested PC...");
-                return;
-            }
 
-            
-
-            c.Initialize(texture, playerPosition);
+            c.Initialize(Content.Load<Texture2D>(root + "\\Content\\Graphics\\player"), playerPosition);
         }
-
-
-        /* fetches the relevant Texture2D for a Texture string */
-        public Texture2D LoadTexture(Actor a)
-        {
-            //this works, probably
-            return Content.Load<Texture2D>(root + "\\Content\\Graphics\\" + a.Texture);
-        }
-
-        /* acquires width of a sprite */
-        public int Width(Actor a)
-        {
-            return LoadTexture(a).Width;
-        }
-
-        /* acquires width of a sprite */
-        public int Height(Actor a)
-        {
-            return LoadTexture(a).Height;
-        }
-
-        /* Draw method for a Sprite */
-        public void DrawSprite(Actor a, SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(LoadTexture(a), a.Position.toVector2(), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
-        }
-
     }
 
-    [Serializable()]
-    public class Location
+    class Location
     {
         public float X;
         public float Y;
@@ -310,7 +275,7 @@ namespace DegreeQuest
         public Location(string s)
         {
             string[] str = s.Split(';');
-            if (str.GetLength(0) != 2)
+            if(str.GetLength(0) != 2)
             {
                 Console.WriteLine("Error converting string to Location!");
                 X = 1;
