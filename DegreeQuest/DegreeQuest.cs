@@ -179,94 +179,39 @@ namespace DegreeQuest
         private void UpdatePlayer(GameTime gameTime)
         {
             //lastAct = "nil";
+            /*
             if (!clientMode)
             {
-                if (currentKeyboardState.IsKeyDown(Keys.Left))
-                {
-                    pc.Position.X -= pc.MoveSpeed;
-                    //actions.Enqueue("MOVE");
-                }
-
-                if (currentKeyboardState.IsKeyDown(Keys.Right))
-                {
-                    pc.Position.X += pc.MoveSpeed;
-                    //actions.Enqueue("MOVE");
-                }
-
-                if (currentKeyboardState.IsKeyDown(Keys.Up))
-                {
-                    pc.Position.Y -= pc.MoveSpeed;
-                    //actions.Enqueue("MOVE");
-                }
-
-                if (currentKeyboardState.IsKeyDown(Keys.Down))
-                {
-                    pc.Position.Y += pc.MoveSpeed;
-                    //actions.Enqueue("MOVE");
-                }
-
-                // clamp might need to be done server-side for clients
-                pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - LoadTexture(pc).Width);
-                pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 90, 810 - LoadTexture(pc).Height);
-                //pc.Position.X = MathHelper.Clamp(pc.Position.X, 0, GraphicsDevice.Viewport.Width - LoadTexture(pc).Width);
-                //pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 0, GraphicsDevice.Viewport.Height - LoadTexture(pc).Height);
-            }
-            else
+            */
+            if (currentKeyboardState.IsKeyDown(Keys.Left))
             {
-                //if clientmode == true
-                string str = "";
-                bool n = false, s = false, e = false, w = false;
-
-                if (currentKeyboardState.IsKeyDown(Keys.Left))
-                {
-                    //pc.Position.X -= pc.MoveSpeed;
-                    w = true;
-                }
-
-                if (currentKeyboardState.IsKeyDown(Keys.Right))
-                {
-                    //pc.Position.X += pc.MoveSpeed;
-                    e = true;
-                }
-
-                if (currentKeyboardState.IsKeyDown(Keys.Up))
-                {
-                    //pc.Position.Y -= pc.MoveSpeed;
-                    n = true;
-                }
-
-                if (currentKeyboardState.IsKeyDown(Keys.Down))
-                {
-                    //pc.Position.Y += pc.MoveSpeed;
-                    s = true;
-                }
-
-                if (n || s || e || w)
-                {
-                    str = "MOVE " + pc.MoveSpeed.ToString();
-                }
-                if (n)
-                {
-                    str += " N";
-                }
-                if (s)
-                {
-                    str += " S";
-                }
-                if (e)
-                {
-                    str += " E";
-                }
-                if (w)
-                {
-                    str += " W";
-                }
-                if (n || s || e || w)
-                {
-                    actions.Enqueue(str);
-                }
-
+                pc.Position.X -= pc.MoveSpeed;
+                //actions.Enqueue("MOVE");
             }
+
+            if (currentKeyboardState.IsKeyDown(Keys.Right))
+            {
+                pc.Position.X += pc.MoveSpeed;
+                //actions.Enqueue("MOVE");
+            }
+
+            if (currentKeyboardState.IsKeyDown(Keys.Up))
+            {
+                pc.Position.Y -= pc.MoveSpeed;
+                //actions.Enqueue("MOVE");
+            }
+
+            if (currentKeyboardState.IsKeyDown(Keys.Down))
+            {
+                pc.Position.Y += pc.MoveSpeed;
+                //actions.Enqueue("MOVE");
+            }
+
+
+            pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - LoadTexture(pc).Width);
+            pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 90, 810 - LoadTexture(pc).Height);
+            //pc.Position.X = MathHelper.Clamp(pc.Position.X, 0, GraphicsDevice.Viewport.Width - LoadTexture(pc).Width);
+            //pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 0, GraphicsDevice.Viewport.Height - LoadTexture(pc).Height);
         }
 
 
@@ -342,12 +287,13 @@ namespace DegreeQuest
         /* Draw method for a Sprite */
         public void DrawSprite(Actor a, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(LoadTexture(a), a.Position, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(LoadTexture(a), a.Position.toVector2(), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
         }
 
     }
 
-    class Location
+    [Serializable()]
+    public class Location
     {
         public float X;
         public float Y;

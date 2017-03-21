@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace DegreeQuest
 {
     /* Generic NPC class type */
-    [Serializable]
+    [Serializable()]
     class NPC : Actor
     {   
         // Current and maximum amount of hit points
@@ -28,7 +28,7 @@ namespace DegreeQuest
             HP = HPMax = 100;
             EP = EPMax = 0;
             Subject = Subject.None;
-            Position = new Vector2(-1,-1);
+            Position = new Location(new Vector2(-1,-1));
 
             //changeme
             Texture = "player";
@@ -45,7 +45,7 @@ namespace DegreeQuest
         { return AType.NPC; }
 
         public override Vector2 GetPos()
-        { return Position; }
+        { return Position.toVector2(); }
 
     }
 }

@@ -20,6 +20,7 @@ namespace DegreeQuest
     *   Exists to provide a placeholder within which a player or a Monster can be placed without mutual exclusion 
     *   to implement you must use "MyClass : Actor" this is equivalent to the Java "MyClass implements Actor"
     */
+    [Serializable()]
     public abstract class Actor
     {
         public bool Active;
@@ -30,7 +31,7 @@ namespace DegreeQuest
 
         //public Texture2D Texture { get; set; }
 
-        public Vector2 Position;
+        public Location Position;
 
         public float MoveSpeed;
 
@@ -46,7 +47,7 @@ namespace DegreeQuest
             Texture = texture;
 
             //Set the starting position of the player around the middle of the screen and to the back
-            Position = position;
+            Position = new Location(position);
 
             // Set the player to be active
             Active = true;

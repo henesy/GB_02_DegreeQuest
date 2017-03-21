@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading;
@@ -78,7 +79,7 @@ namespace DegreeQuest
                         string[] sub = locations[i].Split('#');
                         Console.WriteLine(">>>SUB STRING: " + sub[0] + " then " + sub[1]);
 
-                        dq.room.members[i].Position = new Location(sub[0]).toVector2();
+                        dq.room.members[i].Position = new Location(sub[0]);
                         dq.room.members[i].Texture = sub[1];
                     }
                 }
@@ -113,56 +114,14 @@ namespace DegreeQuest
                 Console.WriteLine("POST CLIENT IS NULL!");
             }
 
-
-            //initial position
-            Byte[] byt = Util.stb("OPEN " + pc.Name);
-            srvStream.Write(byt, 0, byt.Length);
-            srvStream.Flush();
-
-            /* this breaks things?
-            Byte[] byt3 = new Byte[100];
-            byt3 = Util.stb("TEXT " + pc.Texture);
-            srvStream.Write(byt3, 0, byt3.Length);
-            srvStream.Flush();
-            */
-
-            byte[] initB = new byte[100];
-            srvStream.Read(initB, 0, 100);
-            pos = new Location(Util.bts(initB)).toVector2();
-
-            pc.Position = pos;
-
-            Console.WriteLine(">>> POST Client Entering Primary Loop!");
+            //var js = new JavaScriptSerializer();
+            BinaryFormatter bin = new BinaryFormatter();
 
             while (true)
             {
-                byte[] inStream = new byte[100];
-                Byte[] byt2;
 
-                //the problem is last action
-                string la = "nil";
-
-                if (dq.actions.ToArray().Length > 0)
-                {
-                    la = (string)dq.actions.Dequeue();
-                }
-
-                //Console.WriteLine(">>> Processing action: " + la);
-
-                if (la.Contains("MOVE"))
-                {
-                    byt2 = Util.stb(la);
-                    srvStream.Write(byt2, 0, byt2.Length);
-                    srvStream.Flush();
-                    //srvStream.Read(inStream, 0, 100);
-                    //pos = new Location(DegreeQuest.bts(inStream)).toVector2();
-                }
-                else
-                {
-                    byt2 = Util.stb(la);
-                    srvStream.Write(byt2, 0, byt2.Length);
-                    srvStream.Flush();
-                }
+                bin.Serialize(srvStream, pc);
+                srvStream.Flush();
 
                 //wrap up
 

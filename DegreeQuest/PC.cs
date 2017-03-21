@@ -50,7 +50,7 @@ namespace DegreeQuest
         //Default Constructor
         public PC()
         {
-            Position = new Vector2(-1, -1);
+            Position = new Location(new Vector2(-1, -1));
             Active = false;
             HP = HPMax = PC_BASE_HP;
             EP = EPMax = PC_BASE_EP;
@@ -72,6 +72,6 @@ namespace DegreeQuest
         { return AType.PC; }
 
         public override Vector2 GetPos()
-        { return Position; }
+        { return Position.toVector2(); }
     }
 }
