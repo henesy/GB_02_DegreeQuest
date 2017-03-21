@@ -25,6 +25,7 @@ namespace DegreeQuest
         public Queue actions = new Queue();
         DQPostClient pclient = null;
         DQPostSrv psrv = null;
+        Dictionary<string, Texture2D> Textures = new Dictionary<string, Texture2D>();
 
         public static string root = System.AppDomain.CurrentDomain.BaseDirectory + "..\\..\\..\\..";
 
@@ -69,6 +70,22 @@ namespace DegreeQuest
             pc = new PC();
             room = new Room();
             room.Add(pc);
+
+            // initialise texture index
+
+            string[] files = System.IO.Directory.GetFiles(root + "\\Content\\Graphics");
+
+            Console.WriteLine("Loading Textures...");
+            foreach(string fname in files)
+            {
+                //Console.WriteLine(fname);
+                var s = fname.Split('\\');
+                var n = s[s.Length - 1].Split('.');
+                var t = Content.Load<Texture2D>(root + "\\Content\\Graphics\\" + n[0]);
+                Textures.Add(n[0], t);
+            }
+            Console.WriteLine("Done loading Textures...");
+
 
             // server init logic ;; always serving atm
             Config conf = new Config();
@@ -304,7 +321,8 @@ namespace DegreeQuest
         public Texture2D LoadTexture(Actor a)
         {
             //this works, probably
-            return Content.Load<Texture2D>(root + "\\Content\\Graphics\\" + a.Texture);
+            //return Content.Load<Texture2D>(root + "\\Content\\Graphics\\" + a.Texture);
+            return Textures[a.Texture];
         }
 
         /* acquires width of a sprite */
