@@ -269,6 +269,8 @@ namespace DegreeQuest
                     //katie was here
                     PC tc = (PC) bin.Deserialize(cStream);
                     cc.Position = tc.Position;
+                    cc.Texture = tc.Texture;
+                    //cc = tc;
 
                     cStream.Flush();
                 }

@@ -31,7 +31,7 @@ namespace DegreeQuest
             Position = new Location(new Vector2(-1,-1));
 
             //changeme
-            Texture = "player";
+            Texture = "npc";
         }
 
         public NPC(NPCTemplate temp)

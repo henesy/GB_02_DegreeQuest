@@ -6,6 +6,7 @@ using System;
 using System.Threading;
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace DegreeQuest
 {
@@ -148,14 +149,12 @@ namespace DegreeQuest
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
-        {
+        {            
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
 
             // TODO: Add your update logic here
-
-            //rather than disabling, should do a clientmode check here to queue keypresses/keyboard state as a request to the server
 
             previousKeyboardState = currentKeyboardState;
             currentKeyboardState = Keyboard.GetState();
@@ -185,6 +184,14 @@ namespace DegreeQuest
             if (currentKeyboardState.IsKeyDown(Keys.Down))
             {
                 pc.Position.Y += pc.MoveSpeed;
+            }
+
+            if (currentKeyboardState.IsKeyDown(Keys.F5) && !previousKeyboardState.IsKeyDown(Keys.F5))
+            {
+                if (pc.Texture == "player")
+                    pc.Texture = "npc";
+                else
+                    pc.Texture = "player";
             }
 
 
