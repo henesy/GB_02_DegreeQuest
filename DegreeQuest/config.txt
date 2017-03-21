@@ -1,1 +1,1 @@
-﻿server=false
+﻿server=true
