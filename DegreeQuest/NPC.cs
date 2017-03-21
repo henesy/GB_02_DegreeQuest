@@ -9,12 +9,9 @@ using System.Threading.Tasks;
 namespace DegreeQuest
 {
     /* Generic NPC class type */
-    [Serializable]
+    [Serializable()]
     class NPC : Actor
-    {
-        //Vector2 Position;
-
-        public Texture2D PlayerTexture { get; private set; }        
+    {   
         // Current and maximum amount of hit points
         public uint HP, HPMax;
 
@@ -23,7 +20,7 @@ namespace DegreeQuest
 
         public Subject Subject;
 
-        public Texture2D Texture { get; private set; }
+        //public Texture2D Texture { get; private set; }
         
         //Current default constructor
         public NPC()
@@ -31,7 +28,10 @@ namespace DegreeQuest
             HP = HPMax = 100;
             EP = EPMax = 0;
             Subject = Subject.None;
-            Position = new Vector2(-1,-1);
+            Position = new Location(new Vector2(-1,-1));
+
+            //changeme
+            Texture = "npc";
         }
 
         public NPC(NPCTemplate temp)
@@ -45,12 +45,7 @@ namespace DegreeQuest
         { return AType.NPC; }
 
         public override Vector2 GetPos()
-        { return Position; }
+        { return Position.toVector2(); }
 
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(Texture, Position, null, Color.White, 0f, Vector2.Zero, 1f,
-                SpriteEffects.None, 0f);
-        }
     }
 }

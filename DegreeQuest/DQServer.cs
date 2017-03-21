@@ -11,6 +11,7 @@ using System.Web.Script.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Runtime.Serialization;
 using Microsoft.Xna.Framework.Graphics;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace DegreeQuest
 {
@@ -94,12 +95,6 @@ namespace DegreeQuest
         public void ThreadRun()
         {
             Console.WriteLine(">>> Handler Thread Started!");
-            //Type[] knownTypes = new Type[] {typeof(Vector2), typeof(Actor), typeof(AType), typeof(List<PC>)};
-            //DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(List<PC>), knownTypes);
-
-
-            //var ser = new JavaScriptSerializer();
-
 
             while (true)
             {
@@ -108,36 +103,18 @@ namespace DegreeQuest
                 int i;
                 for (i = 0; i < dq.room.num; i++)
                 {
-                    str += ((new Location(dq.room.members[i].Position)).ToString()) + "@";
+                    str += dq.room.members[i].Position.ToString() + "#" + dq.room.members[i].Texture + "@";
                 }
 
+                //Console.WriteLine(">>> STR IS: " + str);
+
                 NetworkStream networkStream = c.GetStream();
-                //needs to be PC position
-
-                Console.WriteLine(">>> Writing Room!");
-
-                //ser.WriteObject(networkStream, dq.room.members);
-                //string json = ser.Serialize(vl);
+ 
                 Byte[] byt2 = Util.stb(str);
                 networkStream.Write(byt2, 0, byt2.Length);
 
                 networkStream.Flush();
-                /*
-                try
-                {
-                    NetworkStream networkStream = c.GetStream();
-                    //needs to be PC position
 
-                    Console.WriteLine(">>> Writing Room!");
-                    ser.WriteObject(networkStream, dq.room.members);
-                    networkStream.Flush();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.ToString());
-                    break;
-                }
-                */
                 Thread.Sleep(5);
             }
 
@@ -253,7 +230,6 @@ namespace DegreeQuest
         TcpClient c;
         PC cc; //client character
         DegreeQuest srvDQ;
-        //Int32 id;
 
         public PostHandler(TcpClient client, DegreeQuest hostDQ)
         {
@@ -267,23 +243,22 @@ namespace DegreeQuest
             Console.WriteLine(">>> POST Handler Thread Started!");
             cc = new PC();
 
+
+            
             NetworkStream cStream = c.GetStream();
             byte[] inStream = new byte[100];
-
-            cStream.Read(inStream, 0, 100);
-            string nameMsg = Util.bts(inStream);
-            cc.Name = nameMsg.Substring(5);
 
             //establish locations/init client "player" object
             srvDQ.room.Add(cc);
 
-            srvDQ.LoadPC(cc);
+            srvDQ.LoadPC(cc, cc.Texture);
 
-            //Byte[] byt = DegreeQuest.stb(new Location(cc.Position).ToString());
-            Byte[] byt = Util.stb(new Location(cc.Position).ToString());
-            cStream.Write(byt, 0, byt.Length);
-            cStream.Flush();
+
+
             Console.WriteLine(">>> POST Handler Entering Primary Loop!");
+
+            var js = new JavaScriptSerializer();
+            BinaryFormatter bin = new BinaryFormatter();
 
             while (true)
             {
@@ -292,47 +267,10 @@ namespace DegreeQuest
 
                     //do things here
                     //katie was here
-                    inStream = new byte[100];
-                    cStream.Read(inStream, 0, 100);
-                    string usrin = Util.bts(inStream);
-                    Console.WriteLine("Got usrin: " + usrin + "\n");
-
-                    if (usrin.Contains("MOVE"))
-                    {
-                        //cc.Position = new Location(usrin.Substring(5)).toVector2();
-                        //checks would occur here to see if there is a valid move
-
-                        //Byte[] byt2 = DegreeQuest.stb((new Location(((PC)srvDQ.room.members.ToArray()[id]).Position)).ToString());
-                        //cStream.Write(byt2, 0, byt2.Length);
-
-                        string[] order = usrin.Split(' ');
-                        float playerMoveSpeed = float.Parse(order[1]);
-                        cc.MoveSpeed = playerMoveSpeed;
-                        int i;
-                        for (i = 2; i < order.Length; i++)
-                        {
-                            //movement logistics from DegreeQuest
-                            if (order[i].Contains("N"))
-                            {
-                                cc.Position.Y -= playerMoveSpeed;
-                            }
-                            if (order[i].Contains("E"))
-                            {
-                                cc.Position.X += playerMoveSpeed;
-                            }
-                            if (order[i].Contains("S"))
-                            {
-                                cc.Position.Y += playerMoveSpeed;
-                            }
-                            if (order[i].Contains("W"))
-                            {
-                                cc.Position.X -= playerMoveSpeed;
-                            }
-
-
-                        }
-                    }
-
+                    PC tc = (PC) bin.Deserialize(cStream);
+                    cc.Position = tc.Position;
+                    cc.Texture = tc.Texture;
+                    //cc = tc;
 
                     cStream.Flush();
                 }

@@ -1,3 +1,2 @@
-﻿isClient=true
-res_x=1900
-res_y=900
+﻿client=false
+server=true
