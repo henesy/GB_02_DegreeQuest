@@ -1,2 +1,4 @@
-﻿client=false
-server=true
+﻿isServer=false
+comControl=100
+spectatorPort=1338
+POSTPort=1337

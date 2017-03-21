@@ -20,7 +20,6 @@ namespace DegreeQuest
     {
         DQServer srv = null;
         DQClient client = null;
-        bool clientMode = false;
         bool serverMode = false;
         public Queue actions = new Queue();
         DQPostClient pclient = null;
@@ -69,10 +68,10 @@ namespace DegreeQuest
             room.Add(pc);
 
             // server init logic ;; always serving atm
-            Config conf = new Config();
+            GameConfig conf = new GameConfig();
 
-            clientMode = conf.bget("client");
-            serverMode = conf.bget("server");
+            
+            serverMode = conf.isServer();
 
             if (serverMode)
             {
@@ -95,7 +94,7 @@ namespace DegreeQuest
             }
 
             // client init logic
-            if (clientMode)
+            if (!serverMode)
             {
                 client = new DQClient(this);
 
@@ -193,7 +192,6 @@ namespace DegreeQuest
                 else
                     pc.Texture = "player";
             }
-
 
             pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - LoadTexture(pc).Width);
             pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 90, 810 - LoadTexture(pc).Height);

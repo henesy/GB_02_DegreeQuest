@@ -86,7 +86,7 @@ namespace DegreeQuest
 
             file.WriteLine("isClient="+isClient.ToString());
             file.WriteLine("res_x=" + res_x.ToString());
-            file.WriteLine("res_y=}" + res_y.ToString());
+            file.WriteLine("res_y=" + res_y.ToString());
         }
 
     }
