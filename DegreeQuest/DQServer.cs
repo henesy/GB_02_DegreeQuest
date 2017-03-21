@@ -95,12 +95,6 @@ namespace DegreeQuest
         public void ThreadRun()
         {
             Console.WriteLine(">>> Handler Thread Started!");
-            //Type[] knownTypes = new Type[] {typeof(Vector2), typeof(Actor), typeof(AType), typeof(List<PC>)};
-            //DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(List<PC>), knownTypes);
-
-
-            //var ser = new JavaScriptSerializer();
-
 
             while (true)
             {
@@ -115,12 +109,7 @@ namespace DegreeQuest
                 //Console.WriteLine(">>> STR IS: " + str);
 
                 NetworkStream networkStream = c.GetStream();
-                //needs to be PC position
-
-                //Console.WriteLine(">>> Writing Room!");
-
-                //ser.WriteObject(networkStream, dq.room.members);
-                //string json = ser.Serialize(vl);
+ 
                 Byte[] byt2 = Util.stb(str);
                 networkStream.Write(byt2, 0, byt2.Length);
 
@@ -241,7 +230,6 @@ namespace DegreeQuest
         TcpClient c;
         PC cc; //client character
         DegreeQuest srvDQ;
-        //Int32 id;
 
         public PostHandler(TcpClient client, DegreeQuest hostDQ)
         {
@@ -281,8 +269,6 @@ namespace DegreeQuest
                     //katie was here
                     PC tc = (PC) bin.Deserialize(cStream);
                     cc.Position = tc.Position;
-
-
 
                     cStream.Flush();
                 }

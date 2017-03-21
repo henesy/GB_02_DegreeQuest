@@ -21,7 +21,6 @@ namespace DegreeQuest
         DQClient client = null;
         bool clientMode = false;
         bool serverMode = false;
-        //public string lastAct = "nil";
         public Queue actions = new Queue();
         DQPostClient pclient = null;
         DQPostSrv psrv = null;
@@ -38,9 +37,6 @@ namespace DegreeQuest
         //states to determine keypresses
         KeyboardState currentKeyboardState;
         KeyboardState previousKeyboardState;
-
-        //movement speed of player
-        //to Actor
 
         /** End Variables **/
 
@@ -74,11 +70,8 @@ namespace DegreeQuest
             // server init logic ;; always serving atm
             Config conf = new Config();
 
-            //clientMode = conf.bget("client");
-            //serverMode = conf.bget("server");
-
-            if (conf.bget("server"))
-                serverMode = true;
+            clientMode = conf.bget("client");
+            serverMode = conf.bget("server");
 
             if (serverMode)
             {
@@ -99,10 +92,6 @@ namespace DegreeQuest
                 Console.WriteLine("> POST Server Initialisation Complete!");
 
             }
-
-
-            if (conf.bget("client"))
-                clientMode = true;
 
             // client init logic
             if (clientMode)
@@ -178,40 +167,29 @@ namespace DegreeQuest
 
         private void UpdatePlayer(GameTime gameTime)
         {
-            //lastAct = "nil";
-            /*
-            if (!clientMode)
-            {
-            */
             if (currentKeyboardState.IsKeyDown(Keys.Left))
             {
                 pc.Position.X -= pc.MoveSpeed;
-                //actions.Enqueue("MOVE");
             }
 
             if (currentKeyboardState.IsKeyDown(Keys.Right))
             {
                 pc.Position.X += pc.MoveSpeed;
-                //actions.Enqueue("MOVE");
             }
 
             if (currentKeyboardState.IsKeyDown(Keys.Up))
             {
                 pc.Position.Y -= pc.MoveSpeed;
-                //actions.Enqueue("MOVE");
             }
 
             if (currentKeyboardState.IsKeyDown(Keys.Down))
             {
                 pc.Position.Y += pc.MoveSpeed;
-                //actions.Enqueue("MOVE");
             }
 
 
             pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - LoadTexture(pc).Width);
             pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 90, 810 - LoadTexture(pc).Height);
-            //pc.Position.X = MathHelper.Clamp(pc.Position.X, 0, GraphicsDevice.Viewport.Width - LoadTexture(pc).Width);
-            //pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 0, GraphicsDevice.Viewport.Height - LoadTexture(pc).Height);
         }
 
 

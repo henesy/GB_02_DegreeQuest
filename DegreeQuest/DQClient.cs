@@ -36,31 +36,16 @@ namespace DegreeQuest
                 Console.WriteLine("CLIENT IS NULL!");
             }
 
-            //Int32 size = c.ReceiveBufferSize;
-            //Type[] knownTypes = new Type[] {typeof(Vector2), typeof(Actor), typeof(AType), typeof(List<PC>) };
-            //DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(List<PC>), knownTypes);
-            //var ser = new JavaScriptSerializer();
-
             while (true)
             {
-                //Console.WriteLine(">>> Reading Room!");
-
-                //right now only runs this once
-                //dq.room.members = (List<PC>)ser.ReadObject(serverStream);
                 Byte[] byt2 = new Byte[10000];
                 serverStream.Read(byt2, 0, 10000);
-                string json = Util.bts(byt2);
-                //List<string> vl = ser.Deserialize<List<string>>(json);
-                string[] locations = json.Split('@');
-
-                //populate rooms
-                //List<Vector2> vl = new List<Vector2>();
+                string str = Util.bts(byt2);
+                string[] locations = str.Split('@');
 
                 //this is bad and unsafe and can cause crashes
                 lock (dq.room) {
 
-                    /** this entire block should be replaced with a server-side ID that re-writes the members array once at start and then just uses server id's to write to the members array **/
-                    //dq.room.members = new List<Actor
                     dq.room.num = locations.Length - 1;
 
                   
@@ -125,7 +110,6 @@ namespace DegreeQuest
 
                 //wrap up
 
-                //pc.Position = pos;
                 Thread.Sleep(5);
             }
         }
