@@ -23,6 +23,15 @@ namespace DegreeQuest
             }
         }
 
+        //constuctor to build a room with known actors
+        public Room(Actor[] members) : this()
+        {
+            foreach(Actor a in members)//maybe need to change... 
+            {
+                Add(a);
+            }
+        }
+
         public void Add(Actor a)
         {
             lock (this)
@@ -45,6 +54,8 @@ namespace DegreeQuest
                 num--;
             }
         }
+
+        
 
     }
 

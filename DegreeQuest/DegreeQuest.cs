@@ -36,7 +36,11 @@ namespace DegreeQuest
 
         PC pc;
 
+        
         public volatile Room room;
+
+        //arraylisted for fun
+        public volatile ArrayList rooms;//TODO finish rooms and be able to switch between them
 
         //states to determine keypresses
         KeyboardState currentKeyboardState;
@@ -57,6 +61,8 @@ namespace DegreeQuest
             graphics.PreferredBackBufferWidth = 1600;
             graphics.PreferredBackBufferHeight = 900;
             graphics.ApplyChanges();
+
+            rooms = new ArrayList();
 
             Content.RootDirectory = "Content";
         }
@@ -227,6 +233,11 @@ namespace DegreeQuest
                     debugMode = true;
             }
 
+            //for changing rooms
+            if(currentKeyboardState.IsKeyDown(Keys.F12) && !previousKeyboardState.IsKeyDown(Keys.F12))
+            {
+
+            }
 
             pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - LoadTexture(pc).Width);
             pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 90, 810 - LoadTexture(pc).Height);
