@@ -69,6 +69,9 @@
     <Compile Include="Config.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Dice.cs" />
+    <Compile Include="GameScreen.cs" />
+    <Compile Include="Item.cs" />
+    <Compile Include="ItemTemplate.cs" />
     <Compile Include="json.cs" />
     <Compile Include="DBReader.cs" />
     <Compile Include="DQClient.cs" />
@@ -81,6 +84,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DQServer.cs" />
+    <Compile Include="ScreenManager.cs" />
     <Compile Include="Stat.cs" />
     <Compile Include="Subject.cs" />
     <Compile Include="Util.cs" />
@@ -108,6 +112,8 @@
   <ItemGroup>
     <Content Include="config.txt" />
     <EmbeddedResource Include="Icon.ico" />
+    <Content Include="Content\NPC.txt" />
+    <Content Include="Content\Item.txt" />
     <Content Include="OpenTK.dll.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

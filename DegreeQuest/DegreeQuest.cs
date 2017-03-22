@@ -22,9 +22,12 @@ namespace DegreeQuest
         DQClient client = null;
         bool clientMode = false;
         bool serverMode = false;
+        bool debugMode = false;
+        string debugString = "nil";
         public Queue actions = new Queue();
         DQPostClient pclient = null;
         DQPostSrv psrv = null;
+        Dictionary<string, Texture2D> Textures = new Dictionary<string, Texture2D>();
 
         public static string root = System.AppDomain.CurrentDomain.BaseDirectory + "..\\..\\..\\..";
 
@@ -40,6 +43,8 @@ namespace DegreeQuest
         KeyboardState previousKeyboardState;
 
         int lastNum = -1;
+
+        SpriteFont sf;
 
         /** End Variables **/
 
@@ -69,6 +74,23 @@ namespace DegreeQuest
             pc = new PC();
             room = new Room();
             room.Add(pc);
+
+            // initialise texture index
+            sf = Content.Load<SpriteFont>("mono");
+
+            string[] files = System.IO.Directory.GetFiles(root + "\\Content\\Graphics");
+
+            Console.WriteLine("Loading Textures...");
+            foreach(string fname in files)
+            {
+                //Console.WriteLine(fname);
+                var s = fname.Split('\\');
+                var n = s[s.Length - 1].Split('.');
+                var t = Content.Load<Texture2D>(root + "\\Content\\Graphics\\" + n[0]);
+                Textures.Add(n[0], t);
+            }
+            Console.WriteLine("Done loading Textures...");
+
 
             // server init logic ;; always serving atm
             Config conf = new Config();
@@ -197,6 +219,14 @@ namespace DegreeQuest
                     pc.Texture = "player";
             }
 
+            if (currentKeyboardState.IsKeyDown(Keys.F2) && !previousKeyboardState.IsKeyDown(Keys.F2))
+            {
+                if (debugMode)
+                    debugMode = false;
+                else
+                    debugMode = true;
+            }
+
 
             pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - LoadTexture(pc).Width);
             pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 90, 810 - LoadTexture(pc).Height);
@@ -248,6 +278,22 @@ namespace DegreeQuest
                     //((PC)room.members[i]).Draw(spriteBatch);
                     DrawSprite(room.members[i], spriteBatch);
                 }
+            }
+
+            /* debug mode draw */
+            if(debugMode)
+            {
+                string str = "";
+                if (clientMode)
+                    str += "\nMode: Client";
+                if (serverMode)
+                    str += "\nMode: Server";
+
+                debugString += str;
+
+                spriteBatch.DrawString(sf, debugString, new Vector2(0, 2), Color.Black);
+
+                debugString = "nil";
             }
 
             base.Draw(gameTime);
@@ -304,7 +350,8 @@ namespace DegreeQuest
         public Texture2D LoadTexture(Actor a)
         {
             //this works, probably
-            return Content.Load<Texture2D>(root + "\\Content\\Graphics\\" + a.Texture);
+            //return Content.Load<Texture2D>(root + "\\Content\\Graphics\\" + a.Texture);
+            return Textures[a.Texture];
         }
 
         /* acquires width of a sprite */
