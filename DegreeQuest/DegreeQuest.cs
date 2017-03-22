@@ -22,6 +22,8 @@ namespace DegreeQuest
         DQClient client = null;
         bool clientMode = false;
         bool serverMode = false;
+        bool debugMode = false;
+        string debugString = "nil";
         public Queue actions = new Queue();
         DQPostClient pclient = null;
         DQPostSrv psrv = null;
@@ -41,6 +43,8 @@ namespace DegreeQuest
         KeyboardState previousKeyboardState;
 
         int lastNum = -1;
+
+        SpriteFont sf;
 
         /** End Variables **/
 
@@ -72,6 +76,7 @@ namespace DegreeQuest
             room.Add(pc);
 
             // initialise texture index
+            sf = Content.Load<SpriteFont>("mono");
 
             string[] files = System.IO.Directory.GetFiles(root + "\\Content\\Graphics");
 
@@ -214,6 +219,14 @@ namespace DegreeQuest
                     pc.Texture = "player";
             }
 
+            if (currentKeyboardState.IsKeyDown(Keys.F2) && !previousKeyboardState.IsKeyDown(Keys.F2))
+            {
+                if (debugMode)
+                    debugMode = false;
+                else
+                    debugMode = true;
+            }
+
 
             pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - LoadTexture(pc).Width);
             pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 90, 810 - LoadTexture(pc).Height);
@@ -265,6 +278,22 @@ namespace DegreeQuest
                     //((PC)room.members[i]).Draw(spriteBatch);
                     DrawSprite(room.members[i], spriteBatch);
                 }
+            }
+
+            /* debug mode draw */
+            if(debugMode)
+            {
+                string str = "";
+                if (clientMode)
+                    str += "\nMode: Client";
+                if (serverMode)
+                    str += "\nMode: Server";
+
+                debugString += str;
+
+                spriteBatch.DrawString(sf, debugString, new Vector2(0, 2), Color.Black);
+
+                debugString = "nil";
             }
 
             base.Draw(gameTime);
