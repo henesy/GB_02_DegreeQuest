@@ -11,23 +11,39 @@ namespace DegreeQuest
     /* Generic NPC class type */
     [Serializable()]
     class NPC : Actor
-    {   
+    {
+        public static String name_DFLT = "null";
+        public static int HP_DFLT = 100;
+        public static int EP_DFLT = 0;
+        public static int atk_DFLT = 0;
+        public static int def_DFLT = 1;
+        public static int spd_DFLT = 1;
+        public static int lvl_DFLT = 1;
+        public static int subject_DFLT = Subject.NONE;
+
+        public string name;
         // Current and maximum amount of hit points
-        public uint HP, HPMax;
+        public int HP, HPMax;
 
         // Current and maximum amount of energy (mana)
-        public uint EP, EPMax;
+        public int EP, EPMax;
 
-        public Subject Subject;
+        public int atk, def, spd, lvl;
+
+        public int subject;
 
         //public Texture2D Texture { get; private set; }
         
         //Current default constructor
         public NPC()
         {
-            HP = HPMax = 100;
-            EP = EPMax = 0;
-            Subject = Subject.None;
+            HP = HPMax = HP_DFLT;
+            EP = EPMax = EP_DFLT;
+            atk = atk_DFLT;
+            def = def_DFLT;
+            spd = spd_DFLT;
+            lvl = lvl_DFLT;
+            subject = Subject.NONE;
             Position = new Location(new Vector2(-1,-1));
 
             //changeme
@@ -36,8 +52,13 @@ namespace DegreeQuest
 
         public NPC(NPCTemplate temp)
         {
-            HP = HPMax = (uint)temp.HP.roll();
-            EP = EPMax = (uint)temp.EP.roll();
+            name = temp.name;
+            HP = HPMax = temp.HP.roll();
+            EP = EPMax = temp.EP.roll();
+            atk = temp.atk.roll();
+            def = temp.def.roll();
+            spd = temp.spd.roll();
+            subject = temp.subject();
         }
 
         /* As per Actor */

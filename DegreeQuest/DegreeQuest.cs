@@ -12,7 +12,7 @@ namespace DegreeQuest
 {
     /// <summary>
     /// 2D rogue-like game for CS 309 with Mitra
-    /// By Sean, Zach B., Zach T., and Dennis
+    /// By Sean Hinchee, Zach Boe, Zach Turley, and Dennis Xhu
     /// Team 102
     /// </summary>
 
@@ -20,10 +20,14 @@ namespace DegreeQuest
     {
         DQServer srv = null;
         DQClient client = null;
+        bool clientMode = false;
         bool serverMode = false;
+        bool debugMode = false;
+        string debugString = "nil";
         public Queue actions = new Queue();
         DQPostClient pclient = null;
         DQPostSrv psrv = null;
+        Dictionary<string, Texture2D> Textures = new Dictionary<string, Texture2D>();
 
         public static string root = System.AppDomain.CurrentDomain.BaseDirectory + "..\\..\\..\\..";
 
@@ -32,11 +36,15 @@ namespace DegreeQuest
 
         PC pc;
 
-        public Room room;
+        public volatile Room room;
 
         //states to determine keypresses
         KeyboardState currentKeyboardState;
         KeyboardState previousKeyboardState;
+
+        int lastNum = -1;
+
+        SpriteFont sf;
 
         /** End Variables **/
 
@@ -67,11 +75,28 @@ namespace DegreeQuest
             room = new Room();
             room.Add(pc);
 
-            // server init logic ;; always serving atm
-            GameConfig conf = new GameConfig();
+            // initialise texture index
+            sf = Content.Load<SpriteFont>("mono");
 
-            
-            serverMode = conf.isServer();
+            string[] files = System.IO.Directory.GetFiles(root + "\\Content\\Graphics");
+
+            Console.WriteLine("Loading Textures...");
+            foreach(string fname in files)
+            {
+                //Console.WriteLine(fname);
+                var s = fname.Split('\\');
+                var n = s[s.Length - 1].Split('.');
+                var t = Content.Load<Texture2D>(root + "\\Content\\Graphics\\" + n[0]);
+                Textures.Add(n[0], t);
+            }
+            Console.WriteLine("Done loading Textures...");
+
+
+            // server init logic ;; always serving atm
+            Config conf = new Config();
+
+            serverMode = conf.bget("server");
+            clientMode = !serverMode;
 
             if (serverMode)
             {
@@ -94,7 +119,7 @@ namespace DegreeQuest
             }
 
             // client init logic
-            if (!serverMode)
+            if (clientMode)
             {
                 client = new DQClient(this);
 
@@ -150,7 +175,7 @@ namespace DegreeQuest
         protected override void Update(GameTime gameTime)
         {            
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+                Halt();
 
 
             // TODO: Add your update logic here
@@ -185,6 +210,7 @@ namespace DegreeQuest
                 pc.Position.Y += pc.MoveSpeed;
             }
 
+            // toggle player and npc sprites (for testing)
             if (currentKeyboardState.IsKeyDown(Keys.F5) && !previousKeyboardState.IsKeyDown(Keys.F5))
             {
                 if (pc.Texture == "player")
@@ -193,8 +219,33 @@ namespace DegreeQuest
                     pc.Texture = "player";
             }
 
+            if (currentKeyboardState.IsKeyDown(Keys.F2) && !previousKeyboardState.IsKeyDown(Keys.F2))
+            {
+                if (debugMode)
+                    debugMode = false;
+                else
+                    debugMode = true;
+            }
+
+
             pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - LoadTexture(pc).Width);
             pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 90, 810 - LoadTexture(pc).Height);
+
+            /* system checks */
+            if(serverMode)
+            {
+                if(psrv._halt || srv._halt)
+                {
+                    Halt();
+                }
+            } else if(clientMode)
+            {
+                if(pclient._halt || client._halt)
+                {
+                    Halt();
+                }
+            }
+            
         }
 
 
@@ -222,11 +273,27 @@ namespace DegreeQuest
                 //draw player
                 //pc.Draw(spriteBatch);
                 int i;
-                for (i = 0; i < room.num; i++)
+                for (i = 0; i < room.num && i < room.members.Length; i++)
                 {
                     //((PC)room.members[i]).Draw(spriteBatch);
                     DrawSprite(room.members[i], spriteBatch);
                 }
+            }
+
+            /* debug mode draw */
+            if(debugMode)
+            {
+                string str = "";
+                if (clientMode)
+                    str += "\nMode: Client";
+                if (serverMode)
+                    str += "\nMode: Server";
+
+                debugString += str;
+
+                spriteBatch.DrawString(sf, debugString, new Vector2(0, 2), Color.Black);
+
+                debugString = "nil";
             }
 
             base.Draw(gameTime);
@@ -236,13 +303,44 @@ namespace DegreeQuest
         }
 
 
+        /* Performs the shutdown routines */
+        public void Halt()
+        {
+            
+            if(serverMode)
+            {
+                psrv.Halt();
+                srv.Halt();
+            }
+            if(clientMode)
+            {
+                client.Halt();
+                pclient.Halt();
+            }
+            
+
+            Exit();
+        }
+
+
         /* loads another PC in */
         public void LoadPC(PC c, string texture)
         {
             // TODO: use this.Content to load your game content here
 
-            Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2,
+            Vector2 playerPosition;
+
+            try
+            {
+                playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2,
                 GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
+            } catch (NullReferenceException e)
+            {
+                Console.WriteLine("Faulty LoadPC, null exception, not loading requested PC...");
+                return;
+            }
+
+            
 
             c.Initialize(texture, playerPosition);
         }
@@ -252,7 +350,8 @@ namespace DegreeQuest
         public Texture2D LoadTexture(Actor a)
         {
             //this works, probably
-            return Content.Load<Texture2D>(root + "\\Content\\Graphics\\" + a.Texture);
+            //return Content.Load<Texture2D>(root + "\\Content\\Graphics\\" + a.Texture);
+            return Textures[a.Texture];
         }
 
         /* acquires width of a sprite */

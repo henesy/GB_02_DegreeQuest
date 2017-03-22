@@ -1,0 +1,30 @@
+Version 1.0.0
+
+Format EXACTLY as initial example directly below.
+That is, "fieldname": "fieldvalue" for EVERY field, in EXACT ORDER. 
+Leave blank if default value desired.
+End with EMPTY line.
+As of 3/21/17 format is not checked, its assumed correctness.
+
+Name: Ez Pz
+HP: 5
+EP: 0
+atk: 1
+def: 1
+spd: 1
+lvl: 100
+subjects: MATH,BIO,CHEM,TECH
+
+
+
+
+
+
+
+
+
+
+
+
+DO NOT REMOVE THESE LINES
+END OF FILE

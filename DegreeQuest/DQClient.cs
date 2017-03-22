@@ -19,6 +19,7 @@ namespace DegreeQuest
     {
         TcpClient c = new TcpClient();
         DegreeQuest dq;
+        public volatile Boolean _halt = false;
 
         public DQClient(DegreeQuest mainDQ)
         {
@@ -27,7 +28,17 @@ namespace DegreeQuest
 
         public void ThreadRun()
         {
-            c.Connect("127.0.0.1", 13337);
+
+            try
+            {
+                c.Connect("127.0.0.1", 13337);
+            } catch(SocketException e)
+            {
+                Console.WriteLine("> Cannot connect to server on port :13337...ending Client...");
+                _halt = true;
+                return;
+            }
+
             Console.WriteLine(">>> Client Connected!");
             NetworkStream serverStream = c.GetStream();
 
@@ -36,10 +47,21 @@ namespace DegreeQuest
                 Console.WriteLine("CLIENT IS NULL!");
             }
 
-            while (true)
+            while (!_halt)
             {
                 Byte[] byt2 = new Byte[10000];
-                serverStream.Read(byt2, 0, 10000);
+
+                try
+                {
+                    serverStream.Read(byt2, 0, 10000);
+                } catch(System.IO.IOException e)
+                {
+                    Console.WriteLine(">>> Client failed to write to the server on port :13337...Client ending...");
+                    _halt = true;
+                    break;
+                }
+
+                
                 string str = Util.bts(byt2);
                 string[] locations = str.Split('@');
 
@@ -51,7 +73,7 @@ namespace DegreeQuest
                   
                     //need to expand
                     int j;
-                    for(j = 0; j < dq.room.num; j++)
+                    for(j = 0; j < dq.room.num && j < dq.room.members.Length; j++)
                     {
                         PC tc = new PC();
                         dq.LoadPC(tc, tc.Texture);
@@ -59,10 +81,10 @@ namespace DegreeQuest
                     }
 
                     int i;
-                    for (i = 0; i < dq.room.num; i++)
+                    for (i = 0; i < dq.room.num && j < dq.room.members.Length; i++)
                     {
                         string[] sub = locations[i].Split('#');
-                        Console.WriteLine(">>>SUB STRING: " + sub[0] + " then " + sub[1]);
+                        //Console.WriteLine(">>>SUB STRING: " + sub[0] + " then " + sub[1]);
 
                         dq.room.members[i].Position = new Location(sub[0]);
                         dq.room.members[i].Texture = sub[1];
@@ -71,6 +93,12 @@ namespace DegreeQuest
 
                 Thread.Sleep(5);
             }
+            _halt = true;
+        }
+
+        public void Halt()
+        {
+            _halt = true;
         }
     }
 
@@ -81,6 +109,7 @@ namespace DegreeQuest
         Vector2 pos;
         PC pc;
         DegreeQuest dq;
+        public volatile Boolean _halt = false;
 
         public DQPostClient(PC mainPC, DegreeQuest mainDQ)
         {
@@ -90,7 +119,16 @@ namespace DegreeQuest
 
         public void ThreadRun()
         {
-            c.Connect("127.0.0.1", 13338);
+            try
+            {
+                c.Connect("127.0.0.1", 13338);
+            } catch(SocketException e)
+            {
+                Console.WriteLine("> Cannot connect to server on port :13337...ending POST Client...");
+                _halt = true;
+                return;
+            }
+            
             Console.WriteLine(">>> POST Client Connected!");
             NetworkStream srvStream = c.GetStream();
 
@@ -102,16 +140,36 @@ namespace DegreeQuest
             //var js = new JavaScriptSerializer();
             BinaryFormatter bin = new BinaryFormatter();
 
-            while (true)
+            while (!_halt)
             {
+                try
+                {
+                    bin.Serialize(srvStream, pc);
+                } catch(Exception e)
+                {
+                    Console.WriteLine(">>> Failed to serialize to server...ending POST Client...");
+                    return;
+                }
 
-                bin.Serialize(srvStream, pc);
                 srvStream.Flush();
+
+                /* submit to server and read back ;; update relevant fields */
+
+                //disabled due to performance issues
+                //PC tc = (PC)bin.Deserialize(srvStream);
+                //pc.Position = tc.Position;
+                //pc.Texture = tc.Texture;
 
                 //wrap up
 
                 Thread.Sleep(5);
             }
+            _halt = true;
+        }
+
+        public void Halt()
+        {
+            _halt = true;
         }
     }
 }

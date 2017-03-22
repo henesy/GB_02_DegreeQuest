@@ -19,6 +19,8 @@ namespace DegreeQuest
     {
         ClientList clients;
         DegreeQuest dq;
+        public volatile Boolean _halt = false;
+        TcpListener srv;
 
         public DQServer(DegreeQuest mainDQ)
         {
@@ -27,17 +29,28 @@ namespace DegreeQuest
 
         public void DQSInit()
         {
-            TcpListener srv = new TcpListener(13337);
+            srv = new TcpListener(13337);
             clients = new ClientList();
 
             srv.Start();
-            Console.WriteLine(">>> Server Started");
+            Console.WriteLine(">>> Server started");
 
-            while (true)
+            while (!_halt)
             {
-                TcpClient client = srv.AcceptTcpClient();
+                TcpClient client;
+                try
+                {
+                    client = srv.AcceptTcpClient();
+                } catch(SocketException e)
+                {
+                    Console.WriteLine(">>> Server got Socket Exception on Accept...probably Halt message...Server ending...");
+                    _halt = true;
+                    return;
+                }
+
+
                 clients.Add(client);
-                Handler h = new Handler(client, dq);
+                Handler h = new Handler(client, dq, _halt);
 
                 //handle concurrently 
                 Thread handler = new Thread(new ThreadStart(h.ThreadRun));
@@ -57,6 +70,7 @@ namespace DegreeQuest
                 }
             }
 
+            _halt = true;
             Console.WriteLine(">>> DQSInit Ending!");
         }
 
@@ -77,6 +91,12 @@ namespace DegreeQuest
             }
         }
 
+        public void Halt()
+        {
+            _halt = true;
+            srv.Stop();
+        }
+
     }
 
 
@@ -84,19 +104,21 @@ namespace DegreeQuest
     {
         TcpClient c;
         DegreeQuest dq;
+        public volatile Boolean _halt2 = false;
 
         //threading and locks on clients variable 
-        public Handler(TcpClient client, DegreeQuest mainDQ)
+        public Handler(TcpClient client, DegreeQuest mainDQ, Boolean _halt)
         {
             c = client;
             dq = mainDQ;
+            _halt2 = _halt;
         }
 
         public void ThreadRun()
         {
             Console.WriteLine(">>> Handler Thread Started!");
 
-            while (true)
+            while (!_halt2)
             {
                 string str = "";
 
@@ -111,14 +133,28 @@ namespace DegreeQuest
                 NetworkStream networkStream = c.GetStream();
  
                 Byte[] byt2 = Util.stb(str);
-                networkStream.Write(byt2, 0, byt2.Length);
 
-                networkStream.Flush();
+                try
+                {
+                    networkStream.Write(byt2, 0, byt2.Length);
+
+                    networkStream.Flush();
+                } catch(Exception e)
+                {
+                    Console.WriteLine(">>> Exception on write, client disconnected...ending Handler...");
+                    break;
+                }
 
                 Thread.Sleep(5);
             }
 
             Console.WriteLine(">>> Handler Ending! ");
+        }
+
+        public void Halt()
+        {
+            _halt2 = true;
+            c.Close();
         }
     }
 
@@ -177,6 +213,8 @@ namespace DegreeQuest
     {
         ClientList clients;
         DegreeQuest srvDQ;
+        public volatile Boolean _halt = false;
+        TcpListener srv;
 
         public DQPostSrv(DegreeQuest hostDQ)
         {
@@ -185,17 +223,28 @@ namespace DegreeQuest
 
         public void PostInit()
         {
-            TcpListener srv = new TcpListener(13338);
+            srv = new TcpListener(13338);
             clients = new ClientList();
 
             srv.Start();
             Console.WriteLine(">>> POST Server Started");
 
-            while (true)
+            while (!_halt)
             {
-                TcpClient client = srv.AcceptTcpClient();
+                TcpClient client;
+                try
+                {
+                    client = srv.AcceptTcpClient();
+                }
+                catch (SocketException e)
+                {
+                    Console.WriteLine(">>> POST Server got Socket Exception on Accept...probably Halt message...POST Server ending...");
+                    _halt = true;
+                    return;
+                }
+
                 clients.Add(client);
-                PostHandler h = new PostHandler(client, srvDQ);
+                PostHandler h = new PostHandler(client, srvDQ, _halt);
 
                 //handle concurrently 
                 Thread handler = new Thread(new ThreadStart(h.ThreadRun));
@@ -215,6 +264,7 @@ namespace DegreeQuest
                 }
             }
 
+            _halt = true;
             Console.WriteLine(">>> DQSInit Ending!");
         }
 
@@ -222,68 +272,89 @@ namespace DegreeQuest
         {
             this.PostInit();
         }
-    }
 
-    /* Manages communications with a client on port :13338 for movement/deltas and changes and such */
-    class PostHandler
-    {
-        TcpClient c;
-        PC cc; //client character
-        DegreeQuest srvDQ;
-
-        public PostHandler(TcpClient client, DegreeQuest hostDQ)
+        public void Halt()
         {
-            c = client;
-            cc = null;
-            srvDQ = hostDQ;
+            _halt = true;
+            srv.Stop();
         }
 
-        public void ThreadRun()
+        /* Manages communications with a client on port :13338 for movement/deltas and changes and such */
+        class PostHandler
         {
-            Console.WriteLine(">>> POST Handler Thread Started!");
-            cc = new PC();
+            TcpClient c;
+            PC cc; //client character
+            DegreeQuest srvDQ;
+            public volatile Boolean _halt2 = false;
 
-
-            
-            NetworkStream cStream = c.GetStream();
-            byte[] inStream = new byte[100];
-
-            //establish locations/init client "player" object
-            srvDQ.room.Add(cc);
-
-            srvDQ.LoadPC(cc, cc.Texture);
-
-
-
-            Console.WriteLine(">>> POST Handler Entering Primary Loop!");
-
-            var js = new JavaScriptSerializer();
-            BinaryFormatter bin = new BinaryFormatter();
-
-            while (true)
+            public PostHandler(TcpClient client, DegreeQuest hostDQ, Boolean _halt)
             {
-                try
-                {
-
-                    //do things here
-                    //katie was here
-                    PC tc = (PC) bin.Deserialize(cStream);
-                    cc.Position = tc.Position;
-                    cc.Texture = tc.Texture;
-                    //cc = tc;
-
-                    cStream.Flush();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.ToString());
-                    break;
-                }
-
-                Thread.Sleep(5);
+                c = client;
+                cc = null;
+                srvDQ = hostDQ;
+                _halt2 = _halt;
             }
 
-            Console.WriteLine(">>> POST Handler Ending! ");
+            public void ThreadRun()
+            {
+                Console.WriteLine(">>> POST Handler Thread Started!");
+                cc = new PC();
+
+
+
+                NetworkStream cStream = c.GetStream();
+                byte[] inStream = new byte[100];
+
+                //establish locations/init client "player" object
+                srvDQ.room.Add(cc);
+
+                srvDQ.LoadPC(cc, cc.Texture);
+
+
+
+                Console.WriteLine(">>> POST Handler Entering Primary Loop!");
+
+                var js = new JavaScriptSerializer();
+                BinaryFormatter bin = new BinaryFormatter();
+
+                while (!_halt2)
+                {
+                    try
+                    {
+
+                        //do things here
+                        //katie was here
+                        PC tc = (PC)bin.Deserialize(cStream);
+                        cc.Position = tc.Position;
+                        cc.Texture = tc.Texture;
+                        //cc = tc;
+
+                        /* read from client and then do processing things, probably with tc.LastAction */
+
+
+
+                        /* write the (potentially modified) temporary character back to the client */
+
+                        // disabled due to temporary performance issues
+                        //bin.Serialize(cStream, tc);
+
+                        cStream.Flush();
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.ToString());
+                        break;
+                    }
+
+                    Thread.Sleep(5);
+                }
+
+                srvDQ.room.Delete(cc);
+
+                Console.WriteLine(">>> POST Handler Ending! ");
+            }
+
         }
+        //danger?
     }
 }
