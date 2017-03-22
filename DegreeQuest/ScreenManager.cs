@@ -20,7 +20,7 @@ namespace DegreeQuest
         //screen manager instance
         private static ScreenManager instance;
         // Stack of the screens
-        //Stack<GameScreen> screenStack = new Stack<GameScreen>();
+        Stack<GameScreen> screenStack = new Stack<GameScreen>();
         Vector2 dimensions;
         GameScreen currentScreen;
         ContentManager content;
@@ -28,6 +28,7 @@ namespace DegreeQuest
         public Vector2 Dimensions { get; set;}
         public void AddScreen(GameScreen screen)
         {
+            screenStack.Push(screen);
             currentScreen.UnloadContent();
             currentScreen = screen;
             currentScreen.LoadContent(content);
