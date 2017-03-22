@@ -80,10 +80,15 @@ namespace DegreeQuest
         /* arbitrary state checks for ease of use */
         public bool isServer()
         {
-            if (this.values["isServer"] == "true")
+            if (this.values["server"] == "true")
                 return true;
             else
                 return false;
+        }
+        /* used to get amount of bytes for communication */
+        public int getComSize()
+        {
+            return Convert.ToInt32(this.values["comSize"]);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace DegreeQuest
 {
     /// <summary>
     /// 2D rogue-like game for CS 309 with Mitra
-    /// By Sean Hinchee, Zach Boe, Zach Turley, and Dennis Xhu
+    /// By Sean Hinchee, Zach Boe, Zach Turley, and Dennis Xu
     /// Team 102
     /// </summary>
 
@@ -93,7 +93,7 @@ namespace DegreeQuest
 
 
             // server init logic ;; always serving atm
-            Config conf = new Config();
+            GameConfig conf = new GameConfig();
 
             serverMode = conf.bget("server");
             clientMode = !serverMode;
@@ -109,7 +109,7 @@ namespace DegreeQuest
                 Console.WriteLine("> Server Initialistion Complete!");
 
                 //post
-                psrv = new DQPostSrv(this);
+                psrv = new DQPostSrv(this, conf.getComSize());
 
                 Thread psrvThread = new Thread(new ThreadStart(psrv.ThreadRun));
                psrvThread.IsBackground = true;
@@ -121,7 +121,7 @@ namespace DegreeQuest
             // client init logic
             if (clientMode)
             {
-                client = new DQClient(this);
+                client = new DQClient(this, conf.getComSize());
 
                 Thread clientThread = new Thread(new ThreadStart(client.ThreadRun));
                 clientThread.Start();
