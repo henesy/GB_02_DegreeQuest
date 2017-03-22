@@ -16,15 +16,13 @@ C:\Users\henesy\Documents\CS309\GB_02_DegreeQuest\DegreeQuest\obj\x86\Debug\Degr
 C:\Users\henesy\Documents\CS309\GB_02_DegreeQuest\DegreeQuest\obj\x86\Debug\DegreeQuest.exe
 C:\Users\henesy\Documents\CS309\GB_02_DegreeQuest\DegreeQuest\obj\x86\Debug\DegreeQuest.pdb
 C:\Users\henesy\Documents\CS309\GB_02_DegreeQuest\DegreeQuest\obj\x86\Debug\DegreeQuest.csprojResolveAssemblyReference.cache
-C:\Users\Sean\Documents\CS309\GB_02_DegreeQuest\DegreeQuest\bin\DesktopGL\x86\Debug\DegreeQuest.exe.config
-C:\Users\Sean\Documents\CS309\GB_02_DegreeQuest\DegreeQuest\obj\x86\Debug\DegreeQuest.exe
-C:\Users\Sean\Documents\CS309\GB_02_DegreeQuest\DegreeQuest\obj\x86\Debug\DegreeQuest.pdb
+C:\Users\Sean\Documents\CS309\GB_02_DegreeQuest\DegreeQuest\bin\DesktopGL\x86\Debug\Content\mono.xnb
 C:\Users\Sean\Documents\CS309\GB_02_DegreeQuest\DegreeQuest\bin\DesktopGL\x86\Debug\Content\npc.xnb
 C:\Users\Sean\Documents\CS309\GB_02_DegreeQuest\DegreeQuest\bin\DesktopGL\x86\Debug\Content\player.xnb
-C:\Users\Sean\Documents\CS309\GB_02_DegreeQuest\DegreeQuest\bin\DesktopGL\x86\Debug\Content\mono.xnb
 C:\Users\Sean\Documents\CS309\GB_02_DegreeQuest\DegreeQuest\bin\DesktopGL\x86\Debug\Content\Images\npc.xnb
 C:\Users\Sean\Documents\CS309\GB_02_DegreeQuest\DegreeQuest\bin\DesktopGL\x86\Debug\Content\Images\player.xnb
 C:\Users\Sean\Documents\CS309\GB_02_DegreeQuest\DegreeQuest\bin\DesktopGL\x86\Debug\OpenTK.dll.config
+C:\Users\Sean\Documents\CS309\GB_02_DegreeQuest\DegreeQuest\bin\DesktopGL\x86\Debug\DegreeQuest.exe.config
 C:\Users\Sean\Documents\CS309\GB_02_DegreeQuest\DegreeQuest\bin\DesktopGL\x86\Debug\DegreeQuest.exe.manifest
 C:\Users\Sean\Documents\CS309\GB_02_DegreeQuest\DegreeQuest\bin\DesktopGL\x86\Debug\DegreeQuest.application
 C:\Users\Sean\Documents\CS309\GB_02_DegreeQuest\DegreeQuest\bin\DesktopGL\x86\Debug\DegreeQuest.exe
@@ -37,3 +35,5 @@ C:\Users\Sean\Documents\CS309\GB_02_DegreeQuest\DegreeQuest\bin\DesktopGL\x86\De
 C:\Users\Sean\Documents\CS309\GB_02_DegreeQuest\DegreeQuest\obj\x86\Debug\DegreeQuest.csprojResolveAssemblyReference.cache
 C:\Users\Sean\Documents\CS309\GB_02_DegreeQuest\DegreeQuest\obj\x86\Debug\DegreeQuest.exe.manifest
 C:\Users\Sean\Documents\CS309\GB_02_DegreeQuest\DegreeQuest\obj\x86\Debug\DegreeQuest.application
+C:\Users\Sean\Documents\CS309\GB_02_DegreeQuest\DegreeQuest\obj\x86\Debug\DegreeQuest.exe
+C:\Users\Sean\Documents\CS309\GB_02_DegreeQuest\DegreeQuest\obj\x86\Debug\DegreeQuest.pdb
