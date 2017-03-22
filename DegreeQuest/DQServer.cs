@@ -330,7 +330,7 @@ namespace DegreeQuest
                         //cc = tc;
 
                         /* read from client and then do processing things, probably with tc.LastAction */
-
+                        Console.WriteLine(tc.kbState);
 
 
                         /* write the (potentially modified) temporary character back to the client */
