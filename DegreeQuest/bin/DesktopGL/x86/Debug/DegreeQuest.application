@@ -7,14 +7,14 @@
     <framework targetVersion="4.5" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="DegreeQuest.exe.manifest" size="8148">
+    <dependentAssembly dependencyType="install" codebase="DegreeQuest.exe.manifest" size="10133">
       <assemblyIdentity name="DegreeQuest.exe" version="1.0.0.4" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="x86" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>4i2b1cUSks9B7TUtmT2N1tXxXj55mjiFmxj3XKOATiQ=</dsig:DigestValue>
+        <dsig:DigestValue>SzspawKDDYee+qfhuV/70y7Et4r0WpLTZqWCQdwIHPs=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
