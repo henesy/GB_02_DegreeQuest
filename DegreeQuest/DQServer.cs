@@ -215,10 +215,12 @@ namespace DegreeQuest
         DegreeQuest srvDQ;
         public volatile Boolean _halt = false;
         TcpListener srv;
+        int comSize;
 
-        public DQPostSrv(DegreeQuest hostDQ)
+        public DQPostSrv(DegreeQuest hostDQ, int comSiz)
         {
             srvDQ = hostDQ;
+            comSize = comSiz;
         }
 
         public void PostInit()
@@ -244,7 +246,7 @@ namespace DegreeQuest
                 }
 
                 clients.Add(client);
-                PostHandler h = new PostHandler(client, srvDQ, _halt);
+                PostHandler h = new PostHandler(client, srvDQ, _halt, comSize);
 
                 //handle concurrently 
                 Thread handler = new Thread(new ThreadStart(h.ThreadRun));
@@ -286,13 +288,15 @@ namespace DegreeQuest
             PC cc; //client character
             DegreeQuest srvDQ;
             public volatile Boolean _halt2 = false;
+            int comSize;
 
-            public PostHandler(TcpClient client, DegreeQuest hostDQ, Boolean _halt)
+            public PostHandler(TcpClient client, DegreeQuest hostDQ, Boolean _halt, int comSiz)
             {
                 c = client;
                 cc = null;
                 srvDQ = hostDQ;
                 _halt2 = _halt;
+                comSize = comSiz;
             }
 
             public void ThreadRun()
@@ -303,7 +307,7 @@ namespace DegreeQuest
 
 
                 NetworkStream cStream = c.GetStream();
-                byte[] inStream = new byte[100];
+                byte[] inStream = new byte[comSize];
 
                 //establish locations/init client "player" object
                 srvDQ.room.Add(cc);

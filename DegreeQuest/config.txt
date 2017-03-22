@@ -1,1 +1,2 @@
 ﻿server=true
+comSize=10000
