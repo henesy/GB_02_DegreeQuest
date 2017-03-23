@@ -60,3 +60,6 @@ C:\Users\zboe\GB_02_DegreeQuest\DegreeQuest\obj\x86\Debug\DegreeQuest.exe.manife
 C:\Users\zboe\GB_02_DegreeQuest\DegreeQuest\obj\x86\Debug\DegreeQuest.application
 C:\Users\zboe\GB_02_DegreeQuest\DegreeQuest\obj\x86\Debug\DegreeQuest.exe
 C:\Users\zboe\GB_02_DegreeQuest\DegreeQuest\obj\x86\Debug\DegreeQuest.pdb
+C:\Users\BlackMatter\Source\Repos\DegreeQuest\DegreeQuest\bin\DesktopGL\x86\Debug\DegreeQuest.exe.config
+C:\Users\BlackMatter\Source\Repos\DegreeQuest\DegreeQuest\obj\x86\Debug\DegreeQuest.exe
+C:\Users\BlackMatter\Source\Repos\DegreeQuest\DegreeQuest\obj\x86\Debug\DegreeQuest.pdb
