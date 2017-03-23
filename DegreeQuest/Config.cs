@@ -9,8 +9,8 @@ namespace DegreeQuest
     /* class to handle the configuration found in config.txt */
     public class Config
     {
-        protected Dictionary<string,string> values;
-        protected string root;
+        Dictionary<string,string> values;
+        string root;
 
         public Config()
         {
@@ -62,25 +62,11 @@ namespace DegreeQuest
             values[key] = val;
         }
 
-        // risky
-        public bool bget(string key)
-        {
-            return Convert.ToBoolean(values[key]);
-        }
-    }
-
-    //Working on, meant to have more specific methods relating to game configs
-    public class GameConfig : Config
-    {
-        public GameConfig() : base()
-        {
-            
-        }
-
         /* arbitrary state checks for ease of use */
+
         public bool isServer()
         {
-            if (this.values["server"] == "true")
+            if (values["server"] == "true")
                 return true;
             else
                 return false;
@@ -89,6 +75,12 @@ namespace DegreeQuest
         public int getComSize()
         {
             return Convert.ToInt32(this.values["comSize"]);
+        }
+
+        // risky
+        public bool bget(string key)
+        {
+            return Convert.ToBoolean(values[key]);
         }
     }
 }
