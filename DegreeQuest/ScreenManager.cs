@@ -44,7 +44,7 @@ namespace DegreeQuest
         }
         public void Initialize()
         {
-            currentScreen = null; //TODO first screen is initialized
+            currentScreen = new StartScreen(); //TODO first screen is initialized
         }
         public void LoadContent(ContentManager c)
         {

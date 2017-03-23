@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DegreeQuest.exe" size="327168">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DegreeQuest.exe" size="328192">
       <assemblyIdentity name="DegreeQuest" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>FgA0enUZpPVW9AXZEfjwHGqmYjY4p5zcWZZjkh0fTs0=</dsig:DigestValue>
+        <dsig:DigestValue>sups6CP2WWAvX5g2soJDhr++vP4DIyv0bGpenA0/zSU=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -102,13 +102,31 @@
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="config.txt" size="14">
+  <file name="config.txt" size="29">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>9QdlgxAfWJ+I4MQmS11pvnEl5/LQhtwhC1js3ryyDfI=</dsig:DigestValue>
+      <dsig:DigestValue>H7LX+xSiZqKz1PDlFdYZRa5O9ICq4j93CS7W/gWPOi4=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\Images\HostButton.xnb" size="92009">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>Z/FJefor+0zFrmixxiQyEyvgUdQjMXj7t4NlUHOODzI=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\Images\joinButton.xnb" size="92009">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>9ER/1CcV5l1ls2NS+nwYXb5jC5WIr5jofIr2QB2yfLE=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Images\npc.xnb" size="16469">

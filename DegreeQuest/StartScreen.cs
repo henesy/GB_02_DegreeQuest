@@ -20,8 +20,8 @@ namespace DegreeQuest
         public override void LoadContent(ContentManager c)
         {
             base.LoadContent(c);
-            startButton = content.Load<Texture2D>("hostButton");
-            joinButton = content.Load<Texture2D>("joinButton");
+            startButton = content.Load<Texture2D>(DegreeQuest.root + "\\Content\\Graphics\\HostButton");
+            joinButton = content.Load<Texture2D>(DegreeQuest.root + "\\Content\\Graphics\\joinButton");
         }
         public override void UnloadContent()
         {
@@ -31,7 +31,6 @@ namespace DegreeQuest
         {
             Vector2 startloc = new Vector2(620, 400);
             Vector2 joinloc = new Vector2(620, 500);
-            sb.Begin();
             sb.Draw(startButton, startloc, Color.White);
             sb.Draw(joinButton, joinloc, Color.White);
 
