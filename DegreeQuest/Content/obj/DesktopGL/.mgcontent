@@ -4,8 +4,8 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/Sean/Documents/CS309/GB_02_DegreeQuest/DegreeQuest/Content/Images/player.png</File>
-    <File>C:/Users/Sean/Documents/CS309/GB_02_DegreeQuest/DegreeQuest/Content/Images/npc.png</File>
-    <File>C:/Users/Sean/Documents/CS309/GB_02_DegreeQuest/DegreeQuest/Content/mono.spritefont</File>
+    <File>C:/Users/zboe/GB_02_DegreeQuest/DegreeQuest/Content/Images/player.png</File>
+    <File>C:/Users/zboe/GB_02_DegreeQuest/DegreeQuest/Content/Images/npc.png</File>
+    <File>C:/Users/zboe/GB_02_DegreeQuest/DegreeQuest/Content/mono.spritefont</File>
   </SourceFiles>
 </SourceFileCollection>

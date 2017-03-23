@@ -20,10 +20,12 @@ namespace DegreeQuest
         TcpClient c = new TcpClient();
         DegreeQuest dq;
         public volatile Boolean _halt = false;
+        int comSize;
 
-        public DQClient(DegreeQuest mainDQ)
+        public DQClient(DegreeQuest mainDQ, int comSiz)
         {
             dq = mainDQ;
+            comSize = comSiz;
         }
 
         public void ThreadRun()
@@ -49,11 +51,11 @@ namespace DegreeQuest
 
             while (!_halt)
             {
-                Byte[] byt2 = new Byte[10000];
+                Byte[] byt2 = new Byte[comSize];
 
                 try
                 {
-                    serverStream.Read(byt2, 0, 10000);
+                    serverStream.Read(byt2, 0, comSize);
                 } catch(System.IO.IOException e)
                 {
                     Console.WriteLine(">>> Client failed to write to the server on port :13337...Client ending...");
