@@ -12,7 +12,7 @@ namespace DegreeQuest
     [Serializable()]
     class NPC : Actor
     {
-        public static String name_DFLT = "null";
+        public static String name_DFLT = "charmander";
         public static int HP_DFLT = 100;
         public static int EP_DFLT = 0;
         public static int atk_DFLT = 0;
@@ -37,6 +37,7 @@ namespace DegreeQuest
         //Current default constructor
         public NPC()
         {
+            name = name_DFLT;
             HP = HPMax = HP_DFLT;
             EP = EPMax = EP_DFLT;
             atk = atk_DFLT;
@@ -45,9 +46,7 @@ namespace DegreeQuest
             lvl = lvl_DFLT;
             subject = Subject.NONE;
             Position = new Location(new Vector2(-1,-1));
-
-            //changeme
-            Texture = "npc";
+            Texture = name;
         }
 
         public NPC(NPCTemplate temp)

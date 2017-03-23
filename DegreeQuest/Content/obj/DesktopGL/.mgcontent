@@ -4,8 +4,10 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/zboe/GB_02_DegreeQuest/DegreeQuest/Content/Images/player.png</File>
-    <File>C:/Users/zboe/GB_02_DegreeQuest/DegreeQuest/Content/Images/npc.png</File>
-    <File>C:/Users/zboe/GB_02_DegreeQuest/DegreeQuest/Content/mono.spritefont</File>
+    <File>F:/Storage/GB_02_DegreeQuest/DegreeQuest/Content/Images/player.png</File>
+    <File>F:/Storage/GB_02_DegreeQuest/DegreeQuest/Content/Images/npc.png</File>
+    <File>F:/Storage/GB_02_DegreeQuest/DegreeQuest/Content/mono.spritefont</File>
+    <File>F:/Storage/GB_02_DegreeQuest/DegreeQuest/Content/Images/DiamondSword.png</File>
+    <File>F:/Storage/GB_02_DegreeQuest/DegreeQuest/Content/Images/charmander.png</File>
   </SourceFiles>
 </SourceFileCollection>

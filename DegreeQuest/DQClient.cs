@@ -70,9 +70,10 @@ namespace DegreeQuest
                 //this is bad and unsafe and can cause crashes
                 lock (dq.room) {
 
-                    dq.room.num = locations.Length - 1;
+                    string[] sub = locations[0].Split('#');
+                    dq.room.num = int.Parse(sub[0]);
+                    dq.room.num_item = int.Parse(sub[1]);
 
-                  
                     //need to expand
                     int j;
                     for(j = 0; j < dq.room.num && j < dq.room.members.Length; j++)
@@ -83,13 +84,22 @@ namespace DegreeQuest
                     }
 
                     int i;
-                    for (i = 0; i < dq.room.num && j < dq.room.members.Length; i++)
+                    for (i = 0; i < dq.room.num && i < dq.room.members.Length; i++)
                     {
-                        string[] sub = locations[i].Split('#');
+                        sub = locations[i+1].Split('#');
                         //Console.WriteLine(">>>SUB STRING: " + sub[0] + " then " + sub[1]);
 
                         dq.room.members[i].Position = new Location(sub[0]);
                         dq.room.members[i].Texture = sub[1];
+                    }
+                    for (i = 0; i< dq.room.num_item && i < dq.room.items.Length; i++)
+                    {
+                        dq.room.items[i] = new Item();
+                        sub = locations[i+dq.room.num+1].Split('#');
+                        //Console.WriteLine(">>>SUB STRING: " + sub[0] + " then " + sub[1]);
+
+                        dq.room.items[i].Position = new Location(sub[0]);
+                        dq.room.items[i].Texture = sub[1];
                     }
                 }
 
