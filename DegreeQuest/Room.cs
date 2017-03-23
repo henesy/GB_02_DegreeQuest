@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
+using Microsoft.Xna.Framework;
+
 
 namespace DegreeQuest
 {
@@ -12,19 +14,23 @@ namespace DegreeQuest
         /* Populate actors by looping over members and getting X/Y values on location in Room */
         public volatile Actor[] members;
         public volatile int num;
+        //colors for the different components
+        public volatile Dictionary<string, Color> colors;
 
-        public Room()
+        public Room(Color backgdColor)
         {
             lock (this)
             {
                 /** Handlers for given players/monsters should remove objects/edit objects ;; members should really only be read by other threads/functions/methods **/
                 members = new Actor[200];
                 num = 0;
+                colors = new Dictionary<string, Color>();
+                colors.Add("backgdColor", backgdColor);
             }
         }
 
         //constuctor to build a room with known actors
-        public Room(Actor[] members) : this()
+        public Room(Actor[] members, Color backgdColor) : this(backgdColor)
         {
             foreach(Actor a in members)//maybe need to change... 
             {
@@ -43,6 +49,7 @@ namespace DegreeQuest
                 }
             }
         }
+
 
         public void Delete(Actor a)
         {

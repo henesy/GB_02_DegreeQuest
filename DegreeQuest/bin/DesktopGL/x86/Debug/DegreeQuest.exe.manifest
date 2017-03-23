@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DegreeQuest.exe" size="327168">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DegreeQuest.exe" size="327680">
       <assemblyIdentity name="DegreeQuest" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>FgA0enUZpPVW9AXZEfjwHGqmYjY4p5zcWZZjkh0fTs0=</dsig:DigestValue>
+        <dsig:DigestValue>ITTaBJUfQLKZ6NowIid/1QEjqxpSei5TcF4CjRurQ2Q=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -102,13 +102,13 @@
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="config.txt" size="14">
+  <file name="config.txt" size="29">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>9QdlgxAfWJ+I4MQmS11pvnEl5/LQhtwhC1js3ryyDfI=</dsig:DigestValue>
+      <dsig:DigestValue>H7LX+xSiZqKz1PDlFdYZRa5O9ICq4j93CS7W/gWPOi4=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\Images\npc.xnb" size="16469">
@@ -172,15 +172,6 @@
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
       <dsig:DigestValue>TN7iHAdv6LaRyVov/Nk7KCC4sg8HpIFygbD/zAtRoIw=</dsig:DigestValue>
-    </hash>
-  </file>
-  <file name="DegreeQuest.exe.config" size="77">
-    <hash>
-      <dsig:Transforms>
-        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
-      </dsig:Transforms>
-      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>sRXPO8NcIiuVI4ajMrs7gnxty0j6ChK7OorE6bM0xfQ=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Icon.ico" size="147541">

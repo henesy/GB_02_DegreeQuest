@@ -38,9 +38,9 @@ namespace DegreeQuest
 
         
         public volatile Room room;
-
         //arraylisted for fun
-        public volatile ArrayList rooms;//TODO finish rooms and be able to switch between them
+        public volatile Room[] rooms;//TODO finish rooms and be able to switch between them
+        public volatile int roomNum;
 
         //states to determine keypresses
         KeyboardState currentKeyboardState;
@@ -62,7 +62,6 @@ namespace DegreeQuest
             graphics.PreferredBackBufferHeight = 900;
             graphics.ApplyChanges();
 
-            rooms = new ArrayList();
 
             Content.RootDirectory = "Content";
         }
@@ -78,8 +77,16 @@ namespace DegreeQuest
         {
             // TODO: Add your initialization logic here
             pc = new PC();
-            room = new Room();
+
+            
+            room = new Room(Color.Green);
             room.Add(pc);
+
+            rooms = new Room[10];
+            rooms[0] = room;
+            rooms[1] = new Room(Color.White);
+
+            roomNum = 0;
 
             // initialise texture index
             sf = Content.Load<SpriteFont>("mono");
@@ -99,7 +106,7 @@ namespace DegreeQuest
 
 
             // server init logic ;; always serving atm
-            GameConfig conf = new GameConfig();
+            Config conf = new Config();
 
             serverMode = conf.bget("server");
             clientMode = !serverMode;
@@ -236,7 +243,11 @@ namespace DegreeQuest
             //for changing rooms
             if(currentKeyboardState.IsKeyDown(Keys.F12) && !previousKeyboardState.IsKeyDown(Keys.F12))
             {
-
+                //for testing purposes
+                if (roomNum == 0)
+                    roomNum = 1;
+                else
+                    roomNum = 0;
             }
 
             pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - LoadTexture(pc).Width);
@@ -269,13 +280,18 @@ namespace DegreeQuest
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+            rooms[roomNum].members = room.members;
+            rooms[roomNum].num = room.num;
+            room = rooms[roomNum];//tmp for easy transfer
 
             // start drawing
             spriteBatch.Begin();
 
             Texture2D rect = new Texture2D(graphics.GraphicsDevice, 1280, 720);
             Color[] data = new Color[1280 * 720];
-            for (int j = 0; j < data.Length; j++) data[j] = Color.Green;
+
+            for (int j = 0; j < data.Length; j++) data[j] = room.colors["backgdColor"];
+
             rect.SetData(data);
             spriteBatch.Draw(rect, new Vector2(160, 90), Color.White);
 
