@@ -272,11 +272,9 @@ namespace DegreeQuest
             lock (room)
             {
                 //draw player
-                //pc.Draw(spriteBatch);
                 int i;
                 for (i = 0; i < room.num && i < room.members.Length; i++)
                 {
-                    //((PC)room.members[i]).Draw(spriteBatch);
                     DrawSprite(room.members[i], spriteBatch);
                 }
             }

@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DegreeQuest.exe" size="320000">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DegreeQuest.exe" size="327168">
       <assemblyIdentity name="DegreeQuest" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>6mPjoiuTxu/4xHcYgafs7idMv2W100lt0uvQS3dNiGI=</dsig:DigestValue>
+        <dsig:DigestValue>JQaADPZWCVDgrXKUsKX4+WCwyKISWjsuiOtDoQ4SZ4A=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -102,13 +102,58 @@
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="config.txt" size="15">
+  <file name="config.txt" size="14">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>lhqFHjCH9cl2c4ZI0jEsYmDFxHHxMlUFkmyMg0BUPSo=</dsig:DigestValue>
+      <dsig:DigestValue>9QdlgxAfWJ+I4MQmS11pvnEl5/LQhtwhC1js3ryyDfI=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\Images\npc.xnb" size="16469">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>kRQleV2Dr9yC/o+WFIzoKJPWLOCtRsJyjLxbh5MqvG4=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\Images\player.xnb" size="16469">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>+fcRht6O/tJBwWaH2wKX5gsmkpzyf63d2b+/Q7YR/V4=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\Item.txt" size="504">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>cvK6U9RRiZuKspCzDOUt00Q9k0CiGkwF6AVe0Wj2lo4=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\mono.xnb" size="21524">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>+UCKUuRomdf4Z0wOavga7jy8lYtLxoNpxpF0bv+UZwo=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\NPC.txt" size="417">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>BQ4YgdstC2GnL2QSWw3XT6b+uLTzXO0qiKr2NuIUOgU=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\npc.xnb" size="16469">
