@@ -135,7 +135,7 @@ namespace DegreeQuest
             }
 
             pc.MoveSpeed = 8.0f;
-            ScreenManager.Instance.Initialize();
+            //ScreenManager.Instance.Initialize();
             base.Initialize();
         }
 
@@ -155,7 +155,7 @@ namespace DegreeQuest
                 GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
 
             pc.Initialize("player", playerPosition);
-            ScreenManager.Instance.LoadContent(Content);
+            //ScreenManager.Instance.LoadContent(Content);
         }
 
         /// <summary>
@@ -184,7 +184,7 @@ namespace DegreeQuest
             previousKeyboardState = currentKeyboardState;
             currentKeyboardState = Keyboard.GetState();
             UpdatePlayer(gameTime);
-            ScreenManager.Instance.Update(gameTime);
+            //ScreenManager.Instance.Update(gameTime);
             base.Update(gameTime);
         }
 
@@ -299,7 +299,7 @@ namespace DegreeQuest
             }
 
             base.Draw(gameTime);
-            ScreenManager.Instance.Draw(spriteBatch);
+            //ScreenManager.Instance.Draw(spriteBatch);
             //stop draw
             spriteBatch.End();
         }
@@ -321,7 +321,8 @@ namespace DegreeQuest
             }
             
 
-            Exit();
+            this.Exit();
+            Program.game = new Game1();
         }
 
 

@@ -69,6 +69,7 @@
     <Compile Include="Config.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Dice.cs" />
+    <Compile Include="Game1.cs" />
     <Compile Include="GameScreen.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="ItemTemplate.cs" />

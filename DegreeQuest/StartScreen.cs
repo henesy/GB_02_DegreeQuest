@@ -17,6 +17,7 @@ namespace DegreeQuest
         private Texture2D startButton;
         private Texture2D joinButton;
 
+
         public override void LoadContent(ContentManager c)
         {
             base.LoadContent(c);
@@ -40,6 +41,7 @@ namespace DegreeQuest
             mousestate = Mouse.GetState();
             if (prevmousestate.LeftButton == ButtonState.Pressed && mousestate.LeftButton == ButtonState.Released)
                 MouseClicked(mousestate.X, mousestate.Y);
+            prevmousestate = mousestate;
             base.Update(gt);
         }
         private void MouseClicked(int x, int y)
@@ -49,13 +51,17 @@ namespace DegreeQuest
             Rectangle joinrect = new Rectangle(620, 500, 343, 67);
             if (mouserect.Intersects(startrect))
             {
-                //TODO
-                //switch to server screen
+                Program.game.Exit();
+                ScreenManager.Instance.AddScreen(new GameScreen());
+                using (var game = new DegreeQuest())
+                    game.Run();
             }
             if (mouserect.Intersects(joinrect))
             {
-                //TODO
-                //switch to client screen
+                Program.game.Exit();
+                ScreenManager.Instance.AddScreen(new GameScreen());
+                using (var game = new DegreeQuest())
+                    game.Run();
             }
         }
     }

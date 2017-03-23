@@ -11,18 +11,26 @@ namespace DegreeQuest
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-       
+        public static Game1 game;
        
             
-               
-        
         [STAThread]
         static void Main()
         {
             NPCTemplate.update();
             ItemTemplate.update();
-            using (var game = new DegreeQuest())
-                game.Run();
+
+            using (game = new Game1())
+            {
+                try
+                {
+                    game.Run();
+                }
+                catch (NullReferenceException e)
+                {
+                    Console.WriteLine("exiting game");
+                }
+            }
         }
     }
 }
