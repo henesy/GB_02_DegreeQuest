@@ -227,6 +227,7 @@ namespace DegreeQuest
                     debugMode = true;
             }
 
+            pc.kbState = currentKeyboardState.GetPressedKeys();
 
             pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - LoadTexture(pc).Width);
             pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 90, 810 - LoadTexture(pc).Height);
