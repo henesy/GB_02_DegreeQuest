@@ -78,7 +78,7 @@ namespace DegreeQuest
             // initialise texture index
             sf = Content.Load<SpriteFont>("mono");
 
-            string[] files = System.IO.Directory.GetFiles(root + "\\Content\\Graphics");
+            string[] files = System.IO.Directory.GetFiles(root + "\\Content\\Bin\\DesktopGL\\Images");
 
             Console.WriteLine("Loading Textures...");
             foreach(string fname in files)
@@ -86,7 +86,7 @@ namespace DegreeQuest
                 //Console.WriteLine(fname);
                 var s = fname.Split('\\');
                 var n = s[s.Length - 1].Split('.');
-                var t = Content.Load<Texture2D>(root + "\\Content\\Graphics\\" + n[0]);
+                var t = Content.Load<Texture2D>(root + "\\Content\\Bin\\DesktopGL\\Images\\" + n[0]);
                 Textures.Add(n[0], t);
             }
             Console.WriteLine("Done loading Textures...");
@@ -227,6 +227,21 @@ namespace DegreeQuest
                     debugMode = true;
             }
 
+            if(currentKeyboardState.IsKeyDown(Keys.F3) && !previousKeyboardState.IsKeyDown(Keys.F3))
+            {
+                Item item = new Item();
+                item.Initialize(item.Texture, pc.Position.toVector2());
+                room.Add(item);
+            }
+
+            if (currentKeyboardState.IsKeyDown(Keys.F4) && !previousKeyboardState.IsKeyDown(Keys.F4))
+            {
+                NPC npc = new NPC();
+                npc.Initialize(npc.Texture, pc.Position.toVector2());
+                room.Add(npc);
+            }
+
+
             pc.kbState = currentKeyboardState.GetPressedKeys();
 
             pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - LoadTexture(pc).Width);
@@ -272,11 +287,10 @@ namespace DegreeQuest
             lock (room)
             {
                 //draw player
+                //pc.Draw(spriteBatch);
                 int i;
-                for (i = 0; i < room.num && i < room.members.Length; i++)
-                {
-                    DrawSprite(room.members[i], spriteBatch);
-                }
+                for (i = 0; i < room.num_item && i < room.items.Length; i++) { DrawSprite(room.items[i], spriteBatch); }
+                for (i = 0; i < room.num && i < room.members.Length; i++){ DrawSprite(room.members[i], spriteBatch); }
             }
 
             /* debug mode draw */
