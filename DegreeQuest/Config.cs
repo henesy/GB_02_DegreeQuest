@@ -71,6 +71,11 @@ namespace DegreeQuest
             else
                 return false;
         }
+        /* used to get amount of bytes for communication */
+        public int getComSize()
+        {
+            return Convert.ToInt32(this.values["comSize"]);
+        }
 
         // risky
         public bool bget(string key)
