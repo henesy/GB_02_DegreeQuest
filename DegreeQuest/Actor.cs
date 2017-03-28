@@ -11,7 +11,7 @@ namespace DegreeQuest
 {
     /* For reflection of what's filling Actor, Item/Object/Static are placeholders for non-combatant elements of the world */
     [DataContract]
-    public enum AType {PC, NPC, Item, Object, Static};
+    public enum AType {Item, NPC, PC, Terrain, Object, Static};
 
     /* For identification of the sprite to use, add more as needed. Note: Texture2D is the MonoGame texture identification ;; might not be necessary */
     //public enum Texture {Generic_PC, Generic_NPC};
