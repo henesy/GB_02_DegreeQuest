@@ -120,12 +120,16 @@ namespace DegreeQuest
 
             while (!_halt2)
             {
-                string str = "";
+                string str = dq.room.num.ToString()+"#"+dq.room.num_item.ToString()+"@";
 
                 int i;
                 for (i = 0; i < dq.room.num; i++)
                 {
                     str += dq.room.members[i].Position.ToString() + "#" + dq.room.members[i].Texture + "@";
+                }
+                for (i = 0; i < dq.room.num_item; i++)
+                {
+                    str += dq.room.items[i].Position.ToString() + "#" + dq.room.items[i].Texture + "@";
                 }
 
                 //Console.WriteLine(">>> STR IS: " + str);
