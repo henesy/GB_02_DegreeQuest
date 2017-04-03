@@ -120,7 +120,7 @@ namespace DegreeQuest
 
             while (!_halt2)
             {
-                string str = dq.room.num.ToString()+"#"+dq.room.num_item.ToString()+"@";
+                string str = dq.room.num.ToString()+"#"+dq.room.num_item.ToString()+ "#" + dq.room.id + "@";
 
                 int i;
                 for (i = 0; i < dq.room.num; i++)

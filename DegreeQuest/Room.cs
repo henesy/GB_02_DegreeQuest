@@ -17,10 +17,9 @@ namespace DegreeQuest
         public volatile int num_item;
         public volatile Actor[] members;
         public volatile int num;
-        //colors for the different components
-        public volatile Dictionary<string, Color> colors;
+        public volatile string id;
 
-        public Room(Color backgdColor)
+        public Room(string room_id)
         {
             lock (this)
             {
@@ -28,20 +27,10 @@ namespace DegreeQuest
                 members = new Actor[200];
                 items = new Item[ITEM_MAX];
                 num = num_item = 0;
-                colors = new Dictionary<string, Color>();
-                colors.Add("backgdColor", backgdColor);
+                id = room_id;
             }
         }
 
-        //constuctor to build a room with known actors
-        public Room(Actor[] members, Color backgdColor) : this(backgdColor)
-        {
-            foreach (Actor a in members)//maybe need to change... 
-            {
-                Add(a);
-                num = 0;
-            }
-        }
 
         public void Add(Actor a)
         {

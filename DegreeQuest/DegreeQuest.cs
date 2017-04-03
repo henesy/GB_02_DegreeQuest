@@ -38,9 +38,7 @@ namespace DegreeQuest
 
         
         public volatile Room room;
-        //arraylisted for fun
-        public volatile Room[] rooms;//TODO finish rooms and be able to switch between them
-        public volatile int roomNum;
+        public Dictionary<string, Room> rooms;
 
         //states to determine keypresses
         KeyboardState currentKeyboardState;
@@ -79,14 +77,11 @@ namespace DegreeQuest
             pc = new PC();
 
             
-            room = new Room(Color.Green);
+            room = new Room("default");
             room.Add(pc);
-
-            rooms = new Room[10];
-            rooms[0] = room;
-            rooms[1] = new Room(Color.White);
-
-            roomNum = 0;
+            rooms = new Dictionary<string, Room>();
+            rooms.Add("default", room);
+            
 
             // initialise texture index
             sf = Content.Load<SpriteFont>("mono");
@@ -243,10 +238,12 @@ namespace DegreeQuest
             if (currentKeyboardState.IsKeyDown(Keys.F12) && !previousKeyboardState.IsKeyDown(Keys.F12))
             {
                 //for testing purposes
-                if (roomNum == 0)
-                    roomNum = 1;
+                if (room.id == "default")
+                {
+                    switchRooms("secondary");
+                }
                 else
-                    roomNum = 0;
+                    switchRooms("default");
             }
             if (currentKeyboardState.IsKeyDown(Keys.F3) && !previousKeyboardState.IsKeyDown(Keys.F3))
             {
@@ -282,7 +279,27 @@ namespace DegreeQuest
                     Halt();
                 }
             }
-            
+        }
+
+        public void switchRooms(string roomId)
+        {
+            lock (room)
+            {
+                //copies current room into the dictionary to store it
+                if (!rooms.ContainsKey(room.id))
+                    rooms.Add(room.id, new Room(room.id));
+                
+                
+                //copies actors from this room into the new room
+                if (!rooms.ContainsKey(roomId))
+                    rooms.Add(roomId, new Room(roomId));
+
+                rooms[roomId].members = room.members;
+                rooms[roomId].num = room.num;
+
+                room = rooms[roomId];
+            }
+
         }
 
 
@@ -294,18 +311,13 @@ namespace DegreeQuest
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
-            rooms[roomNum].members = room.members;
-            rooms[roomNum].num = room.num;
-            room = rooms[roomNum];//tmp for easy transfer
-
             // start drawing
             spriteBatch.Begin();
 
             Texture2D rect = new Texture2D(graphics.GraphicsDevice, 1280, 720);
             Color[] data = new Color[1280 * 720];
 
-            for (int j = 0; j < data.Length; j++) data[j] = room.colors["backgdColor"];
+            for (int j = 0; j < data.Length; j++) data[j] = Color.Green;
 
             rect.SetData(data);
             spriteBatch.Draw(rect, new Vector2(160, 90), Color.White);
@@ -328,7 +340,7 @@ namespace DegreeQuest
                 if (serverMode)
                     str += "\nMode: Server";
 
-                debugString += str;
+                debugString += str + "\nRoom Id: " + room.id;
 
                 spriteBatch.DrawString(sf, debugString, new Vector2(0, 2), Color.Black);
 

@@ -73,6 +73,8 @@ namespace DegreeQuest
                     string[] sub = locations[0].Split('#');
                     dq.room.num = int.Parse(sub[0]);
                     dq.room.num_item = int.Parse(sub[1]);
+                    if (sub[2] != dq.room.id)
+                        dq.switchRooms(sub[2]);
 
                     //need to expand
                     int j;
