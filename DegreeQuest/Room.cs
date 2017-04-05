@@ -9,7 +9,10 @@ namespace DegreeQuest
 {
     public class Room
     {
+        public static int ITEM_MAX = 256;
         /* Populate actors by looping over members and getting X/Y values on location in Room */
+        public volatile Item[] items;
+        public volatile int num_item;
         public volatile Actor[] members;
         public volatile int num;
 
@@ -19,7 +22,8 @@ namespace DegreeQuest
             {
                 /** Handlers for given players/monsters should remove objects/edit objects ;; members should really only be read by other threads/functions/methods **/
                 members = new Actor[200];
-                num = 0;
+                items = new Item[ITEM_MAX];
+                num = num_item = 0;
             }
         }
 
@@ -27,10 +31,22 @@ namespace DegreeQuest
         {
             lock (this)
             {
-                if (num + 1 < 200)
+                if (a.GetAType() == AType.Item)
                 {
-                    members[num] = a;
-                    num++;
+                    if (num_item + 1 < ITEM_MAX)
+                    {
+                        items[num_item] = (Item)a;
+                        num_item++;
+                    }
+
+                }
+                else
+                {
+                    if (num + 1 < 200)
+                    {
+                        members[num] = a;
+                        num++;
+                    }
                 }
             }
         }
