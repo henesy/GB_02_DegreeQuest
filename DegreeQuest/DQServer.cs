@@ -21,15 +21,17 @@ namespace DegreeQuest
         DegreeQuest dq;
         public volatile Boolean _halt = false;
         TcpListener srv;
+        int spectatorPort;
 
-        public DQServer(DegreeQuest mainDQ)
+        public DQServer(DegreeQuest mainDQ, Config conf)
         {
             dq = mainDQ;
+            spectatorPort = Convert.ToInt32(conf.get("spectatorPort"));
         }
 
         public void DQSInit()
         {
-            srv = new TcpListener(13337);
+            srv = new TcpListener(spectatorPort);
             clients = new ClientList();
 
             srv.Start();
@@ -220,16 +222,18 @@ namespace DegreeQuest
         public volatile Boolean _halt = false;
         TcpListener srv;
         int comSize;
+        int postPort;
 
-        public DQPostSrv(DegreeQuest hostDQ, int comSiz)
+        public DQPostSrv(DegreeQuest hostDQ, Config conf)
         {
             srvDQ = hostDQ;
-            comSize = comSiz;
+            comSize = conf.getComSize();
+            postPort = Convert.ToInt32(conf.get("postPort"));
         }
 
         public void PostInit()
         {
-            srv = new TcpListener(13338);
+            srv = new TcpListener(postPort);
             clients = new ClientList();
 
             srv.Start();

@@ -21,11 +21,13 @@ namespace DegreeQuest
         DegreeQuest dq;
         public volatile Boolean _halt = false;
         int comSize;
+        int spectatorPort;
 
-        public DQClient(DegreeQuest mainDQ, int comSiz)
+        public DQClient(DegreeQuest mainDQ, Config conf)
         {
             dq = mainDQ;
-            comSize = comSiz;
+            comSize = conf.getComSize();
+            spectatorPort = Convert.ToInt32(conf.get("spectatorPort"));
         }
 
         public void ThreadRun()
@@ -33,7 +35,7 @@ namespace DegreeQuest
 
             try
             {
-                c.Connect("127.0.0.1", 13337);
+                c.Connect("127.0.0.1", spectatorPort);
             } catch(SocketException e)
             {
                 Console.WriteLine("> Cannot connect to server on port :13337...ending Client...");
@@ -124,18 +126,20 @@ namespace DegreeQuest
         PC pc;
         DegreeQuest dq;
         public volatile Boolean _halt = false;
+        int postPort;
 
-        public DQPostClient(PC mainPC, DegreeQuest mainDQ)
+        public DQPostClient(PC mainPC, DegreeQuest mainDQ, Config conf)
         {
             pc = mainPC;
             dq = mainDQ;
+            postPort = Convert.ToInt32(conf.get("postPort"));
         }
 
         public void ThreadRun()
         {
             try
             {
-                c.Connect("127.0.0.1", 13338);
+                c.Connect("127.0.0.1", postPort);
             } catch(SocketException e)
             {
                 Console.WriteLine("> Cannot connect to server on port :13337...ending POST Client...");

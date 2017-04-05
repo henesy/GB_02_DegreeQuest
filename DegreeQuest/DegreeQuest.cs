@@ -108,7 +108,7 @@ namespace DegreeQuest
 
             if (serverMode)
             {
-                srv = new DQServer(this);
+                srv = new DQServer(this, conf);
 
                 Thread srvThread = new Thread(new ThreadStart(srv.ThreadRun));
                srvThread.IsBackground = true;
@@ -117,7 +117,7 @@ namespace DegreeQuest
                 Console.WriteLine("> Server Initialistion Complete!");
 
                 //post
-                psrv = new DQPostSrv(this, conf.getComSize());
+                psrv = new DQPostSrv(this, conf);
 
                 Thread psrvThread = new Thread(new ThreadStart(psrv.ThreadRun));
                psrvThread.IsBackground = true;
@@ -129,14 +129,14 @@ namespace DegreeQuest
             // client init logic
             if (clientMode)
             {
-                client = new DQClient(this, conf.getComSize());
+                client = new DQClient(this, conf);
 
                 Thread clientThread = new Thread(new ThreadStart(client.ThreadRun));
                 clientThread.Start();
                 Console.WriteLine("> Client Initialisation Complete!");
 
                 //post
-                pclient = new DQPostClient(pc, this);
+                pclient = new DQPostClient(pc, this, conf);
                 Thread pclientThread = new Thread(new ThreadStart(pclient.ThreadRun));
                 pclientThread.Start();
                 Console.WriteLine("> POST Client Initialisation Complete!");
