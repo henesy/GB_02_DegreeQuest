@@ -22,14 +22,9 @@ namespace DegreeQuest
 
             using (game = new Game1())
             {
-                try
-                {
+                
                     game.Run();
-                }
-                catch (NullReferenceException e)
-                {
-                    Console.WriteLine("exiting game");
-                }
+               
             }
         }
     }
