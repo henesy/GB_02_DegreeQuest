@@ -12,7 +12,7 @@ namespace DegreeQuest
 {
     /// <summary>
     /// 2D rogue-like game for CS 309 with Mitra
-    /// By Sean Hinchee, Zach Boe, Zach Turley, and Dennis Xhu
+    /// By Sean Hinchee, Zach Boe, Zach Turley, and Dennis Xu
     /// Team 102
     /// </summary>
 
@@ -36,7 +36,9 @@ namespace DegreeQuest
 
         PC pc;
 
+        
         public volatile Room room;
+        public Dictionary<string, Room> rooms;
 
         //states to determine keypresses
         KeyboardState currentKeyboardState;
@@ -58,6 +60,7 @@ namespace DegreeQuest
             graphics.PreferredBackBufferHeight = 900;
             graphics.ApplyChanges();
 
+
             Content.RootDirectory = "Content";
         }
 
@@ -72,8 +75,13 @@ namespace DegreeQuest
         {
             // TODO: Add your initialization logic here
             pc = new PC();
-            room = new Room();
+
+            
+            room = new Room("default");
             room.Add(pc);
+            rooms = new Dictionary<string, Room>();
+            rooms.Add("default", room);
+            
 
             // initialise texture index
             sf = Content.Load<SpriteFont>("mono");
@@ -100,7 +108,7 @@ namespace DegreeQuest
 
             if (serverMode)
             {
-                srv = new DQServer(this);
+                srv = new DQServer(this, conf);
 
                 Thread srvThread = new Thread(new ThreadStart(srv.ThreadRun));
                srvThread.IsBackground = true;
@@ -109,7 +117,7 @@ namespace DegreeQuest
                 Console.WriteLine("> Server Initialistion Complete!");
 
                 //post
-                psrv = new DQPostSrv(this, conf.getComSize());
+                psrv = new DQPostSrv(this, conf);
 
                 Thread psrvThread = new Thread(new ThreadStart(psrv.ThreadRun));
                psrvThread.IsBackground = true;
@@ -121,14 +129,14 @@ namespace DegreeQuest
             // client init logic
             if (clientMode)
             {
-                client = new DQClient(this, conf.getComSize());
+                client = new DQClient(this, conf);
 
                 Thread clientThread = new Thread(new ThreadStart(client.ThreadRun));
                 clientThread.Start();
                 Console.WriteLine("> Client Initialisation Complete!");
 
                 //post
-                pclient = new DQPostClient(pc, this);
+                pclient = new DQPostClient(pc, this, conf);
                 Thread pclientThread = new Thread(new ThreadStart(pclient.ThreadRun));
                 pclientThread.Start();
                 Console.WriteLine("> POST Client Initialisation Complete!");
@@ -226,8 +234,18 @@ namespace DegreeQuest
                 else
                     debugMode = true;
             }
-
-            if(currentKeyboardState.IsKeyDown(Keys.F3) && !previousKeyboardState.IsKeyDown(Keys.F3))
+            //for changing rooms
+            if (currentKeyboardState.IsKeyDown(Keys.F12) && !previousKeyboardState.IsKeyDown(Keys.F12))
+            {
+                //for testing purposes
+                if (room.id == "default")
+                {
+                    switchRooms("secondary");
+                }
+                else
+                    switchRooms("default");
+            }
+            if (currentKeyboardState.IsKeyDown(Keys.F3) && !previousKeyboardState.IsKeyDown(Keys.F3))
             {
                 Item item = new Item();
                 item.Initialize(item.Texture, pc.Position.toVector2());
@@ -261,7 +279,27 @@ namespace DegreeQuest
                     Halt();
                 }
             }
-            
+        }
+
+        public void switchRooms(string roomId)
+        {
+            lock (room)
+            {
+                //copies current room into the dictionary to store it
+                if (!rooms.ContainsKey(room.id))
+                    rooms.Add(room.id, new Room(room.id));
+                
+                
+                //copies actors from this room into the new room
+                if (!rooms.ContainsKey(roomId))
+                    rooms.Add(roomId, new Room(roomId));
+
+                rooms[roomId].members = room.members;
+                rooms[roomId].num = room.num;
+
+                room = rooms[roomId];
+            }
+
         }
 
 
@@ -273,14 +311,14 @@ namespace DegreeQuest
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
-
             // start drawing
             spriteBatch.Begin();
 
             Texture2D rect = new Texture2D(graphics.GraphicsDevice, 1280, 720);
             Color[] data = new Color[1280 * 720];
+
             for (int j = 0; j < data.Length; j++) data[j] = Color.Green;
+
             rect.SetData(data);
             spriteBatch.Draw(rect, new Vector2(160, 90), Color.White);
 
@@ -302,7 +340,7 @@ namespace DegreeQuest
                 if (serverMode)
                     str += "\nMode: Server";
 
-                debugString += str;
+                debugString += str + "\nRoom Id: " + room.id;
 
                 spriteBatch.DrawString(sf, debugString, new Vector2(0, 2), Color.Black);
 

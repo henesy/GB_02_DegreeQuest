@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
+using Microsoft.Xna.Framework;
+
 
 namespace DegreeQuest
 {
@@ -15,8 +17,9 @@ namespace DegreeQuest
         public volatile int num_item;
         public volatile Actor[] members;
         public volatile int num;
+        public volatile string id;
 
-        public Room()
+        public Room(string room_id)
         {
             lock (this)
             {
@@ -24,8 +27,10 @@ namespace DegreeQuest
                 members = new Actor[200];
                 items = new Item[ITEM_MAX];
                 num = num_item = 0;
+                id = room_id;
             }
         }
+
 
         public void Add(Actor a)
         {
@@ -51,6 +56,7 @@ namespace DegreeQuest
             }
         }
 
+
         public void Delete(Actor a)
         {
             lock (this)
@@ -61,6 +67,8 @@ namespace DegreeQuest
                 num--;
             }
         }
+
+        
 
     }
 
