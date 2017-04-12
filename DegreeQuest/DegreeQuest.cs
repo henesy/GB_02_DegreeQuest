@@ -77,15 +77,16 @@ namespace DegreeQuest
             pc = new PC();
 
             
-            room = new Room("default");
-            room.Add(pc);
+            Room room1 = new Room("default");
+            room1.Add(pc);
             rooms = new Dictionary<string, Room>();
-            rooms.Add("default", room);
+            rooms.Add("default", room1);
 
             Room room2 = new Room("secondary");
             room2.Add(pc);
             rooms.Add("secondary", room2);
-            
+
+            room = room1.copy();
 
             // initialise texture index
             sf = Content.Load<SpriteFont>("mono");
@@ -287,21 +288,27 @@ namespace DegreeQuest
 
         public void switchRooms(string roomId)
         {
+            Console.WriteLine("\nRoomName: " + room.id + "\nnum_item: " + room.num_item + ", count: " + rooms[room.id].num_item);
+            Console.WriteLine("Other: " + roomId + "\nnum_item: " + rooms[room.id].num_item);
             lock (room)
             {
                 //copies current room into the dictionary to store it
                 if (!rooms.ContainsKey(room.id))
                     rooms.Add(room.id, new Room(room.id));
-                rooms[room.id].num_item = room.num_item;
-                
+
+                rooms[room.id] = room.copy();
+
                 //copies actors from this room into the new room
                 if (!rooms.ContainsKey(roomId))
                     rooms.Add(roomId, new Room(roomId));
+              
 
                 rooms[roomId].members = room.members;
                 rooms[roomId].num = room.num;
                 room = null;
-                room = rooms[roomId];
+                //rooms["secondary"].num_item = 0;
+                room = rooms[roomId].copy();
+                Console.WriteLine("RoomName: " + room.id);
             }
 
         }
@@ -347,7 +354,7 @@ namespace DegreeQuest
                 debugString += str + "\nRoom Id: " + room.id;
                 
                 foreach(var rom in rooms){
-                    debugString += "\n" + rom.Key + " item #: " + rom.Value.num_item;
+                    debugString += "\n" + rom.Key + " item #: " + rom.Value.num_item + "\nactors: " + rom.Value.num;
                 }
 
                 spriteBatch.DrawString(sf, debugString, new Vector2(0, 2), Color.Black);

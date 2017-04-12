@@ -73,12 +73,18 @@ namespace DegreeQuest
                 lock (dq.room) {
 
                     string[] sub = locations[0].Split('#');
+                    
+
+                    if (sub[2] != dq.room.id)
+                    {
+                        dq.switchRooms(sub[2]);
+                        Console.WriteLine("name: " + sub[2]);
+                    }
+
                     dq.room.num = int.Parse(sub[0]);
                     dq.room.num_item = int.Parse(sub[1]);
 
-                    if (sub[2] != dq.room.id)
-                        dq.switchRooms(sub[2]);
-                    Console.WriteLine("item_count" + dq.rooms["secondary"]);
+                    //Console.WriteLine("item_count: " + dq.rooms["secondary"].num_item);
                     //need to expand
                     int j;
                     for(j = 0; j < dq.room.num && j < dq.room.members.Length; j++)

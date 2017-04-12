@@ -4,10 +4,10 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/DGXU/Source/Repos/dq/DegreeQuest/Content/Images/player.png</File>
-    <File>C:/Users/DGXU/Source/Repos/dq/DegreeQuest/Content/Images/npc.png</File>
-    <File>C:/Users/DGXU/Source/Repos/dq/DegreeQuest/Content/mono.spritefont</File>
-    <File>C:/Users/DGXU/Source/Repos/dq/DegreeQuest/Content/Images/DiamondSword.png</File>
-    <File>C:/Users/DGXU/Source/Repos/dq/DegreeQuest/Content/Images/charmander.png</File>
+    <File>C:/Users/BlackMatter/Source/Repos/DegreeQuest/DegreeQuest/Content/Images/player.png</File>
+    <File>C:/Users/BlackMatter/Source/Repos/DegreeQuest/DegreeQuest/Content/Images/npc.png</File>
+    <File>C:/Users/BlackMatter/Source/Repos/DegreeQuest/DegreeQuest/Content/mono.spritefont</File>
+    <File>C:/Users/BlackMatter/Source/Repos/DegreeQuest/DegreeQuest/Content/Images/DiamondSword.png</File>
+    <File>C:/Users/BlackMatter/Source/Repos/DegreeQuest/DegreeQuest/Content/Images/charmander.png</File>
   </SourceFiles>
 </SourceFileCollection>

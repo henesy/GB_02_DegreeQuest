@@ -31,6 +31,19 @@ namespace DegreeQuest
             }
         }
 
+        public Room copy()
+        {
+            Room room = new Room(id);
+            for(int i = 0; i < num_item; i++)
+            {
+                room.Add(items[i]);
+            }
+            for(int i = 0; i < num; i++)
+            {
+                room.Add(members[i]);
+            }
+            return room;
+        }
 
         public void Add(Actor a)
         {
