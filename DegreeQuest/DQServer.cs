@@ -133,7 +133,7 @@ namespace DegreeQuest
                 {
                     str += dq.room.items[i].Position.ToString() + "#" + dq.room.items[i].Texture + "@";
                 }
-
+                //2#2#2@pos#tex@pos2#tex2@ipos#itex@ipos2#itex2@
                 //Console.WriteLine(">>> STR IS: " + str);
 
                 NetworkStream networkStream = c.GetStream();

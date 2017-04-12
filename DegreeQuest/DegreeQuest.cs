@@ -38,7 +38,7 @@ namespace DegreeQuest
 
         
         public volatile Room room;
-        public Dictionary<string, Room> rooms;
+        public volatile Dictionary<string, Room> rooms;
 
         //states to determine keypresses
         KeyboardState currentKeyboardState;
@@ -81,6 +81,10 @@ namespace DegreeQuest
             room.Add(pc);
             rooms = new Dictionary<string, Room>();
             rooms.Add("default", room);
+
+            Room room2 = new Room("secondary");
+            room2.Add(pc);
+            rooms.Add("secondary", room2);
             
 
             // initialise texture index
@@ -288,7 +292,7 @@ namespace DegreeQuest
                 //copies current room into the dictionary to store it
                 if (!rooms.ContainsKey(room.id))
                     rooms.Add(room.id, new Room(room.id));
-                
+                rooms[room.id].num_item = room.num_item;
                 
                 //copies actors from this room into the new room
                 if (!rooms.ContainsKey(roomId))
@@ -296,7 +300,7 @@ namespace DegreeQuest
 
                 rooms[roomId].members = room.members;
                 rooms[roomId].num = room.num;
-
+                room = null;
                 room = rooms[roomId];
             }
 
@@ -339,8 +343,12 @@ namespace DegreeQuest
                     str += "\nMode: Client";
                 if (serverMode)
                     str += "\nMode: Server";
-
+                
                 debugString += str + "\nRoom Id: " + room.id;
+                
+                foreach(var rom in rooms){
+                    debugString += "\n" + rom.Key + " item #: " + rom.Value.num_item;
+                }
 
                 spriteBatch.DrawString(sf, debugString, new Vector2(0, 2), Color.Black);
 

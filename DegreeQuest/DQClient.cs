@@ -75,9 +75,10 @@ namespace DegreeQuest
                     string[] sub = locations[0].Split('#');
                     dq.room.num = int.Parse(sub[0]);
                     dq.room.num_item = int.Parse(sub[1]);
+
                     if (sub[2] != dq.room.id)
                         dq.switchRooms(sub[2]);
-
+                    Console.WriteLine("item_count" + dq.rooms["secondary"]);
                     //need to expand
                     int j;
                     for(j = 0; j < dq.room.num && j < dq.room.members.Length; j++)
@@ -96,14 +97,15 @@ namespace DegreeQuest
                         dq.room.members[i].Position = new Location(sub[0]);
                         dq.room.members[i].Texture = sub[1];
                     }
-                    for (i = 0; i< dq.room.num_item && i < dq.room.items.Length; i++)
+                    for (i = 0; i< dq.room.num_item && i < dq.room.items.Length; i++) //issue is that the second rooms items gets the values of the first room
                     {
+                        //2#2#2@pos#tex@pos2#tex2@ipos#itex@ipos2#itex2@
                         dq.room.items[i] = new Item();
                         sub = locations[i+dq.room.num+1].Split('#');
                         //Console.WriteLine(">>>SUB STRING: " + sub[0] + " then " + sub[1]);
 
                         dq.room.items[i].Position = new Location(sub[0]);
-                        dq.room.items[i].Texture = sub[1];
+                    
                     }
                 }
 
