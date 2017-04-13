@@ -10,7 +10,7 @@ namespace DegreeQuest
 {
     /* Generic NPC class type */
     [Serializable()]
-    class NPC : Actor
+    public class NPC : Actor
     {
         public static String name_DFLT = "charmander";
         public static int HP_DFLT = 100;
