@@ -219,6 +219,7 @@ namespace DegreeQuest
                     pc.Texture = "player";
             }
 
+            // toggle debug mode
             if (currentKeyboardState.IsKeyDown(Keys.F2) && !previousKeyboardState.IsKeyDown(Keys.F2))
             {
                 if (debugMode)
@@ -227,6 +228,7 @@ namespace DegreeQuest
                     debugMode = true;
             }
 
+            // spawn item at current pc position
             if(currentKeyboardState.IsKeyDown(Keys.F3) && !previousKeyboardState.IsKeyDown(Keys.F3))
             {
                 Item item = new Item();
@@ -234,6 +236,7 @@ namespace DegreeQuest
                 room.Add(item);
             }
 
+            // spawn npc 
             if (currentKeyboardState.IsKeyDown(Keys.F4) && !previousKeyboardState.IsKeyDown(Keys.F4))
             {
                 NPC npc = new NPC();
@@ -352,8 +355,6 @@ namespace DegreeQuest
                 Console.WriteLine("Faulty LoadPC, null exception, not loading requested PC...");
                 return;
             }
-
-            
 
             c.Initialize(texture, playerPosition);
         }
