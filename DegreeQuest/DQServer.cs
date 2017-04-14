@@ -122,16 +122,16 @@ namespace DegreeQuest
 
             while (!_halt2)
             {
-                string str = dq.room.num.ToString()+"#"+dq.room.num_item.ToString()+ "#" + dq.room.id + "@";
+                string str = dq.dungeon.currentRoom.num.ToString()+"#"+dq.dungeon.currentRoom.num_item.ToString()+ "#" + dq.dungeon.currentRoom.id + "@";
 
                 int i;
-                for (i = 0; i < dq.room.num; i++)
+                for (i = 0; i < dq.dungeon.currentRoom.num; i++)
                 {
-                    str += dq.room.members[i].Position.ToString() + "#" + dq.room.members[i].Texture + "@";
+                    str += dq.dungeon.currentRoom.members[i].Position.ToString() + "#" + dq.dungeon.currentRoom.members[i].Texture + "@";
                 }
-                for (i = 0; i < dq.room.num_item; i++)
+                for (i = 0; i < dq.dungeon.currentRoom.num_item; i++)
                 {
-                    str += dq.room.items[i].Position.ToString() + "#" + dq.room.items[i].Texture + "@";
+                    str += dq.dungeon.currentRoom.items[i].Position.ToString() + "#" + dq.dungeon.currentRoom.items[i].Texture + "@";
                 }
                 //2#2#2@pos#tex@pos2#tex2@ipos#itex@ipos2#itex2@
                 //Console.WriteLine(">>> STR IS: " + str);
@@ -318,7 +318,7 @@ namespace DegreeQuest
                 byte[] inStream = new byte[comSize];
 
                 //establish locations/init client "player" object
-                srvDQ.room.Add(cc);
+                srvDQ.dungeon.currentRoom.Add(cc);
 
                 srvDQ.LoadPC(cc, cc.Texture);
 
@@ -361,7 +361,7 @@ namespace DegreeQuest
                     Thread.Sleep(5);
                 }
 
-                srvDQ.room.Delete(cc);
+                srvDQ.dungeon.currentRoom.Delete(cc);
 
                 Console.WriteLine(">>> POST Handler Ending! ");
             }

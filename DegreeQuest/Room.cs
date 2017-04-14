@@ -31,6 +31,31 @@ namespace DegreeQuest
             }
         }
 
+        public void sortMembers()
+        {
+            lock (this)
+            {
+                IComparer comp = new ActorComparer();
+                Array.Sort(members, 0, num, comp);
+
+                string n = "";
+                for (int i = 0; i < num; i++)
+                {
+                    if (members[i].GetAType() == AType.PC)
+                    {
+                        n += "pc ";
+                        if (members[i].Active == true)
+                            n += "true, ";
+                        else
+                            n += "false, ";
+                    }
+                    else
+                        n += "idk ,";
+                }
+                Console.WriteLine(n);
+            }
+        }
+
         public Room copy()
         {
             Room room = new Room(id);
@@ -64,6 +89,7 @@ namespace DegreeQuest
                     {
                         members[num] = a;
                         num++;
+                        sortMembers();
                     }
                 }
             }
@@ -77,6 +103,18 @@ namespace DegreeQuest
                 a.Active = false;
                 ClientComparator comp = new ClientComparator();
                 Array.Sort(members, 0, this.num, comp);
+                num--;
+            }
+        }
+
+        public void Remove(Actor a)
+        {
+            lock (this)
+            {
+                a.Active = false;
+                ClientComparator comp = new ClientComparator();
+                Array.Sort(members, 0, this.num, comp);
+                a.Active = true;
                 num--;
             }
         }

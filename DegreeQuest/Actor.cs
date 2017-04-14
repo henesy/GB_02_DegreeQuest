@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -56,5 +57,32 @@ namespace DegreeQuest
 
         }
 
+    }
+
+    public class ActorComparer : IComparer
+    {
+        int IComparer.Compare(object x, object y)
+        {
+            if (x == null && y != null)
+                return 1;
+
+            if (y == null && x != null)
+                return -1;
+
+            if (y == null && x == null)
+                return 0;
+
+            AType xType = ((Actor)x).GetAType();
+            AType yType = ((Actor)y).GetAType();
+
+            if (xType == yType)
+                return 0;
+
+            if (xType == AType.PC) 
+                return -10;
+
+            return 0;
+
+        }
     }
 }
