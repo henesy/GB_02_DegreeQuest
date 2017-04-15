@@ -70,41 +70,48 @@ namespace DegreeQuest
                 string[] locations = str.Split('@');
 
                 //this is bad and unsafe and can cause crashes
-                lock (dq.room) {
+                lock (dq.dungeon.currentRoom) {
 
                     string[] sub = locations[0].Split('#');
-                    dq.room.num = int.Parse(sub[0]);
-                    dq.room.num_item = int.Parse(sub[1]);
+                    
 
-                    if (sub[2] != dq.room.id)
-                        dq.switchRooms(sub[2]);
+                    if (sub[2] != dq.dungeon.currentRoom.id)
+                    {
+                        dq.dungeon.switchRooms(sub[2]);
+                        Console.WriteLine("name: " + sub[2]);
+                    }
 
+                    dq.dungeon.currentRoom.num = int.Parse(sub[0]);
+                    dq.dungeon.currentRoom.num_item = int.Parse(sub[1]);
+
+                    //Console.WriteLine("item_count: " + dq.rooms["secondary"].num_item);
                     //need to expand
                     int j;
-                    for(j = 0; j < dq.room.num && j < dq.room.members.Length; j++)
+                    for(j = 0; j < dq.dungeon.currentRoom.num && j < dq.dungeon.currentRoom.members.Length; j++)
                     {
                         PC tc = new PC();
                         dq.LoadPC(tc, tc.Texture);
-                        dq.room.members[j] = tc;
+                        dq.dungeon.currentRoom.members[j] = tc;
                     }
 
                     int i;
-                    for (i = 0; i < dq.room.num && i < dq.room.members.Length; i++)
+                    for (i = 0; i < dq.dungeon.currentRoom.num && i < dq.dungeon.currentRoom.members.Length; i++)
                     {
                         sub = locations[i+1].Split('#');
                         //Console.WriteLine(">>>SUB STRING: " + sub[0] + " then " + sub[1]);
 
-                        dq.room.members[i].Position = new Location(sub[0]);
-                        dq.room.members[i].Texture = sub[1];
+                        dq.dungeon.currentRoom.members[i].Position = new Location(sub[0]);
+                        dq.dungeon.currentRoom.members[i].Texture = sub[1];
                     }
-                    for (i = 0; i< dq.room.num_item && i < dq.room.items.Length; i++)
+                    for (i = 0; i< dq.dungeon.currentRoom.num_item && i < dq.dungeon.currentRoom.items.Length; i++) //issue is that the second rooms items gets the values of the first room
                     {
-                        dq.room.items[i] = new Item();
-                        sub = locations[i+dq.room.num+1].Split('#');
+                        //2#2#2@pos#tex@pos2#tex2@ipos#itex@ipos2#itex2@
+                        dq.dungeon.currentRoom.items[i] = new Item();
+                        sub = locations[i+dq.dungeon.currentRoom.num+1].Split('#');
                         //Console.WriteLine(">>>SUB STRING: " + sub[0] + " then " + sub[1]);
 
-                        dq.room.items[i].Position = new Location(sub[0]);
-                        dq.room.items[i].Texture = sub[1];
+                        dq.dungeon.currentRoom.items[i].Position = new Location(sub[0]);
+                    
                     }
                 }
 

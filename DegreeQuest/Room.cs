@@ -31,6 +31,32 @@ namespace DegreeQuest
             }
         }
 
+        public void sortMembers()
+        {
+            lock (this)
+            {
+                IComparer comp = new ActorComparer();
+                Array.Sort(members, 0, num, comp);
+            }         
+        }
+
+        /// <summary>
+        /// creates a shallow copy of the room.
+        /// </summary>
+        /// <returns>a shallow copy of the room</returns>
+        public Room copy()
+        {
+            Room room = new Room(id);
+            for(int i = 0; i < num_item; i++)
+            {
+                room.Add(items[i]);
+            }
+            for(int i = 0; i < num; i++)
+            {
+                room.Add(members[i]);
+            }
+            return room;
+        }
 
         public void Add(Actor a)
         {
@@ -51,6 +77,7 @@ namespace DegreeQuest
                     {
                         members[num] = a;
                         num++;
+                        sortMembers();
                     }
                 }
             }
@@ -67,9 +94,6 @@ namespace DegreeQuest
                 num--;
             }
         }
-
-        
-
     }
 
     class ClientComparator : IComparer
