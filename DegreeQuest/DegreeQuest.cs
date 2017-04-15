@@ -384,7 +384,11 @@ namespace DegreeQuest
                 
                 foreach(var rom in dungeon.Rooms)
                 {
-                    debugString += "\n" + rom.Key + " item #: " + rom.Value.num_item + "\nactors: " + rom.Value.num;
+                    //WARNING the debug for the client might not be 100% accurate since it doesn't get the entire Dungeon class
+                    if(rom.Key == dungeon.currentRoom.id)
+                        debugString += "\n" + dungeon.currentRoom.id + " item #: " + dungeon.currentRoom.num_item + "\nactors: " + dungeon.currentRoom.num;
+                    else
+                        debugString += "\n" + rom.Key + " item #: " + rom.Value.num_item + "\nactors: " + rom.Value.num;
                 }
 
                     spriteBatch.DrawString(sf, debugString, new Vector2(0, 2), Color.Black);

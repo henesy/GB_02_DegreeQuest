@@ -4,13 +4,13 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/zboe/GB_02_DegreeQuest/DegreeQuest/Content/Images/player.png</File>
-    <File>C:/Users/zboe/GB_02_DegreeQuest/DegreeQuest/Content/Images/npc.png</File>
-    <File>C:/Users/zboe/GB_02_DegreeQuest/DegreeQuest/Content/mono.spritefont</File>
-    <File>C:/Users/zboe/GB_02_DegreeQuest/DegreeQuest/Content/Images/DiamondSword.png</File>
-    <File>C:/Users/zboe/GB_02_DegreeQuest/DegreeQuest/Content/Images/charmander.png</File>
-    <File>C:/Users/zboe/GB_02_DegreeQuest/DegreeQuest/Content/Images/HostButton.png</File>
-    <File>C:/Users/zboe/GB_02_DegreeQuest/DegreeQuest/Content/Images/joinButton.png</File>
-    <File>C:/Users/zboe/GB_02_DegreeQuest/DegreeQuest/Content/Images/ISU-campus.jpg</File>
+    <File>C:/Users/BlackMatter/Source/Repos/DegreeQuest/DegreeQuest/Content/Images/player.png</File>
+    <File>C:/Users/BlackMatter/Source/Repos/DegreeQuest/DegreeQuest/Content/Images/npc.png</File>
+    <File>C:/Users/BlackMatter/Source/Repos/DegreeQuest/DegreeQuest/Content/mono.spritefont</File>
+    <File>C:/Users/BlackMatter/Source/Repos/DegreeQuest/DegreeQuest/Content/Images/DiamondSword.png</File>
+    <File>C:/Users/BlackMatter/Source/Repos/DegreeQuest/DegreeQuest/Content/Images/charmander.png</File>
+    <File>C:/Users/BlackMatter/Source/Repos/DegreeQuest/DegreeQuest/Content/Images/HostButton.png</File>
+    <File>C:/Users/BlackMatter/Source/Repos/DegreeQuest/DegreeQuest/Content/Images/joinButton.png</File>
+    <File>C:/Users/BlackMatter/Source/Repos/DegreeQuest/DegreeQuest/Content/Images/ISU-campus.jpg</File>
   </SourceFiles>
 </SourceFileCollection>
