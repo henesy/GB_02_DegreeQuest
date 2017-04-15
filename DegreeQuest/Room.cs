@@ -37,25 +37,13 @@ namespace DegreeQuest
             {
                 IComparer comp = new ActorComparer();
                 Array.Sort(members, 0, num, comp);
-
-                string n = "";
-                for (int i = 0; i < num; i++)
-                {
-                    if (members[i].GetAType() == AType.PC)
-                    {
-                        n += "pc ";
-                        if (members[i].Active == true)
-                            n += "true, ";
-                        else
-                            n += "false, ";
-                    }
-                    else
-                        n += "idk ,";
-                }
-                Console.WriteLine(n);
-            }
+            }         
         }
 
+        /// <summary>
+        /// creates a shallow copy of the room.
+        /// </summary>
+        /// <returns>a shallow copy of the room</returns>
         public Room copy()
         {
             Room room = new Room(id);
@@ -106,21 +94,6 @@ namespace DegreeQuest
                 num--;
             }
         }
-
-        public void Remove(Actor a)
-        {
-            lock (this)
-            {
-                a.Active = false;
-                ClientComparator comp = new ClientComparator();
-                Array.Sort(members, 0, this.num, comp);
-                a.Active = true;
-                num--;
-            }
-        }
-
-        
-
     }
 
     class ClientComparator : IComparer

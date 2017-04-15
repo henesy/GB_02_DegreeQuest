@@ -79,7 +79,9 @@ namespace DegreeQuest
                 return 0;
 
             if (xType == AType.PC) 
-                return -10;
+                return -1;
+            if (yType == AType.PC)
+                return 1;
 
             return 0;
 

@@ -8,7 +8,8 @@ namespace DegreeQuest
 {
     public class Dungeon
     {
-        public volatile Dictionary<string, Room> Rooms;
+        //possibly change to different datatype like a 2d array or have a vector2 as key
+        public volatile Dictionary<string, Room> Rooms; 
         public volatile Room currentRoom;
 
         public Dungeon(PC pc)
@@ -37,29 +38,29 @@ namespace DegreeQuest
 
         public void switchRooms(string roomId)
         {
-            lock (currentRoom)
+            lock (this)
             {
                 if (!Rooms.ContainsKey(roomId))
                     Rooms.Add(roomId, new Room(roomId));
 
-                Rooms[currentRoom.id] = currentRoom; //shouldn't need
+                Rooms[currentRoom.id] = currentRoom.copy(); 
 
-                //currentRoom.sortMembers();
-
-                //Rooms[roomId].members = currentRoom.members;
-                //Rooms[roomId].num = currentRoom.num;
-                
+                currentRoom.sortMembers();
                 for (int i = 0; i < currentRoom.num; i++)
                 {
                     if (currentRoom.members[i].GetAType() == AType.PC)
                     {
-                        Rooms[roomId].Add(currentRoom.members[i]);
-                        currentRoom.Remove(currentRoom.members[i]); 
+                        Actor pc = currentRoom.members[i];
+                        Rooms[roomId].Add(pc);
+                        Rooms[currentRoom.id].Delete(pc);
+                        pc.Active = true;
+                    }
+                    else
+                    {
+                        break;
                     }
                 }
-
-                currentRoom = Rooms[roomId];
-
+                currentRoom = Rooms[roomId].copy();    
             }
         }
     }

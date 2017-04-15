@@ -82,7 +82,7 @@ namespace DegreeQuest
             dungeon = new Dungeon(pc);
 
             dungeon.AddRoom("secondary");
-           
+            //dungeon.Rooms["secondary"].Add(pc);
 
             // initialise texture index
             sf = Content.Load<SpriteFont>("mono");
@@ -121,7 +121,7 @@ namespace DegreeQuest
                 psrv = new DQPostSrv(this, conf);
 
                 Thread psrvThread = new Thread(new ThreadStart(psrv.ThreadRun));
-               psrvThread.IsBackground = true;
+                psrvThread.IsBackground = true;
                 psrvThread.Start();
                 Console.WriteLine("> POST Server Initialisation Complete!");
 
@@ -283,33 +283,6 @@ namespace DegreeQuest
                 }
             }
         }
-        /*
-        public void switchRooms(string roomId)
-        {
-            Console.WriteLine("\nRoomName: " + room.id + "\nnum_item: " + room.num_item + ", count: " + rooms[room.id].num_item);
-            Console.WriteLine("Other: " + roomId + "\nnum_item: " + rooms[room.id].num_item);
-            lock (room)
-            {
-                //copies current room into the dictionary to store it
-                if (!rooms.ContainsKey(room.id))
-                    rooms.Add(room.id, new Room(room.id));
-
-                rooms[room.id] = room.copy();
-
-                //copies actors from this room into the new room
-                if (!rooms.ContainsKey(roomId))
-                    rooms.Add(roomId, new Room(roomId));
-              
-
-                rooms[roomId].members = room.members;
-                rooms[roomId].num = room.num;
-                room = null;
-                //rooms["secondary"].num_item = 0;
-                room = rooms[roomId].copy();
-                Console.WriteLine("RoomName: " + room.id);
-            }
-
-        }*/
 
 
         /// <summary>
