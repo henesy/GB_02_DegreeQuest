@@ -66,6 +66,7 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Projectile.cs" />
     <Compile Include="Dungeon.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Constants.cs" />

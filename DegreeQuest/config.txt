@@ -2,3 +2,4 @@
 comSize=10000
 postPort=13338
 spectatorPort=13337
+srvAddr=127.0.0.1

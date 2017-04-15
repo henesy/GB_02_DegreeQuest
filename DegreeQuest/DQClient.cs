@@ -147,7 +147,7 @@ namespace DegreeQuest
         {
             try
             {
-                c.Connect("127.0.0.1", postPort);
+                c.Connect(dq.conf.get("srvAddr"), postPort);
             } catch(SocketException e)
             {
                 Console.WriteLine("> Cannot connect to server on port :13337...ending POST Client...");

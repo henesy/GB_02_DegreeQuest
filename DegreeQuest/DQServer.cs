@@ -344,6 +344,17 @@ namespace DegreeQuest
                         /* read from client and then do processing things, probably with tc.LastAction */
                         Console.WriteLine(tc.kbState);
 
+                        if (tc.kbState != null)
+                        {
+                            if (tc.kbState.ToString().Contains("s"))
+                            {
+                                //shoot command
+                                Projectile proj = new Projectile(cc, new Location(0, 0), 2, PType.Dot, new Location(1000, 1000));
+                                proj.Texture = "dot";
+                                srvDQ.dungeon.currentRoom.Add(proj);
+                            }
+                        }
+
 
                         /* write the (potentially modified) temporary character back to the client */
 

@@ -25,6 +25,7 @@ namespace DegreeQuest
         bool debugMode = false;
         string debugString = "nil";
         public Queue actions = new Queue();
+        public Config conf;
         DQPostClient pclient = null;
         DQPostSrv psrv = null;
         public Dictionary<string, Texture2D> Textures = new Dictionary<string, Texture2D>();
@@ -102,7 +103,7 @@ namespace DegreeQuest
 
 
             // server init logic ;; always serving atm
-            Config conf = new Config();
+            conf = new Config();
 
             serverMode = conf.bget("server");
             clientMode = !serverMode;
@@ -302,6 +303,41 @@ namespace DegreeQuest
 
             pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - LoadTexture(pc).Width);
             pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 90, 810 - LoadTexture(pc).Height);
+
+            /*
+            if (serverMode)
+            {
+                int i;
+                //move projectiles
+                for (i = 0; i < dungeon.currentRoom.num; i++)
+                {
+                    var a = dungeon.currentRoom.members[i];
+                    if (a.GetAType() == AType.Projectile)
+                    {
+                        var p = (Projectile)a;
+                        if (Math.Abs(p.Position.X - p.Bearing.X) < p.MoveSpeed && Math.Abs(p.Position.Y - p.Bearing.Y) < p.MoveSpeed)
+                        {
+                            //close enough to target
+                            p.Active = false;
+                        }
+                        else
+                        {
+                            //move towards target
+                            if (p.Position.X < p.Bearing.X)
+                                a.Position.X += p.MoveSpeed;
+                            else if (p.Position.X > p.Bearing.X)
+                                a.Position.X -= p.MoveSpeed;
+
+                            if (p.Position.Y < p.Bearing.Y)
+                                a.Position.Y += p.MoveSpeed;
+                            else if (p.Position.Y > p.Bearing.Y)
+                                a.Position.Y -= p.MoveSpeed;
+
+                        }
+                    }
+                }
+            }
+            */
 
             /* system checks */
             if (serverMode)
