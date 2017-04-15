@@ -82,5 +82,11 @@ namespace DegreeQuest
         {
             return Convert.ToBoolean(values[key]);
         }
+
+        // risky
+        public int iget(string key)
+        {
+            return Convert.ToInt32(values[key]);
+        }
     }
 }

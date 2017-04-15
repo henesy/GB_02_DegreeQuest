@@ -284,6 +284,8 @@ namespace DegreeQuest
                     dungeon.switchRooms("default");
                 }
             }
+
+            /* spawn test item */
             if (currentKeyboardState.IsKeyDown(Keys.F3) && !previousKeyboardState.IsKeyDown(Keys.F3))
             {
                 Item item = new Item();
@@ -291,11 +293,20 @@ namespace DegreeQuest
                 dungeon.currentRoom.Add(item);
             }
 
+            /* spawn test NPC */
             if (currentKeyboardState.IsKeyDown(Keys.F4) && !previousKeyboardState.IsKeyDown(Keys.F4))
             {
                 NPC npc = new NPC();
                 npc.Initialize(npc.Texture, pc.Position.toVector2());
                 dungeon.currentRoom.Add(npc);
+            }
+
+            /* spawn test projectile that goes to 0,0 */
+            if(currentKeyboardState.IsKeyDown(Keys.F10) && !previousKeyboardState.IsKeyDown(Keys.F10) && serverMode == true)
+            {
+                Projectile proj = new Projectile(pc, new Location(0, 0), 2, PType.Dot, new Location(1000, 1000));
+                proj.Initialize("dot", pc.Position.toVector2());
+                dungeon.currentRoom.Add(proj);
             }
 
 
@@ -304,10 +315,12 @@ namespace DegreeQuest
             pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - LoadTexture(pc).Width);
             pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 90, 810 - LoadTexture(pc).Height);
 
-            /*
+            
             if (serverMode)
             {
                 int i;
+                int l = conf.iget("spriteLen");
+
                 //move projectiles
                 for (i = 0; i < dungeon.currentRoom.num; i++)
                 {
@@ -315,10 +328,11 @@ namespace DegreeQuest
                     if (a.GetAType() == AType.Projectile)
                     {
                         var p = (Projectile)a;
-                        if (Math.Abs(p.Position.X - p.Bearing.X) < p.MoveSpeed && Math.Abs(p.Position.Y - p.Bearing.Y) < p.MoveSpeed)
+                        if (Math.Abs(p.Position.X - p.Bearing.X) < l && Math.Abs(p.Position.Y - p.Bearing.Y) < l)
                         {
                             //close enough to target
                             p.Active = false;
+                            dungeon.currentRoom.Delete(a);
                         }
                         else
                         {
@@ -337,7 +351,7 @@ namespace DegreeQuest
                     }
                 }
             }
-            */
+            
 
             /* system checks */
             if (serverMode)

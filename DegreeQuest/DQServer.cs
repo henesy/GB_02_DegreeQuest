@@ -329,6 +329,8 @@ namespace DegreeQuest
                 var js = new JavaScriptSerializer();
                 BinaryFormatter bin = new BinaryFormatter();
 
+                Microsoft.Xna.Framework.Input.Keys[] lastkb = cc.kbState;
+
                 while (!_halt2)
                 {
                     try
@@ -342,19 +344,26 @@ namespace DegreeQuest
                         //cc = tc;
 
                         /* read from client and then do processing things, probably with tc.LastAction */
-                        Console.WriteLine(tc.kbState);
+                        //Console.WriteLine("KB State: " + tc.kbState.ToString());
 
+                        
                         if (tc.kbState != null)
                         {
-                            if (tc.kbState.ToString().Contains("s"))
+                            Console.WriteLine("KB State: " + tc.kbState.ToString());
+
+                            foreach (var k in tc.kbState)
                             {
-                                //shoot command
-                                Projectile proj = new Projectile(cc, new Location(0, 0), 2, PType.Dot, new Location(1000, 1000));
-                                proj.Texture = "dot";
-                                srvDQ.dungeon.currentRoom.Add(proj);
+                                if(k == Microsoft.Xna.Framework.Input.Keys.F10 && !lastkb.Contains(Microsoft.Xna.Framework.Input.Keys.F10))
+                                {
+                                    //shoot command
+                                    Projectile proj = new Projectile(cc, new Location(0, 0), 2, PType.Dot, new Location(1000, 1000));
+                                    proj.Initialize("dot", cc.Position.toVector2());
+                                    srvDQ.dungeon.currentRoom.Add(proj);
+                                }
                             }
                         }
 
+                        lastkb = tc.kbState;
 
                         /* write the (potentially modified) temporary character back to the client */
 
