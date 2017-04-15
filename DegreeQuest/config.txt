@@ -1,2 +1,4 @@
 ﻿server=true
 comSize=10000
+postPort=13338
+spectatorPort=13337

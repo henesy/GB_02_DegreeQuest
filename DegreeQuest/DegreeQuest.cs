@@ -12,7 +12,7 @@ namespace DegreeQuest
 {
     /// <summary>
     /// 2D rogue-like game for CS 309 with Mitra
-    /// By Sean Hinchee, Zach Boe, Zach Turley, and Dennis Xhu
+    /// By Sean Hinchee, Zach Boe, Zach Turley, and Dennis Xu
     /// Team 102
     /// </summary>
 
@@ -37,7 +37,9 @@ namespace DegreeQuest
 
         PC pc;
 
-        public volatile Room room;
+        public volatile Dungeon dungeon;
+
+
 
         //states to determine keypresses
         KeyboardState currentKeyboardState;
@@ -63,6 +65,7 @@ namespace DegreeQuest
             graphics.PreferredBackBufferHeight = 900;
             graphics.ApplyChanges();
 
+
             Content.RootDirectory = "Content";
         }
 
@@ -77,8 +80,9 @@ namespace DegreeQuest
         {
             // TODO: Add your initialization logic here
             pc = new PC();
-            room = new Room();
-            room.Add(pc);
+
+            dungeon = new Dungeon(pc);
+            dungeon.AddRoom("secondary");
 
             // initialise texture index
             sf = Content.Load<SpriteFont>("mono");
@@ -105,7 +109,7 @@ namespace DegreeQuest
 
             if (serverMode)
             {
-                srv = new DQServer(this);
+                srv = new DQServer(this, conf);
 
                 Thread srvThread = new Thread(new ThreadStart(srv.ThreadRun));
                 srvThread.IsBackground = true;
@@ -114,7 +118,7 @@ namespace DegreeQuest
                 Console.WriteLine("> Server Initialistion Complete!");
 
                 //post
-                psrv = new DQPostSrv(this, conf.getComSize());
+                psrv = new DQPostSrv(this, conf);
 
                 Thread psrvThread = new Thread(new ThreadStart(psrv.ThreadRun));
                 psrvThread.IsBackground = true;
@@ -126,14 +130,14 @@ namespace DegreeQuest
             // client init logic
             if (clientMode)
             {
-                client = new DQClient(this, conf.getComSize());
+                client = new DQClient(this, conf);
 
                 Thread clientThread = new Thread(new ThreadStart(client.ThreadRun));
                 clientThread.Start();
                 Console.WriteLine("> Client Initialisation Complete!");
 
                 //post
-                pclient = new DQPostClient(pc, this);
+                pclient = new DQPostClient(pc, this, conf);
                 Thread pclientThread = new Thread(new ThreadStart(pclient.ThreadRun));
                 pclientThread.Start();
                 Console.WriteLine("> POST Client Initialisation Complete!");
@@ -266,19 +270,31 @@ namespace DegreeQuest
                 else
                     debugMode = true;
             }
-
+            //for changing rooms
+            if (currentKeyboardState.IsKeyDown(Keys.F12) && !previousKeyboardState.IsKeyDown(Keys.F12))
+            {
+                //for testing purposes
+                if (dungeon.currentRoom.id == "default")
+                {
+                    dungeon.switchRooms("secondary");
+                }
+                else
+                {
+                    dungeon.switchRooms("default");
+                }
+            }
             if (currentKeyboardState.IsKeyDown(Keys.F3) && !previousKeyboardState.IsKeyDown(Keys.F3))
             {
                 Item item = new Item();
                 item.Initialize(item.Texture, pc.Position.toVector2());
-                room.Add(item);
+                dungeon.currentRoom.Add(item);
             }
 
             if (currentKeyboardState.IsKeyDown(Keys.F4) && !previousKeyboardState.IsKeyDown(Keys.F4))
             {
                 NPC npc = new NPC();
                 npc.Initialize(npc.Texture, pc.Position.toVector2());
-                room.Add(npc);
+                dungeon.currentRoom.Add(npc);
             }
 
 
@@ -302,7 +318,7 @@ namespace DegreeQuest
                     Halt();
                 }
             }
-
+            
         }
 
 
@@ -313,8 +329,6 @@ namespace DegreeQuest
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            // TODO: Add your drawing code here
 
             // start drawing
             spriteBatch.Begin();
@@ -348,25 +362,34 @@ namespace DegreeQuest
                 rect.SetData(data);
                 spriteBatch.Draw(rect, new Vector2(160, 90), Color.White);
 
-                lock (room)
+            lock (dungeon.currentRoom)
+            {
+                //draw player
+                //pc.Draw(spriteBatch);
+                int i;
+                for (i = 0; i < dungeon.currentRoom.num_item && i < dungeon.currentRoom.items.Length; i++) { DrawSprite(dungeon.currentRoom.items[i], spriteBatch); }
+                for (i = 0; i < dungeon.currentRoom.num && i < dungeon.currentRoom.members.Length; i++){ DrawSprite(dungeon.currentRoom.members[i], spriteBatch); }
+            }
+
+            /* debug mode draw */
+            if(debugMode)
+            {
+                string str = "";
+                if (clientMode)
+                    str += "\nMode: Client";
+                if (serverMode)
+                    str += "\nMode: Server";
+                
+                debugString += str + "\nRoom Id: " + dungeon.currentRoom.id;
+                
+                foreach(var rom in dungeon.Rooms)
                 {
-                    //draw player
-                    //pc.Draw(spriteBatch);
-                    int i;
-                    for (i = 0; i < room.num_item && i < room.items.Length; i++) { DrawSprite(room.items[i], spriteBatch); }
-                    for (i = 0; i < room.num && i < room.members.Length; i++) { DrawSprite(room.members[i], spriteBatch); }
+                    //WARNING the debug for the client might not be 100% accurate since it doesn't get the entire Dungeon class
+                    if(rom.Key == dungeon.currentRoom.id)
+                        debugString += "\n" + dungeon.currentRoom.id + " item #: " + dungeon.currentRoom.num_item + "\nactors: " + dungeon.currentRoom.num;
+                    else
+                        debugString += "\n" + rom.Key + " item #: " + rom.Value.num_item + "\nactors: " + rom.Value.num;
                 }
-
-                /* debug mode draw */
-                if (debugMode)
-                {
-                    string str = "";
-                    if (clientMode)
-                        str += "\nMode: Client";
-                    if (serverMode)
-                        str += "\nMode: Server";
-
-                    debugString += str;
 
                     spriteBatch.DrawString(sf, debugString, new Vector2(0, 2), Color.Black);
 

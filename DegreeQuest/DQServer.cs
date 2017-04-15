@@ -21,15 +21,17 @@ namespace DegreeQuest
         DegreeQuest dq;
         public volatile Boolean _halt = false;
         TcpListener srv;
+        int spectatorPort;
 
-        public DQServer(DegreeQuest mainDQ)
+        public DQServer(DegreeQuest mainDQ, Config conf)
         {
             dq = mainDQ;
+            spectatorPort = Convert.ToInt32(conf.get("spectatorPort"));
         }
 
         public void DQSInit()
         {
-            srv = new TcpListener(13337);
+            srv = new TcpListener(spectatorPort);
             clients = new ClientList();
 
             srv.Start();
@@ -120,18 +122,18 @@ namespace DegreeQuest
 
             while (!_halt2)
             {
-                string str = dq.room.num.ToString()+"#"+dq.room.num_item.ToString()+"@";
+                string str = dq.dungeon.currentRoom.num.ToString()+"#"+dq.dungeon.currentRoom.num_item.ToString()+ "#" + dq.dungeon.currentRoom.id + "@";
 
                 int i;
-                for (i = 0; i < dq.room.num; i++)
+                for (i = 0; i < dq.dungeon.currentRoom.num; i++)
                 {
-                    str += dq.room.members[i].Position.ToString() + "#" + dq.room.members[i].Texture + "@";
+                    str += dq.dungeon.currentRoom.members[i].Position.ToString() + "#" + dq.dungeon.currentRoom.members[i].Texture + "@";
                 }
-                for (i = 0; i < dq.room.num_item; i++)
+                for (i = 0; i < dq.dungeon.currentRoom.num_item; i++)
                 {
-                    str += dq.room.items[i].Position.ToString() + "#" + dq.room.items[i].Texture + "@";
+                    str += dq.dungeon.currentRoom.items[i].Position.ToString() + "#" + dq.dungeon.currentRoom.items[i].Texture + "@";
                 }
-
+                //2#2#2@pos#tex@pos2#tex2@ipos#itex@ipos2#itex2@
                 //Console.WriteLine(">>> STR IS: " + str);
 
                 NetworkStream networkStream = c.GetStream();
@@ -220,16 +222,18 @@ namespace DegreeQuest
         public volatile Boolean _halt = false;
         TcpListener srv;
         int comSize;
+        int postPort;
 
-        public DQPostSrv(DegreeQuest hostDQ, int comSiz)
+        public DQPostSrv(DegreeQuest hostDQ, Config conf)
         {
             srvDQ = hostDQ;
-            comSize = comSiz;
+            comSize = conf.getComSize();
+            postPort = Convert.ToInt32(conf.get("postPort"));
         }
 
         public void PostInit()
         {
-            srv = new TcpListener(13338);
+            srv = new TcpListener(postPort);
             clients = new ClientList();
 
             srv.Start();
@@ -314,7 +318,7 @@ namespace DegreeQuest
                 byte[] inStream = new byte[comSize];
 
                 //establish locations/init client "player" object
-                srvDQ.room.Add(cc);
+                srvDQ.dungeon.currentRoom.Add(cc);
 
                 srvDQ.LoadPC(cc, cc.Texture);
 
@@ -357,7 +361,7 @@ namespace DegreeQuest
                     Thread.Sleep(5);
                 }
 
-                srvDQ.room.Delete(cc);
+                srvDQ.dungeon.currentRoom.Delete(cc);
 
                 Console.WriteLine(">>> POST Handler Ending! ");
             }

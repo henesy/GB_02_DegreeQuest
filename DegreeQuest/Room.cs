@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
+using Microsoft.Xna.Framework;
+
 
 namespace DegreeQuest
 {
@@ -15,8 +17,9 @@ namespace DegreeQuest
         public volatile int num_item;
         public volatile Actor[] members;
         public volatile int num;
+        public volatile string id;
 
-        public Room()
+        public Room(string room_id)
         {
             lock (this)
             {
@@ -24,7 +27,35 @@ namespace DegreeQuest
                 members = new Actor[200];
                 items = new Item[ITEM_MAX];
                 num = num_item = 0;
+                id = room_id;
             }
+        }
+
+        public void sortMembers()
+        {
+            lock (this)
+            {
+                IComparer comp = new ActorComparer();
+                Array.Sort(members, 0, num, comp);
+            }         
+        }
+
+        /// <summary>
+        /// creates a shallow copy of the room.
+        /// </summary>
+        /// <returns>a shallow copy of the room</returns>
+        public Room copy()
+        {
+            Room room = new Room(id);
+            for(int i = 0; i < num_item; i++)
+            {
+                room.Add(items[i]);
+            }
+            for(int i = 0; i < num; i++)
+            {
+                room.Add(members[i]);
+            }
+            return room;
         }
 
         public void Add(Actor a)
@@ -46,10 +77,12 @@ namespace DegreeQuest
                     {
                         members[num] = a;
                         num++;
+                        sortMembers();
                     }
                 }
             }
         }
+
 
         public void Delete(Actor a)
         {
@@ -61,7 +94,6 @@ namespace DegreeQuest
                 num--;
             }
         }
-
     }
 
     class ClientComparator : IComparer
