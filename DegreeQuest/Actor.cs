@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -11,7 +12,8 @@ namespace DegreeQuest
 {
     /* For reflection of what's filling Actor, Item/Object/Static are placeholders for non-combatant elements of the world */
     [DataContract]
-    public enum AType {Item, NPC, PC, Terrain, Object, Static};
+    public enum AType {Item, NPC, PC, Terrain, Object, Static, Projectile};
+    public enum PType {Arrow, Beam, Dot};
 
     /* For identification of the sprite to use, add more as needed. Note: Texture2D is the MonoGame texture identification ;; might not be necessary */
     //public enum Texture {Generic_PC, Generic_NPC};
@@ -56,5 +58,34 @@ namespace DegreeQuest
 
         }
 
+    }
+
+    public class ActorComparer : IComparer
+    {
+        int IComparer.Compare(object x, object y)
+        {
+            if (x == null && y != null)
+                return 1;
+
+            if (y == null && x != null)
+                return -1;
+
+            if (y == null && x == null)
+                return 0;
+
+            AType xType = ((Actor)x).GetAType();
+            AType yType = ((Actor)y).GetAType();
+
+            if (xType == yType)
+                return 0;
+
+            if (xType == AType.PC) 
+                return -1;
+            if (yType == AType.PC)
+                return 1;
+
+            return 0;
+
+        }
     }
 }
