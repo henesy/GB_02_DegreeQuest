@@ -83,7 +83,7 @@ namespace DegreeQuest
             pc = new PC();
 
             dungeon = new Dungeon(pc);
-            dungeon.AddRoom("secondary");
+            dungeon.AddRoom(dungeon.index_x, dungeon.index_y  + 1);
 
             // initialise texture index
             sf = Content.Load<SpriteFont>("mono");
@@ -275,13 +275,13 @@ namespace DegreeQuest
             if (currentKeyboardState.IsKeyDown(Keys.F12) && !previousKeyboardState.IsKeyDown(Keys.F12))
             {
                 //for testing purposes
-                if (dungeon.currentRoom.id == "default")
+                if (dungeon.index_x == 25 && dungeon.index_y == 25)
                 {
-                    dungeon.switchRooms("secondary");
+                    dungeon.switchRooms(25, 26);
                 }
                 else
                 {
-                    dungeon.switchRooms("default");
+                    dungeon.switchRooms(25, 25);
                 }
             }
 
@@ -412,34 +412,31 @@ namespace DegreeQuest
                 rect.SetData(data);
                 spriteBatch.Draw(rect, new Vector2(160, 90), Color.White);
 
-            lock (dungeon.currentRoom)
-            {
-                //draw player
-                //pc.Draw(spriteBatch);
-                int i;
-                for (i = 0; i < dungeon.currentRoom.num_item && i < dungeon.currentRoom.items.Length; i++) { DrawSprite(dungeon.currentRoom.items[i], spriteBatch); }
-                for (i = 0; i < dungeon.currentRoom.num && i < dungeon.currentRoom.members.Length; i++){ DrawSprite(dungeon.currentRoom.members[i], spriteBatch); }
-            }
-
-            /* debug mode draw */
-            if(debugMode)
-            {
-                string str = "";
-                if (clientMode)
-                    str += "\nMode: Client";
-                if (serverMode)
-                    str += "\nMode: Server";
-                
-                debugString += str + "\nRoom Id: " + dungeon.currentRoom.id;
-                
-                foreach(var rom in dungeon.Rooms)
+                lock (dungeon.currentRoom)
                 {
-                    //WARNING the debug for the client might not be 100% accurate since it doesn't get the entire Dungeon class
-                    if(rom.Key == dungeon.currentRoom.id)
-                        debugString += "\n" + dungeon.currentRoom.id + " item #: " + dungeon.currentRoom.num_item + "\nactors: " + dungeon.currentRoom.num;
-                    else
-                        debugString += "\n" + rom.Key + " item #: " + rom.Value.num_item + "\nactors: " + rom.Value.num;
+                    //draw player
+                    //pc.Draw(spriteBatch);
+                    int i;
+                    for (i = 0; i < dungeon.currentRoom.num_item && i < dungeon.currentRoom.items.Length; i++) { DrawSprite(dungeon.currentRoom.items[i], spriteBatch); }
+                    for (i = 0; i < dungeon.currentRoom.num && i < dungeon.currentRoom.members.Length; i++){ DrawSprite(dungeon.currentRoom.members[i], spriteBatch); }
                 }
+
+                /* debug mode draw */
+                if(debugMode)
+                {
+                    string str = "";
+                    if (clientMode)
+                        str += "\nMode: Client";
+                    if (serverMode)
+                        str += "\nMode: Server";
+                
+                    debugString += str + "\nRoom cords: " + dungeon.index_x + "," + dungeon.index_y;
+                    /*
+                    foreach(Room room in dungeon.Rooms)
+                    {
+                        //WARNING the debug for the client might not be 100% accurate since it doesn't get the entire Dungeon class                 
+                        debugString += "\nitem #: " + room.num_item + "\nactors: " + room.num;
+                    }*/
 
                     spriteBatch.DrawString(sf, debugString, new Vector2(0, 2), Color.Black);
 

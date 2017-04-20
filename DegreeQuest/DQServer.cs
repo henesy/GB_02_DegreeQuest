@@ -122,7 +122,7 @@ namespace DegreeQuest
 
             while (!_halt2)
             {
-                string str = dq.dungeon.currentRoom.num.ToString()+"#"+dq.dungeon.currentRoom.num_item.ToString()+ "#" + dq.dungeon.currentRoom.id + "@";
+                string str = dq.dungeon.currentRoom.num.ToString()+"#"+dq.dungeon.currentRoom.num_item.ToString()+ "#" + dq.dungeon.index_x + "#" + dq.dungeon.index_y + "@";
 
                 int i;
                 for (i = 0; i < dq.dungeon.currentRoom.num; i++)

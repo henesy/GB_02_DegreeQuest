@@ -17,9 +17,10 @@ namespace DegreeQuest
         public volatile int num_item;
         public volatile Actor[] members;
         public volatile int num;
-        public volatile string id;
+        //public volatile string id;
 
-        public Room(string room_id)
+
+        public Room()
         {
             lock (this)
             {
@@ -27,7 +28,7 @@ namespace DegreeQuest
                 members = new Actor[200];
                 items = new Item[ITEM_MAX];
                 num = num_item = 0;
-                id = room_id;
+                
             }
         }
 
@@ -46,7 +47,7 @@ namespace DegreeQuest
         /// <returns>a shallow copy of the room</returns>
         public Room copy()
         {
-            Room room = new Room(id);
+            Room room = new Room();
             for(int i = 0; i < num_item; i++)
             {
                 room.Add(items[i]);
