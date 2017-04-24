@@ -311,7 +311,10 @@ namespace DegreeQuest
             /* spawn test projectile that goes to 0,0 */
             if(currentKeyboardState.IsKeyDown(Keys.F10) && !previousKeyboardState.IsKeyDown(Keys.F10) && serverMode == true)
             {
-                Projectile proj = new Projectile(pc, new Location(pc.mLoc.X, pc.mLoc.Y), 2, PType.Dot, new Location(pc.Position.X, pc.Position.Y));
+                Projectile proj = new Projectile(pc, new Location(currentMouseState.X, currentMouseState.Y), 2, PType.Dot, new Location(pc.Position.X, pc.Position.Y));
+                Console.WriteLine("Mouse: " + currentMouseState.X + " : " + currentMouseState.Y);
+                Console.WriteLine("Bearing: " + proj.Bearing);
+
                 proj.Initialize("dot", pc.Position.toVector2());
                 dungeon.currentRoom.Add(proj);
             }
@@ -336,7 +339,7 @@ namespace DegreeQuest
                     if (a.GetAType() == AType.Projectile)
                     {
                         var p = (Projectile)a;
-                        if (Math.Abs(p.Position.X - p.Bearing.X) < l && Math.Abs(p.Position.Y - p.Bearing.Y) < l)
+                        if (Math.Abs(p.Position.X - p.Bearing.X) < 1 && Math.Abs(p.Position.Y - p.Bearing.Y) < 1)
                         {
                             //close enough to target
                             p.Active = false;

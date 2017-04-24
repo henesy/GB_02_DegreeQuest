@@ -9,6 +9,7 @@ namespace DegreeQuest
 {
     class Projectile : Actor
     {
+        //need to broadcast AType for this to be effective or check for texture
         Actor Creator;
         public Location Bearing;
         PType ptype;

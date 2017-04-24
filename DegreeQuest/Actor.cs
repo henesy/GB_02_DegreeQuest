@@ -71,7 +71,7 @@ namespace DegreeQuest
             // we can move through projectiles
             var xd = Math.Abs(a.Position.X - this.Position.X);
             var yd = Math.Abs(a.Position.Y - this.Position.Y);
-            if (((xd <= w && yd <= w) && (xd > 0 && yd > 0)) && a.GetAType() != AType.Projectile && a.Active)
+            if (((xd <= w && yd <= w) && (xd > 0 && yd > 0)) && (a.GetAType() != AType.Projectile || a.Texture == "dot") && a.Active)
             {
                 return true;
             }
