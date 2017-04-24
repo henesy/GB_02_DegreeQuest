@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,41 +10,48 @@ namespace DegreeQuest
     public class Dungeon
     {
         //possibly change to different datatype like a 2d array or have a vector2 as key
-        public volatile Dictionary<string, Room> Rooms; 
+        public volatile Room[,] Rooms;
+        public volatile int index_x;
+        public volatile int index_y;
         public volatile Room currentRoom;
 
         public Dungeon(PC pc)
         {
             lock (this)
             {
-                Rooms = new Dictionary<string, Room>();
+                Rooms = new Room[50, 50];
 
-                Room room = new Room("default");
+                Room room = new Room();
                 room.Add(pc);
 
-                Rooms.Add("default", room);
+                index_x = index_y = 25;
 
-                currentRoom = Rooms["default"];
+                Rooms[index_x, index_y] = room;
+                currentRoom = room.copy();
             }
         }
 
-        public void AddRoom(string roomName)
+        public void AddRoom(int x, int y)
         {
+            if (x >= 50 || y >= 50 || x < 0 || y < 0)
+                return;
+
             lock (Rooms)
             {
-                Room room = new Room(roomName);
-                Rooms.Add(roomName, room);
+                Rooms[x, y] = new Room();
             }
         }
 
-        public void switchRooms(string roomId)
+        public void switchRooms(int x, int y)
         {
+            if (x >= 50 || y >= 50 || x < 0 || y < 0)
+                return;
             lock (this)
             {
-                if (!Rooms.ContainsKey(roomId))
-                    Rooms.Add(roomId, new Room(roomId));
+                if (Rooms[x, y] == null)
+                    AddRoom(x, y);
 
-                Rooms[currentRoom.id] = currentRoom.copy(); 
+                Rooms[index_x, index_y] = currentRoom.copy(); 
 
                 currentRoom.sortMembers();
                 for (int i = 0; i < currentRoom.num; i++)
@@ -51,8 +59,8 @@ namespace DegreeQuest
                     if (currentRoom.members[i].GetAType() == AType.PC)
                     {
                         Actor pc = currentRoom.members[i];
-                        Rooms[roomId].Add(pc);
-                        Rooms[currentRoom.id].Delete(pc);
+                        Rooms[x, y].Add(pc);
+                        Rooms[index_x, index_y].Delete(pc);
                         pc.Active = true;
                     }
                     else
@@ -60,7 +68,9 @@ namespace DegreeQuest
                         break;
                     }
                 }
-                currentRoom = Rooms[roomId].copy();    
+                currentRoom = Rooms[x, y].copy();
+                index_x = x;
+                index_y = y;
             }
         }
     }

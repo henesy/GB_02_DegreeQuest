@@ -25,11 +25,13 @@ namespace DegreeQuest
         bool debugMode = false;
         string debugString = "nil";
         public Queue actions = new Queue();
+        public Config conf;
         DQPostClient pclient = null;
         DQPostSrv psrv = null;
-        Dictionary<string, Texture2D> Textures = new Dictionary<string, Texture2D>();
+        public Dictionary<string, Texture2D> Textures = new Dictionary<string, Texture2D>();
 
         public static string root = System.AppDomain.CurrentDomain.BaseDirectory + "..\\..\\..\\..";
+        public static string state = "start";
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -38,14 +40,14 @@ namespace DegreeQuest
 
         public volatile Dungeon dungeon;
 
-        /*
-        public volatile Room room;
-        public volatile Dictionary<string, Room> rooms;
-        */
+
 
         //states to determine keypresses
         KeyboardState currentKeyboardState;
         KeyboardState previousKeyboardState;
+        //states for mouse
+        MouseState currentMouseState;
+        MouseState previousMouseState;
 
         int lastNum = -1;
 
@@ -58,6 +60,7 @@ namespace DegreeQuest
             graphics = new GraphicsDeviceManager(this);
 
             /* window resize code */
+            IsMouseVisible = true;
             graphics.IsFullScreen = false;
             graphics.PreferredBackBufferWidth = 1600;
             graphics.PreferredBackBufferHeight = 900;
@@ -80,9 +83,7 @@ namespace DegreeQuest
             pc = new PC();
 
             dungeon = new Dungeon(pc);
-
-            dungeon.AddRoom("secondary");
-            //dungeon.Rooms["secondary"].Add(pc);
+            dungeon.AddRoom(dungeon.index_x, dungeon.index_y  + 1);
 
             // initialise texture index
             sf = Content.Load<SpriteFont>("mono");
@@ -90,7 +91,7 @@ namespace DegreeQuest
             string[] files = System.IO.Directory.GetFiles(root + "\\Content\\Bin\\DesktopGL\\Images");
 
             Console.WriteLine("Loading Textures...");
-            foreach(string fname in files)
+            foreach (string fname in files)
             {
                 //Console.WriteLine(fname);
                 var s = fname.Split('\\');
@@ -102,7 +103,7 @@ namespace DegreeQuest
 
 
             // server init logic ;; always serving atm
-            Config conf = new Config();
+            conf = new Config();
 
             serverMode = conf.bget("server");
             clientMode = !serverMode;
@@ -112,7 +113,7 @@ namespace DegreeQuest
                 srv = new DQServer(this, conf);
 
                 Thread srvThread = new Thread(new ThreadStart(srv.ThreadRun));
-               srvThread.IsBackground = true;
+                srvThread.IsBackground = true;
                 srvThread.Start();
                 //srvThread.Join();
                 Console.WriteLine("> Server Initialistion Complete!");
@@ -182,16 +183,51 @@ namespace DegreeQuest
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
-        {            
+        {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Halt();
 
 
             // TODO: Add your update logic here
 
-            previousKeyboardState = currentKeyboardState;
-            currentKeyboardState = Keyboard.GetState();
-            UpdatePlayer(gameTime);
+            if (state == "start")
+            {
+                Rectangle hostClick = new Rectangle(629, 400, 343, 67);
+                Rectangle joinClick = new Rectangle(629, 500, 343, 67);
+                previousMouseState = currentMouseState;
+                currentMouseState = Mouse.GetState();
+                if (currentMouseState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Released)
+                {
+                    Point mouseloc = new Point(currentMouseState.X, currentMouseState.Y);
+                    if (hostClick.Contains(mouseloc))
+                    {
+                        state = "game";
+                    }
+                    else if (joinClick.Contains(mouseloc))
+                    {
+                        state = "game";
+                    }
+
+                }
+            }
+            if (state == "login")
+            {
+                //TODO
+            }
+            if (state == "signup")
+            {
+                //TODO
+            }
+            if (state == "game")
+            {
+                previousKeyboardState = currentKeyboardState;
+                currentKeyboardState = Keyboard.GetState();
+                UpdatePlayer(gameTime);
+            }
+            if (state == "inventory")
+            {
+                //TODO
+            }
 
             base.Update(gameTime);
         }
@@ -239,15 +275,17 @@ namespace DegreeQuest
             if (currentKeyboardState.IsKeyDown(Keys.F12) && !previousKeyboardState.IsKeyDown(Keys.F12))
             {
                 //for testing purposes
-                if (dungeon.currentRoom.id == "default")
+                if (dungeon.index_x == 25 && dungeon.index_y == 25)
                 {
-                    dungeon.switchRooms("secondary");
+                    dungeon.switchRooms(25, 26);
                 }
                 else
                 {
-                    dungeon.switchRooms("default");
+                    dungeon.switchRooms(25, 25);
                 }
             }
+
+            /* spawn test item */
             if (currentKeyboardState.IsKeyDown(Keys.F3) && !previousKeyboardState.IsKeyDown(Keys.F3))
             {
                 Item item = new Item();
@@ -255,11 +293,20 @@ namespace DegreeQuest
                 dungeon.currentRoom.Add(item);
             }
 
+            /* spawn test NPC */
             if (currentKeyboardState.IsKeyDown(Keys.F4) && !previousKeyboardState.IsKeyDown(Keys.F4))
             {
                 NPC npc = new NPC();
                 npc.Initialize(npc.Texture, pc.Position.toVector2());
                 dungeon.currentRoom.Add(npc);
+            }
+
+            /* spawn test projectile that goes to 0,0 */
+            if(currentKeyboardState.IsKeyDown(Keys.F10) && !previousKeyboardState.IsKeyDown(Keys.F10) && serverMode == true)
+            {
+                Projectile proj = new Projectile(pc, new Location(0, 0), 2, PType.Dot, new Location(1000, 1000));
+                proj.Initialize("dot", pc.Position.toVector2());
+                dungeon.currentRoom.Add(proj);
             }
 
 
@@ -268,20 +315,60 @@ namespace DegreeQuest
             pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - LoadTexture(pc).Width);
             pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 90, 810 - LoadTexture(pc).Height);
 
-            /* system checks */
-            if(serverMode)
+            
+            if (serverMode)
             {
-                if(psrv._halt || srv._halt)
+                int i;
+                int l = conf.iget("spriteLen");
+
+                //move projectiles
+                for (i = 0; i < dungeon.currentRoom.num; i++)
                 {
-                    Halt();
+                    var a = dungeon.currentRoom.members[i];
+                    if (a.GetAType() == AType.Projectile)
+                    {
+                        var p = (Projectile)a;
+                        if (Math.Abs(p.Position.X - p.Bearing.X) < l && Math.Abs(p.Position.Y - p.Bearing.Y) < l)
+                        {
+                            //close enough to target
+                            p.Active = false;
+                            dungeon.currentRoom.Delete(a);
+                        }
+                        else
+                        {
+                            //move towards target
+                            if (p.Position.X < p.Bearing.X)
+                                a.Position.X += p.MoveSpeed;
+                            else if (p.Position.X > p.Bearing.X)
+                                a.Position.X -= p.MoveSpeed;
+
+                            if (p.Position.Y < p.Bearing.Y)
+                                a.Position.Y += p.MoveSpeed;
+                            else if (p.Position.Y > p.Bearing.Y)
+                                a.Position.Y -= p.MoveSpeed;
+
+                        }
+                    }
                 }
-            } else if(clientMode)
+            }
+            
+
+            /* system checks */
+            if (serverMode)
             {
-                if(pclient._halt || client._halt)
+                if (psrv._halt || srv._halt)
                 {
                     Halt();
                 }
             }
+            else if (clientMode)
+            {
+                if (pclient._halt || client._halt)
+                {
+                    Halt();
+                }
+            }
+            
         }
 
 
@@ -296,47 +383,67 @@ namespace DegreeQuest
             // start drawing
             spriteBatch.Begin();
 
-            Texture2D rect = new Texture2D(graphics.GraphicsDevice, 1280, 720);
-            Color[] data = new Color[1280 * 720];
-
-            for (int j = 0; j < data.Length; j++) data[j] = Color.Green;
-
-            rect.SetData(data);
-            spriteBatch.Draw(rect, new Vector2(160, 90), Color.White);
-
-            lock (dungeon.currentRoom)
+            if (state == "start")
             {
-                //draw player
-                //pc.Draw(spriteBatch);
-                int i;
-                for (i = 0; i < dungeon.currentRoom.num_item && i < dungeon.currentRoom.items.Length; i++) { DrawSprite(dungeon.currentRoom.items[i], spriteBatch); }
-                for (i = 0; i < dungeon.currentRoom.num && i < dungeon.currentRoom.members.Length; i++){ DrawSprite(dungeon.currentRoom.members[i], spriteBatch); }
+                Texture2D backgound = Textures["ISU-campus"];
+                spriteBatch.Draw(backgound, new Vector2(0, 0), Color.White);
+                Texture2D hostb = Textures["HostButton"];
+                Texture2D joinb = Textures["joinButton"];
+                spriteBatch.Draw(hostb, new Vector2(629, 400), Color.White);
+                spriteBatch.Draw(joinb, new Vector2(629, 500), Color.White);
             }
-
-            /* debug mode draw */
-            if(debugMode)
+            if (state == "login")
             {
-                string str = "";
-                if (clientMode)
-                    str += "\nMode: Client";
-                if (serverMode)
-                    str += "\nMode: Server";
-                
-                debugString += str + "\nRoom Id: " + dungeon.currentRoom.id;
-                
-                foreach(var rom in dungeon.Rooms)
+                //TODO
+            }
+            if (state == "signup")
+            {
+                //TODO
+            }
+            if (state == "inventory")
+            {
+                //TODO
+            }
+            if (state == "game")
+            {
+                Texture2D rect = new Texture2D(graphics.GraphicsDevice, 1280, 720);
+                Color[] data = new Color[1280 * 720];
+                for (int j = 0; j < data.Length; j++) data[j] = Color.Green;
+                rect.SetData(data);
+                spriteBatch.Draw(rect, new Vector2(160, 90), Color.White);
+
+                lock (dungeon.currentRoom)
                 {
-                    if(rom.Key == dungeon.currentRoom.id)
-                        debugString += "\n" + dungeon.currentRoom.id + " item #: " + dungeon.currentRoom.num_item + "\nactors: " + dungeon.currentRoom.num;
-                    else
-                        debugString += "\n" + rom.Key + " item #: " + rom.Value.num_item + "\nactors: " + rom.Value.num;
+                    //draw player
+                    //pc.Draw(spriteBatch);
+                    int i;
+                    for (i = 0; i < dungeon.currentRoom.num_item && i < dungeon.currentRoom.items.Length; i++) { DrawSprite(dungeon.currentRoom.items[i], spriteBatch); }
+                    for (i = 0; i < dungeon.currentRoom.num && i < dungeon.currentRoom.members.Length; i++){ DrawSprite(dungeon.currentRoom.members[i], spriteBatch); }
                 }
 
-                spriteBatch.DrawString(sf, debugString, new Vector2(0, 2), Color.Black);
+                /* debug mode draw */
+                if(debugMode)
+                {
+                    string str = "";
+                    if (clientMode)
+                        str += "\nMode: Client";
+                    if (serverMode)
+                        str += "\nMode: Server";
+                
+                    debugString += str + "\nRoom cords: " + dungeon.index_x + "," + dungeon.index_y;
+                    /*
+                    foreach(Room room in dungeon.Rooms)
+                    {
+                        //WARNING the debug for the client might not be 100% accurate since it doesn't get the entire Dungeon class                 
+                        debugString += "\nitem #: " + room.num_item + "\nactors: " + room.num;
+                    }*/
 
-                debugString = "nil";
+                    spriteBatch.DrawString(sf, debugString, new Vector2(0, 2), Color.Black);
+
+                    debugString = "nil";
+                }
+
             }
-
             base.Draw(gameTime);
 
             //stop draw
@@ -347,18 +454,18 @@ namespace DegreeQuest
         /* Performs the shutdown routines */
         public void Halt()
         {
-            
-            if(serverMode)
+
+            if (serverMode)
             {
                 psrv.Halt();
                 srv.Halt();
             }
-            if(clientMode)
+            if (clientMode)
             {
                 client.Halt();
                 pclient.Halt();
             }
-            
+
 
             Exit();
         }
@@ -375,13 +482,14 @@ namespace DegreeQuest
             {
                 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2,
                 GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
-            } catch (NullReferenceException e)
+            }
+            catch (NullReferenceException e)
             {
                 Console.WriteLine("Faulty LoadPC, null exception, not loading requested PC...");
                 return;
             }
 
-            
+
 
             c.Initialize(texture, playerPosition);
         }

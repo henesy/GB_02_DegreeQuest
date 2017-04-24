@@ -122,7 +122,7 @@ namespace DegreeQuest
 
             while (!_halt2)
             {
-                string str = dq.dungeon.currentRoom.num.ToString()+"#"+dq.dungeon.currentRoom.num_item.ToString()+ "#" + dq.dungeon.currentRoom.id + "@";
+                string str = dq.dungeon.currentRoom.num.ToString()+"#"+dq.dungeon.currentRoom.num_item.ToString()+ "#" + dq.dungeon.index_x + "#" + dq.dungeon.index_y + "@";
 
                 int i;
                 for (i = 0; i < dq.dungeon.currentRoom.num; i++)
@@ -329,6 +329,8 @@ namespace DegreeQuest
                 var js = new JavaScriptSerializer();
                 BinaryFormatter bin = new BinaryFormatter();
 
+                Microsoft.Xna.Framework.Input.Keys[] lastkb = cc.kbState;
+
                 while (!_halt2)
                 {
                     try
@@ -342,8 +344,26 @@ namespace DegreeQuest
                         //cc = tc;
 
                         /* read from client and then do processing things, probably with tc.LastAction */
-                        Console.WriteLine(tc.kbState);
+                        //Console.WriteLine("KB State: " + tc.kbState.ToString());
 
+                        
+                        if (tc.kbState != null)
+                        {
+                            Console.WriteLine("KB State: " + tc.kbState.ToString());
+
+                            foreach (var k in tc.kbState)
+                            {
+                                if(k == Microsoft.Xna.Framework.Input.Keys.F10 && !lastkb.Contains(Microsoft.Xna.Framework.Input.Keys.F10))
+                                {
+                                    //shoot command
+                                    Projectile proj = new Projectile(cc, new Location(0, 0), 2, PType.Dot, new Location(1000, 1000));
+                                    proj.Initialize("dot", cc.Position.toVector2());
+                                    srvDQ.dungeon.currentRoom.Add(proj);
+                                }
+                            }
+                        }
+
+                        lastkb = tc.kbState;
 
                         /* write the (potentially modified) temporary character back to the client */
 
