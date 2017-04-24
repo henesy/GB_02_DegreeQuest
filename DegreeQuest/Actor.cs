@@ -62,14 +62,16 @@ namespace DegreeQuest
         /* returns true if we will collide with the given actor, called by canMove */
         public bool Collides(Actor a, Config conf)
         {
-            var w = conf.iget("spriteLen");
+            var w = conf.iget("spriteLen")+1;
             
             // we can move through ourselves ;; need to fix npc test spawning to not be on top of us or it locks our movement
             if (a.Position == this.Position)
                 return false;
 
             // we can move through projectiles
-            if((Math.Abs(a.Position.X - this.Position.X) <= w && Math.Abs(a.Position.Y - this.Position.Y) <= w) && a.GetAType() != AType.Projectile && a.Active)
+            var xd = Math.Abs(a.Position.X - this.Position.X);
+            var yd = Math.Abs(a.Position.Y - this.Position.Y);
+            if ((xd <= w && yd <= w && xd > 0 && yd > 0) && a.GetAType() != AType.Projectile && a.Active)
             {
                 return true;
             }
@@ -81,7 +83,6 @@ namespace DegreeQuest
 
         public bool CanMove(Bear b, Room r, Config conf)
         {
-            bool can = true;
             Actor us = this;
             Location orig = new Location(us.Position.X, us.Position.Y);
             
@@ -101,11 +102,13 @@ namespace DegreeQuest
                     break;
             }
 
+            Console.WriteLine("Members in room to be scanned: " + r.num);
             int i;
             for (i = 0; i < r.num; i++)
             {
                 if(r.members[i].Collides(us, conf))
                 {
+                    Console.WriteLine("Cancelled movement with: " + r.members[i]);
                     this.Position = orig;
                     us.Position = orig;
                     return false;
@@ -114,7 +117,7 @@ namespace DegreeQuest
 
             this.Position = orig;
             us.Position = orig;
-            return can;
+            return true;
         }
 
     }
