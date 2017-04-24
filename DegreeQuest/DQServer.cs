@@ -259,6 +259,7 @@ namespace DegreeQuest
                 //handle concurrently 
                 Thread handler = new Thread(new ThreadStart(h.ThreadRun));
 
+
                 try
                 {
                     handler.Start();

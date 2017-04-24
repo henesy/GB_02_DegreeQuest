@@ -275,13 +275,13 @@ namespace DegreeQuest
             if (currentKeyboardState.IsKeyDown(Keys.F12) && !previousKeyboardState.IsKeyDown(Keys.F12))
             {
                 //for testing purposes
-                if (dungeon.index_x == 25 && dungeon.index_y == 25)
+                if (dungeon.index_x == 128 && dungeon.index_y == 128)
                 {
-                    dungeon.switchRooms(25, 26);
+                    dungeon.switchRooms(Direction.North);
                 }
                 else
                 {
-                    dungeon.switchRooms(25, 25);
+                    dungeon.switchRooms(Direction.South);
                 }
             }
 
@@ -350,6 +350,8 @@ namespace DegreeQuest
                         }
                     }
                 }
+
+                dungeon.checkRoomSwitch();
             }
             
 
@@ -411,6 +413,7 @@ namespace DegreeQuest
                 for (int j = 0; j < data.Length; j++) data[j] = Color.Green;
                 rect.SetData(data);
                 spriteBatch.Draw(rect, new Vector2(160, 90), Color.White);
+                
 
                 lock (dungeon.currentRoom)
                 {

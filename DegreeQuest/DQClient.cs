@@ -74,12 +74,13 @@ namespace DegreeQuest
 
                     string[] sub = locations[0].Split('#');
                     
-
+                    /*
                     if (Convert.ToInt32(sub[2]) != dq.dungeon.index_x && Convert.ToInt32(sub[3]) != dq.dungeon.index_y)
                     {
                         dq.dungeon.switchRooms(Convert.ToInt32(sub[2]), Convert.ToInt32(sub[3]));
                         //Console.WriteLine("name: " + sub[2] + "," + sub[3]);
                     }
+                    */
 
                     dq.dungeon.currentRoom.num = int.Parse(sub[0]);
                     dq.dungeon.currentRoom.num_item = int.Parse(sub[1]);
