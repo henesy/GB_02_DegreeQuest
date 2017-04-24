@@ -18,6 +18,7 @@ namespace DegreeQuest
     {
         //action for server side usage
         public Microsoft.Xna.Framework.Input.Keys[] kbState;
+        public Microsoft.Xna.Framework.Input.MouseState mState;
 
         //Base values and constants related to PCs
         public readonly uint PC_BASE_HP= 100;

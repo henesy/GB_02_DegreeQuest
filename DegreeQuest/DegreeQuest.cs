@@ -237,22 +237,28 @@ namespace DegreeQuest
         {
             if (currentKeyboardState.IsKeyDown(Keys.Left))
             {
-                pc.Position.X -= pc.MoveSpeed;
+                if(pc.CanMove(Bear.W, dungeon.currentRoom, conf))
+                {
+                    pc.Position.X -= pc.MoveSpeed;
+                }
             }
 
             if (currentKeyboardState.IsKeyDown(Keys.Right))
             {
-                pc.Position.X += pc.MoveSpeed;
+                if (pc.CanMove(Bear.E, dungeon.currentRoom, conf))
+                    pc.Position.X += pc.MoveSpeed;
             }
 
             if (currentKeyboardState.IsKeyDown(Keys.Up))
             {
-                pc.Position.Y -= pc.MoveSpeed;
+                if (pc.CanMove(Bear.N, dungeon.currentRoom, conf))
+                    pc.Position.Y -= pc.MoveSpeed;
             }
 
             if (currentKeyboardState.IsKeyDown(Keys.Down))
             {
-                pc.Position.Y += pc.MoveSpeed;
+                if (pc.CanMove(Bear.S, dungeon.currentRoom, conf))
+                    pc.Position.Y += pc.MoveSpeed;
             }
 
             // toggle player and npc sprites (for testing)
@@ -311,6 +317,7 @@ namespace DegreeQuest
 
 
             pc.kbState = currentKeyboardState.GetPressedKeys();
+            pc.mState = currentMouseState;
 
             pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - LoadTexture(pc).Width);
             pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 90, 810 - LoadTexture(pc).Height);

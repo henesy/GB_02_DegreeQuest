@@ -14,6 +14,7 @@ namespace DegreeQuest
     [DataContract]
     public enum AType {Item, NPC, PC, Terrain, Object, Static, Projectile};
     public enum PType {Arrow, Beam, Dot};
+    public enum Bear {N, S, E, W };
 
     /* For identification of the sprite to use, add more as needed. Note: Texture2D is the MonoGame texture identification ;; might not be necessary */
     //public enum Texture {Generic_PC, Generic_NPC};
@@ -56,6 +57,64 @@ namespace DegreeQuest
 
             // Stats would be set here...
 
+        }
+
+        /* returns true if we will collide with the given actor, called by canMove */
+        public bool Collides(Actor a, Config conf)
+        {
+            var w = conf.iget("spriteLen");
+            
+            // we can move through ourselves ;; need to fix npc test spawning to not be on top of us or it locks our movement
+            if (a.Position == this.Position)
+                return false;
+
+            // we can move through projectiles
+            if((Math.Abs(a.Position.X - this.Position.X) <= w && Math.Abs(a.Position.Y - this.Position.Y) <= w) && a.GetAType() != AType.Projectile && a.Active)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool CanMove(Bear b, Room r, Config conf)
+        {
+            bool can = true;
+            Actor us = this;
+            Location orig = new Location(us.Position.X, us.Position.Y);
+            
+            switch (b)
+            {
+                case Bear.N:
+                    us.Position.Y -= us.MoveSpeed;
+                    break;
+                case Bear.S:
+                    us.Position.Y += us.MoveSpeed;
+                    break;
+                case Bear.E:
+                    us.Position.X += us.MoveSpeed;
+                    break;
+                case Bear.W:
+                    us.Position.X -= us.MoveSpeed;
+                    break;
+            }
+
+            int i;
+            for (i = 0; i < r.num; i++)
+            {
+                if(r.members[i].Collides(us, conf))
+                {
+                    this.Position = orig;
+                    us.Position = orig;
+                    return false;
+                }
+            }
+
+            this.Position = orig;
+            us.Position = orig;
+            return can;
         }
 
     }
