@@ -85,7 +85,6 @@ namespace DegreeQuest
         {
             Actor us = this;
             Location orig = new Location(us.Position.X, us.Position.Y);
-            
             switch (b)
             {
                 case Bear.N:
@@ -106,9 +105,10 @@ namespace DegreeQuest
             int i;
             for (i = 0; i < r.num; i++)
             {
-                if(r.members[i].Collides(us, conf))
+                if(r.members[i].Overlap(us))
                 {
-                    Console.WriteLine("Cancelled movement with: " + r.members[i]);
+                    
+                    Console.WriteLine("Cancelled movement with: " + r.members[i].GetHashCode() + " " + i + " " + this.GetHashCode());
                     this.Position = orig;
                     us.Position = orig;
                     return false;
@@ -134,6 +134,7 @@ namespace DegreeQuest
         public bool Overlap(Actor a)
         {
             if(!(a.Active && Active)) { return false; }
+            if (a.Equals(this)) { return false; }
             Vector2 diff = a.GetPos() - GetPos();
             int x = GetWidth();
             int y = GetHeight();

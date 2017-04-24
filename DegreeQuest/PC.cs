@@ -78,6 +78,12 @@ namespace DegreeQuest
             //for server-side use from a client
         }
 
+        public PC(String name) : this()
+        {
+            Name = name;
+        }
+
+
         public void Update()
         {
 
@@ -92,7 +98,7 @@ namespace DegreeQuest
 
 
         //If room in bag, adds and returns true. else returns false
-        public Boolean pickup(Item p)
+        public bool pickup(Item p)
         {
             for(int i=0; i < bag.Length; i++)
             {
@@ -140,6 +146,9 @@ namespace DegreeQuest
         public override int GetHeight()
         { return TEXTURE_HEIGHT; }
 
-
+        public bool Equals(PC p)
+        {
+            return p.Name.Equals(Name);
+        }
     }
 }

@@ -257,15 +257,8 @@ namespace DegreeQuest
                 if (a.GetAType() == AType.NPC && a.Active)
                 {
                     var n = (NPC)a;
-
-                    Actor target = dungeon.currentRoom.NearestPC(a.GetPos());
-
-                    if (!n.Overlap(target))
-                    {
-                        Vector2 path = target.GetPos() - n.GetPos();
-                        path.Normalize();
-                        n.Position = new Location(n.GetPos() + path * n.MoveSpeed);
-                    }
+                    n.Move(dungeon.currentRoom);
+                    
                 }
             }
         }
@@ -333,16 +326,20 @@ namespace DegreeQuest
             if (currentKeyboardState.IsKeyDown(Keys.F3) && !previousKeyboardState.IsKeyDown(Keys.F3))
             {
                 Item item = Item.Random();
-                item.Initialize(item.Texture, pc.GetPos());
+                item.Initialize(item.Texture, Mouse.GetState().Position.ToVector2());
                 dungeon.currentRoom.Add(item);
             }
 
             /* spawn test NPC */
             if (currentKeyboardState.IsKeyDown(Keys.F4) && !previousKeyboardState.IsKeyDown(Keys.F4))
             {
-                NPC npc = NPC.Random();
-                npc.Initialize(npc.name,Mouse.GetState().Position.ToVector2());
-                dungeon.currentRoom.Add(npc);
+                
+                    NPC npc = NPC.Random();
+                    npc.Initialize(npc.name, Mouse.GetState().Position.ToVector2());
+                if (npc.TryMove(dungeon.currentRoom,npc.GetPos()))
+                {
+                    dungeon.currentRoom.Add(npc);
+                }
             }
 
             /* spawn test projectile that goes to 0,0 */
@@ -362,7 +359,7 @@ namespace DegreeQuest
 
             pc.Position.X = MathHelper.Clamp(pc.Position.X, West+64, East - pc.GetWidth()-64);
             pc.Position.Y = MathHelper.Clamp(pc.Position.Y, North+64, South - pc.GetHeight()-64);
-
+            dungeon.currentRoom.Pickup(pc);
             
             if (serverMode)
             {

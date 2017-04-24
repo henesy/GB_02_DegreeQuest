@@ -22,7 +22,7 @@ namespace DegreeQuest
         public static int EP_DFLT = 0;
         public static int atk_DFLT = 0;
         public static int def_DFLT = 1;
-        public static int spd_DFLT = 1;
+        public static int spd_DFLT = 2;
         public static int lvl_DFLT = 1;
         public static int subject_DFLT = Subject.NONE;
 
@@ -84,6 +84,37 @@ namespace DegreeQuest
         public override int GetHeight()
         {return TEXTURE_HEIGHT;}
 
+
+        public bool Move(Room r)
+        {
+            Actor target = r.NearestPC(GetPos());
+            Vector2 path = target.GetPos() - GetPos();
+            path.Normalize();
+            if (TryMove(r, GetPos() + path * MoveSpeed)) { return true; }
+            if (path.X != 0) {
+                if (TryMove(r, GetPos() + new Vector2(path.X / Math.Abs(path.X), 0) * MoveSpeed)) { return true; }
+            }
+            if (path.Y != 0)
+            {
+                if (TryMove(r, GetPos() + new Vector2(0, path.Y / Math.Abs(path.Y)) * MoveSpeed)) { return true; }
+            }
+            return false;
+        }
+
+        public bool TryMove(Room r, Vector2 dest)
+        {
+            Location orig = Position;
+            Position = new Location(dest);
+            for (int i = 0; i < r.num; i++)
+            {
+                if (Overlap(r.members[i]))
+                {
+                    Position = orig;
+                    return false;
+                }
+            }
+            return true;
+        }
 
     }
 }
