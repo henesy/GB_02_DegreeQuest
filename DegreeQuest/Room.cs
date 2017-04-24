@@ -94,6 +94,18 @@ namespace DegreeQuest
                 num--;
             }
         }
+
+        public Actor NearestPC(Vector2 loc)
+        {
+            int i = 1;
+            Actor best = members[0];
+            while (i < num && members[i].GetAType()==AType.PC)
+            {
+                if ((members[i].GetPos() - loc).Length() < (best.GetPos() - loc).Length()) { best = members[i]; }
+                i++;
+            }
+            return best;
+        }
     }
 
     class ClientComparator : IComparer

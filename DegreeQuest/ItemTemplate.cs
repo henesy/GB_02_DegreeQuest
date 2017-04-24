@@ -15,12 +15,16 @@ namespace DegreeQuest
     {
         public static readonly String table_name = "ItemTemplate";
         public static readonly String Item_FILE = DegreeQuest.root + "\\Content\\Item.txt";
-        public static String[] fields = { "Name", "Type", "Effect", "Value", "Rarity", "Logic", "Life", "Chem", "Tech"};
-        public static String[] types = { "VARCHAR(45)", "VARCHAR(45)", "VARCHAR(45)", "VARCHAR(45)", "VARCHAR(45)", "INT", "INT", "INT", "INT" };
+        public static String[] fields = { "Name", "Type", "Atk", "Def", "Spd", "HP", "EP", "Val" , "Rarity","Logic", "Life", "Chem", "Tech"};
+        public static String[] types = { "VARCHAR(45)", "VARCHAR(45)", "VARCHAR(45)", "VARCHAR(45)", "VARCHAR(45)", "VARCHAR(45)", "VARCHAR(45)", "VARCHAR(45)", "VARCHAR(45)", "INT", "INT", "INT", "INT" };
         public static String[] defaults = {
             Item.name_DFLT,
             Item.type_DFLT.ToString(),
-            Item.effect_DFLT.ToString(),
+            Item.atk_DFLT.ToString(),
+            Item.def_DFLT.ToString(),
+            Item.spd_DFLT.ToString(),
+            Item.HP_DFLT.ToString(),
+            Item.EP_DFLT.ToString(),
             Item.value_DFLT.ToString(),
             Item.rarity_DFLT.ToString(),
             Item.logic_DFLT.ToString(),
@@ -29,16 +33,22 @@ namespace DegreeQuest
             Item.tech_DFLT.ToString()
         };
         public String name;
-        public int type, effect, value, rarity;
+        public int atk,def,spd,HP,EP,type, value, rarity;
         public int[] stats;
 
         ItemTemplate()
         {
+            
             this.name = Item.name_DFLT;
             this.type = Item.type_DFLT;
-            this.effect = Item.effect_DFLT;
+            this.atk = Item.type_DFLT;
+            this.def = Item.type_DFLT;
+            this.spd = Item.type_DFLT;
+            this.HP = Item.type_DFLT;
+            this.EP = Item.type_DFLT;
             this.value = Item.value_DFLT;
             this.rarity = Item.rarity_DFLT;
+
             this.stats = new int[Stat.NUM];
             this.stats[Stat.LOGIC] = Item.logic_DFLT;
             this.stats[Stat.LIFE] = Item.life_DFLT;

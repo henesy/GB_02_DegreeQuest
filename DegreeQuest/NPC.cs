@@ -12,6 +12,11 @@ namespace DegreeQuest
     [Serializable()]
     public class NPC : Actor
     {
+
+        public static readonly int TEXTURE_WIDTH = 64;
+        public static readonly int TEXTURE_HEIGHT = 64;
+
+
         public static String name_DFLT = "charmander";
         public static int HP_DFLT = 100;
         public static int EP_DFLT = 0;
@@ -28,7 +33,7 @@ namespace DegreeQuest
         // Current and maximum amount of energy (mana)
         public int EP, EPMax;
 
-        public int atk, def, spd, lvl;
+        public int atk, def, lvl;
 
         public int subject;
 
@@ -42,7 +47,7 @@ namespace DegreeQuest
             EP = EPMax = EP_DFLT;
             atk = atk_DFLT;
             def = def_DFLT;
-            spd = spd_DFLT;
+            MoveSpeed = spd_DFLT;
             lvl = lvl_DFLT;
             subject = Subject.NONE;
             Position = new Location(new Vector2(-1,-1));
@@ -56,7 +61,7 @@ namespace DegreeQuest
             EP = EPMax = temp.EP.roll();
             atk = temp.atk.roll();
             def = temp.def.roll();
-            spd = temp.spd.roll();
+            MoveSpeed = temp.spd.roll();
             subject = temp.subject();
         }
 
@@ -66,6 +71,13 @@ namespace DegreeQuest
 
         public override Vector2 GetPos()
         { return Position.toVector2(); }
+
+        public override int GetWidth()
+        {  return TEXTURE_WIDTH;   }
+
+        public override int GetHeight()
+        {return TEXTURE_HEIGHT;}
+
 
     }
 }
