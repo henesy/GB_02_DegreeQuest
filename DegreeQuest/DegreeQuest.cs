@@ -317,7 +317,7 @@ namespace DegreeQuest
 
 
             pc.kbState = currentKeyboardState.GetPressedKeys();
-            pc.mState = currentMouseState;
+            pc.mLoc = new Location(currentMouseState.X, currentMouseState.Y);
 
             pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - LoadTexture(pc).Width);
             pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 90, 810 - LoadTexture(pc).Height);

@@ -330,6 +330,7 @@ namespace DegreeQuest
                 BinaryFormatter bin = new BinaryFormatter();
 
                 Microsoft.Xna.Framework.Input.Keys[] lastkb = cc.kbState;
+                Location lastm = cc.mLoc;
 
                 while (!_halt2)
                 {
@@ -364,6 +365,16 @@ namespace DegreeQuest
                         }
 
                         lastkb = tc.kbState;
+
+                        if(tc.mLoc != null)
+                        {
+                            //mouse things
+                            Console.WriteLine("Mouse State: " + tc.mLoc.ToString());
+                        }
+
+                        lastm = tc.mLoc;
+
+                        
 
                         /* write the (potentially modified) temporary character back to the client */
 
