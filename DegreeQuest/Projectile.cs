@@ -9,6 +9,10 @@ namespace DegreeQuest
 {
     class Projectile : Actor
     {
+
+        public static readonly int TEXTURE_WIDTH = 64;
+        public static readonly int TEXTURE_HEIGHT = 64;
+
         //need to broadcast AType for this to be effective or check for texture
         Actor Creator;
         public Location Bearing;
@@ -50,5 +54,13 @@ namespace DegreeQuest
         {
             return Position.toVector2();
         }
+
+        public override int GetWidth()
+        { return TEXTURE_WIDTH; }
+
+        public override int GetHeight()
+        { return TEXTURE_HEIGHT; }
     }
+
+
 }

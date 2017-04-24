@@ -222,6 +222,10 @@ namespace DegreeQuest
             {
                 previousKeyboardState = currentKeyboardState;
                 currentKeyboardState = Keyboard.GetState();
+                if (serverMode)
+                {
+                    UpdateServer(gameTime);
+                }
                 UpdatePlayer(gameTime);
             }
             if (state == "inventory")
@@ -232,6 +236,30 @@ namespace DegreeQuest
             base.Update(gameTime);
         }
 
+
+        private void UpdateServer(GameTime gameTime)
+        {
+            for (int i = 0; i < dungeon.currentRoom.num; i++)
+            {
+                var a = dungeon.currentRoom.members[i];
+
+
+                //move npcs
+                if (a.GetAType() == AType.NPC && a.Active)
+                {
+                    var n = (NPC)a;
+
+                    Actor target = dungeon.currentRoom.NearestPC(a.GetPos());
+
+                    if (!n.Overlap(target))
+                    {
+                        Vector2 path = target.GetPos() - n.GetPos();
+                        path.Normalize();
+                        n.Position = new Location(n.GetPos() + path * n.MoveSpeed);
+                    }
+                }
+            }
+        }
 
         private void UpdatePlayer(GameTime gameTime)
         {
@@ -296,7 +324,7 @@ namespace DegreeQuest
             if (currentKeyboardState.IsKeyDown(Keys.F3) && !previousKeyboardState.IsKeyDown(Keys.F3))
             {
                 Item item = new Item();
-                item.Initialize(item.Texture, pc.Position.toVector2());
+                item.Initialize(item.Texture, pc.GetPos());
                 dungeon.currentRoom.Add(item);
             }
 
@@ -304,7 +332,7 @@ namespace DegreeQuest
             if (currentKeyboardState.IsKeyDown(Keys.F4) && !previousKeyboardState.IsKeyDown(Keys.F4))
             {
                 NPC npc = new NPC();
-                npc.Initialize(npc.Texture, pc.Position.toVector2());
+                npc.Initialize(npc.name,Mouse.GetState().Position.ToVector2());
                 dungeon.currentRoom.Add(npc);
             }
 
@@ -331,11 +359,13 @@ namespace DegreeQuest
             {
                 int i;
                 int l = conf.iget("spriteLen");
-
-                //move projectiles
+                
                 for (i = 0; i < dungeon.currentRoom.num; i++)
                 {
                     var a = dungeon.currentRoom.members[i];
+
+
+                    //move projectiles
                     if (a.GetAType() == AType.Projectile)
                     {
                         var p = (Projectile)a;
@@ -417,20 +447,19 @@ namespace DegreeQuest
             }
             if (state == "game")
             {
-                Texture2D rect = new Texture2D(graphics.GraphicsDevice, 1280, 720);
-                Color[] data = new Color[1280 * 720];
+                Texture2D rect = new Texture2D(graphics.GraphicsDevice, 1600, 720);
+                Color[] data = new Color[1600* 720];
                 for (int j = 0; j < data.Length; j++) data[j] = Color.Green;
                 rect.SetData(data);
-                spriteBatch.Draw(rect, new Vector2(160, 90), Color.White);
+                spriteBatch.Draw(rect, new Vector2(0, 90), Color.White);
 
-            lock (dungeon.currentRoom)
-            {
-                //draw player
-                //pc.Draw(spriteBatch);
-                int i;
-                for (i = 0; i < dungeon.currentRoom.num_item && i < dungeon.currentRoom.items.Length; i++) { DrawSprite(dungeon.currentRoom.items[i], spriteBatch); }
-                for (i = 0; i < dungeon.currentRoom.num && i < dungeon.currentRoom.members.Length; i++){ DrawSprite(dungeon.currentRoom.members[i], spriteBatch); }
-            }
+                lock (dungeon.currentRoom)
+                {
+                    //draw player
+                    //pc.Draw(spriteBatch);
+                    for (int i = 0; i < dungeon.currentRoom.num_item && i < dungeon.currentRoom.items.Length; i++) { DrawSprite(dungeon.currentRoom.items[i], spriteBatch); }
+                    for (int i = 0; i < dungeon.currentRoom.num && i < dungeon.currentRoom.members.Length; i++){ DrawSprite(dungeon.currentRoom.members[i], spriteBatch); }
+                }
 
             /* debug mode draw */
             if(debugMode)

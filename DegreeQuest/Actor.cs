@@ -12,12 +12,9 @@ namespace DegreeQuest
 {
     /* For reflection of what's filling Actor, Item/Object/Static are placeholders for non-combatant elements of the world */
     [DataContract]
-    public enum AType {Item, NPC, PC, Terrain, Object, Static, Projectile};
+    public enum AType {Item, NPC, PC, Terrain, Static, Projectile}; //In Dispaly order bottom to top
     public enum PType {Arrow, Beam, Dot};
     public enum Bear {N, S, E, W };
-
-    /* For identification of the sprite to use, add more as needed. Note: Texture2D is the MonoGame texture identification ;; might not be necessary */
-    //public enum Texture {Generic_PC, Generic_NPC};
 
     /*
     *   Exists to provide a placeholder within which a player or a Monster can be placed without mutual exclusion 
@@ -42,6 +39,9 @@ namespace DegreeQuest
         public abstract AType GetAType();
 
         public abstract  Vector2 GetPos();
+
+        public abstract int GetHeight();
+        public abstract int GetWidth();
 
         //public abstract void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch);
 
@@ -118,6 +118,29 @@ namespace DegreeQuest
             this.Position = orig;
             us.Position = orig;
             return true;
+        }
+
+        //true if the actor's texture occupies the given loc
+        public bool Occupying(Vector2 loc)
+        {
+            Vector2 pos = GetPos();
+            float farX = pos.X + GetWidth();
+            float farY = pos.Y + GetHeight();
+            return Active && (loc.X >= pos.X && loc.X <= farX && loc.Y >= pos.Y && loc.Y <= farY);
+
+        }
+
+        //true if the actors currently overlap, false otherwise
+        public bool Overlap(Actor a)
+        {
+            if(!(a.Active && Active)) { return false; }
+            Vector2 diff = a.GetPos() - GetPos();
+            int x = GetWidth();
+            int y = GetHeight();
+            if (diff.X < 0) { x = a.GetWidth(); diff.X =diff.X * -1; }
+            if (diff.Y < 0) { y = a.GetHeight(); diff.Y = diff.Y * -1; }
+
+            return (diff.X < x && diff.Y < y);
         }
 
     }
