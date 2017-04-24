@@ -350,14 +350,14 @@ namespace DegreeQuest
                         
                         if (tc.kbState != null)
                         {
-                            Console.WriteLine("KB State: " + tc.kbState.ToString());
+                            //Console.WriteLine("KB State: " + tc.kbState.ToString());
 
                             foreach (var k in tc.kbState)
                             {
                                 if(k == Microsoft.Xna.Framework.Input.Keys.F10 && !lastkb.Contains(Microsoft.Xna.Framework.Input.Keys.F10))
                                 {
                                     //shoot command
-                                    Projectile proj = new Projectile(cc, new Location(0, 0), 2, PType.Dot, new Location(1000, 1000));
+                                    Projectile proj = new Projectile(cc, new Location(tc.mLoc.X, tc.mLoc.Y), 2, PType.Dot, new Location(tc.Position.X, tc.Position.Y));
                                     proj.Initialize("dot", cc.Position.toVector2());
                                     srvDQ.dungeon.currentRoom.Add(proj);
                                 }
@@ -369,7 +369,8 @@ namespace DegreeQuest
                         if(tc.mLoc != null)
                         {
                             //mouse things
-                            Console.WriteLine("Mouse State: " + tc.mLoc.ToString());
+                            //Console.WriteLine("Mouse State: " + tc.mLoc.ToString());
+
                         }
 
                         lastm = tc.mLoc;

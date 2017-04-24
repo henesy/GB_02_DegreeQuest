@@ -270,6 +270,7 @@ namespace DegreeQuest
                     pc.Texture = "player";
             }
 
+            // toggle debug mode display (shows some debug information)
             if (currentKeyboardState.IsKeyDown(Keys.F2) && !previousKeyboardState.IsKeyDown(Keys.F2))
             {
                 if (debugMode)
@@ -310,7 +311,7 @@ namespace DegreeQuest
             /* spawn test projectile that goes to 0,0 */
             if(currentKeyboardState.IsKeyDown(Keys.F10) && !previousKeyboardState.IsKeyDown(Keys.F10) && serverMode == true)
             {
-                Projectile proj = new Projectile(pc, new Location(0, 0), 2, PType.Dot, new Location(1000, 1000));
+                Projectile proj = new Projectile(pc, new Location(pc.mLoc.X, pc.mLoc.Y), 2, PType.Dot, new Location(pc.Position.X, pc.Position.Y));
                 proj.Initialize("dot", pc.Position.toVector2());
                 dungeon.currentRoom.Add(proj);
             }
