@@ -218,7 +218,7 @@ namespace DegreeQuest
                 conn.Open();
                 String query = "SELECT COUNT(*) FROM " + tableName;
                 MySqlCommand cmd = new MySqlCommand(query, conn);
-                int num = new Random().Next(1,Convert.ToInt32(cmd.ExecuteScalar()));
+                int num = new Random().Next(1,Convert.ToInt32(cmd.ExecuteScalar())+1);
                 query = "SELECT * FROM " + tableName + " WHERE id = '"+num.ToString()+"'";
                 cmd = new MySqlCommand(query, conn);
                 readed = readRow(cmd.ExecuteReader());

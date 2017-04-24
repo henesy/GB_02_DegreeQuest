@@ -12,12 +12,16 @@ namespace DegreeQuest
     public class Room
     {
         public static int ITEM_MAX = 256;
+        public static int num_floor = 10;
+        public static int num_wall = 2;
         /* Populate actors by looping over members and getting X/Y values on location in Room */
         public volatile Item[] items;
         public volatile int num_item;
         public volatile Actor[] members;
         public volatile int num;
         public volatile string id;
+        public int floor, walls;
+
 
         public Room(string room_id)
         {
@@ -28,6 +32,9 @@ namespace DegreeQuest
                 items = new Item[ITEM_MAX];
                 num = num_item = 0;
                 id = room_id;
+                floor = new Random().Next(1, num_floor+1);
+                walls = new Random().Next(1, num_wall+1);
+                Console.WriteLine(walls);
             }
         }
 

@@ -18,6 +18,15 @@ namespace DegreeQuest
 
     public class DegreeQuest : Game
     {
+        public static int North = 0;
+        public static int South = 900 - 68;
+        public static int West = 0;
+        public static int East = 1600;
+        public static Vector2 NW = new Vector2(West, North);
+        public static Vector2 NE = new Vector2(East-64, North);
+        public static Vector2 SW = new Vector2(West, South - 64);
+        public static Vector2 SE = new Vector2(East-64, South-64);
+
         DQServer srv = null;
         DQClient client = null;
         bool clientMode = false;
@@ -351,8 +360,8 @@ namespace DegreeQuest
             pc.kbState = currentKeyboardState.GetPressedKeys();
             pc.mLoc = new Location(currentMouseState.X, currentMouseState.Y);
 
-            pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - LoadTexture(pc).Width);
-            pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 90, 810 - LoadTexture(pc).Height);
+            pc.Position.X = MathHelper.Clamp(pc.Position.X, West+64, East - pc.GetWidth()-64);
+            pc.Position.Y = MathHelper.Clamp(pc.Position.Y, North+64, South - pc.GetHeight()-64);
 
             
             if (serverMode)
@@ -447,14 +456,37 @@ namespace DegreeQuest
             }
             if (state == "game")
             {
-                Texture2D rect = new Texture2D(graphics.GraphicsDevice, 1600, 720);
-                Color[] data = new Color[1600* 720];
-                for (int j = 0; j < data.Length; j++) data[j] = Color.Green;
-                rect.SetData(data);
-                spriteBatch.Draw(rect, new Vector2(0, 90), Color.White);
+                //Texture2D rect = new Texture2D(graphics.GraphicsDevice, 1600, 720);
+                //Color[] data = new Color[1600* 720];
+                //for (int j = 0; j < data.Length; j++) data[j] = Color.Green;
+                //rect.SetData(data);
+                //spriteBatch.Draw(rect, new Vector2(0, 90), Color.White);
 
                 lock (dungeon.currentRoom)
                 {
+                    Room r = dungeon.currentRoom;
+                    spriteBatch.Draw(Textures["NW"+r.walls.ToString()], NW, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(Textures["NE" + r.walls.ToString()], NE, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(Textures["SW" + r.walls.ToString()], SW, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(Textures["SE" + r.walls.ToString()], SE, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    for(int x = West+64; x < East-64; x += 64)
+                    {
+                        spriteBatch.Draw(Textures["H" + r.walls.ToString()], new Vector2(x,North), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                        spriteBatch.Draw(Textures["H" + r.walls.ToString()], new Vector2(x,South-64), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    }
+                    for (int y = North+64; y < South-64; y += 64)
+                    {
+                        spriteBatch.Draw(Textures["V" + r.walls.ToString()], new Vector2(West, y), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                        spriteBatch.Draw(Textures["V" + r.walls.ToString()], new Vector2(East-64, y), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    }
+                    for (int x = West+64;x<East-64; x += 64)
+                    {
+                        for(int y = North + 64; y < South - 64; y += 64)
+                        {
+                            spriteBatch.Draw(Textures["Floor" + r.floor.ToString()], new Vector2(x, y), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                        }
+                    }
+
                     //draw player
                     //pc.Draw(spriteBatch);
                     for (int i = 0; i < dungeon.currentRoom.num_item && i < dungeon.currentRoom.items.Length; i++) { DrawSprite(dungeon.currentRoom.items[i], spriteBatch); }
