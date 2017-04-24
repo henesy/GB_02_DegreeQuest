@@ -65,6 +65,12 @@ namespace DegreeQuest
             subject = temp.subject();
         }
 
+
+        public static NPC Random()
+        {
+            return new NPC(NPCTemplate.Random());
+        }
+
         /* As per Actor */
         public override AType GetAType()
         { return AType.NPC; }

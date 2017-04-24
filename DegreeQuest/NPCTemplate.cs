@@ -88,12 +88,29 @@ namespace DegreeQuest
             return arr;
         }
 
+
+        public static NPCTemplate Random()
+        {
+            NPCTemplate t = new NPCTemplate();
+            String[] arr = DBReader.random(table_name);
+
+            t.name = arr[1];
+            t.HP = new Dice(arr[2]);
+            t.EP = new Dice(arr[3]);
+            t.atk = new Dice(arr[4]);
+            t.def = new Dice(arr[5]);
+            t.spd = new Dice(arr[6]);
+            t.lvl = new Dice(arr[7]);
+            t.subjects = Subject.listToVect(arr[8]);
+
+            return t;
+        }
+
         public static void update()
         {
             DBReader.createTable(table_name, fields, types, defaults);
             //NPCTemplate temp;
             String[] values;
-            Console.WriteLine(Path.GetFullPath(NPC_FILE));
             String[] lines = File.ReadAllLines(NPC_FILE, Encoding.UTF8);
             if (lines[0] != "Version 1.0.0")
                 throw new Exception();

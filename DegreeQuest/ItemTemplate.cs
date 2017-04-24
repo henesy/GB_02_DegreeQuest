@@ -15,7 +15,7 @@ namespace DegreeQuest
     {
         public static readonly String table_name = "ItemTemplate";
         public static readonly String Item_FILE = DegreeQuest.root + "\\Content\\Item.txt";
-        public static String[] fields = { "Name", "Type", "Atk", "Def", "Spd", "HP", "EP", "Val" , "Rarity","Logic", "Life", "Chem", "Tech"};
+        public static String[] fields = { "Name", "Type", "Atk", "Def", "Spd", "HP", "EP", "Value" , "Rarity","Logic", "Life", "Chem", "Tech"};
         public static String[] types = { "VARCHAR(45)", "VARCHAR(45)", "VARCHAR(45)", "VARCHAR(45)", "VARCHAR(45)", "VARCHAR(45)", "VARCHAR(45)", "VARCHAR(45)", "VARCHAR(45)", "INT", "INT", "INT", "INT" };
         public static String[] defaults = {
             Item.name_DFLT,
@@ -33,7 +33,8 @@ namespace DegreeQuest
             Item.tech_DFLT.ToString()
         };
         public String name;
-        public int atk,def,spd,HP,EP,type, value, rarity;
+        public Item.IType type;
+        public int atk,def,spd,HP,EP, value, rarity;
         public int[] stats;
 
         ItemTemplate()
@@ -41,11 +42,11 @@ namespace DegreeQuest
             
             this.name = Item.name_DFLT;
             this.type = Item.type_DFLT;
-            this.atk = Item.type_DFLT;
-            this.def = Item.type_DFLT;
-            this.spd = Item.type_DFLT;
-            this.HP = Item.type_DFLT;
-            this.EP = Item.type_DFLT;
+            this.atk = Item.atk_DFLT;
+            this.def = Item.def_DFLT;
+            this.spd = Item.spd_DFLT;
+            this.HP = Item.HP_DFLT;
+            this.EP = Item.EP_DFLT;
             this.value = Item.value_DFLT;
             this.rarity = Item.rarity_DFLT;
 
@@ -55,13 +56,34 @@ namespace DegreeQuest
             this.stats[Stat.CHEM] = Item.chem_DFLT;
             this.stats[Stat.TECH] = Item.tech_DFLT;
         }
-        
+
+        public static ItemTemplate Random()
+        {
+            ItemTemplate t = new ItemTemplate();
+            String[] arr = DBReader.random(table_name);
+
+            t.name = arr[1];
+            Enum.TryParse(arr[2], out t.type);
+            t.atk = int.Parse(arr[3]);
+            t.def = int.Parse(arr[4]);
+            t.spd = int.Parse(arr[5]);
+            t.HP = int.Parse(arr[6]);
+            t.EP = int.Parse(arr[7]);
+            t.value = int.Parse(arr[8]);
+            t.rarity = int.Parse(arr[9]);
+            t.stats[0] = int.Parse(arr[10]);
+            t.stats[1] = int.Parse(arr[11]);
+            t.stats[2] = int.Parse(arr[12]);
+            t.stats[3] = int.Parse(arr[13]);
+
+            return t;
+        }
+
         public static void update()
         {
             DBReader.createTable(table_name, fields, types, defaults);
             //ItemTemplate temp;
             String[] values;
-            Console.WriteLine(Path.GetFullPath(Item_FILE));
             String[] lines = File.ReadAllLines(Item_FILE, Encoding.UTF8);
             if (lines[0] != "Version 1.0.0")
                 throw new Exception();

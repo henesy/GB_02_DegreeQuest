@@ -22,7 +22,7 @@ namespace DegreeQuest
         public static int equip_slots = (int)IType.TwoHand+1;
 
         public static String name_DFLT = "thing";
-        public static int type_DFLT = (int)IType.NONE;
+        public static IType type_DFLT = IType.NONE;
         public static int atk_DFLT = 0;
         public static int def_DFLT = 0;
         public static int spd_DFLT = 0;
@@ -40,8 +40,9 @@ namespace DegreeQuest
         public IType type;
         public int value, rarity;
         public int atk, def, spd;
+        public int HP, EP;
 
-        public int[] req;
+        public int[] stats;
         
 
         //Current default constructor
@@ -52,12 +53,33 @@ namespace DegreeQuest
             name = name_DFLT;
             value = rarity = 0;
             atk = def = spd = 0;
+            HP = EP = 0;
             type = IType.NONE;
-            req = new int[Stat.NUM];
-            for(int i=0;i<req.Length;i++)
+            stats = new int[Stat.NUM];
+            for(int i=0;i<stats.Length;i++)
             {
-                req[i] = 0;
+                stats[i] = 0;
             }
+        }
+
+        public Item(ItemTemplate temp)
+        {
+            Texture = name = temp.name;
+            type = temp.type;
+            atk = temp.atk;
+            def = temp.def;
+            spd = temp.spd;
+            value = temp.value;
+            rarity = temp.rarity;
+            HP = temp.HP;
+            EP = temp.EP;
+            stats = temp.stats;
+
+        }
+
+        public static Item Random()
+        {
+            return new Item(ItemTemplate.Random());
         }
 
         public override AType GetAType() { return AType.Item; }

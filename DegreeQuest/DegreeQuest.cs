@@ -323,7 +323,7 @@ namespace DegreeQuest
             /* spawn test item */
             if (currentKeyboardState.IsKeyDown(Keys.F3) && !previousKeyboardState.IsKeyDown(Keys.F3))
             {
-                Item item = new Item();
+                Item item = Item.Random();
                 item.Initialize(item.Texture, pc.GetPos());
                 dungeon.currentRoom.Add(item);
             }
@@ -331,7 +331,7 @@ namespace DegreeQuest
             /* spawn test NPC */
             if (currentKeyboardState.IsKeyDown(Keys.F4) && !previousKeyboardState.IsKeyDown(Keys.F4))
             {
-                NPC npc = new NPC();
+                NPC npc = NPC.Random();
                 npc.Initialize(npc.name,Mouse.GetState().Position.ToVector2());
                 dungeon.currentRoom.Add(npc);
             }
