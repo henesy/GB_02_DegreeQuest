@@ -18,6 +18,7 @@ namespace DegreeQuest
     {
         //action for server side usage
         public Microsoft.Xna.Framework.Input.Keys[] kbState;
+        public Microsoft.Xna.Framework.Input.MouseState mouseState;
         public Location mLoc;
 
         public static readonly int TEXTURE_WIDTH = 64;
@@ -59,12 +60,14 @@ namespace DegreeQuest
         public Item[] bag;
 
         public int atkmod, defmod, spdmod;
-
+        public long id;
+        public int number;
 
         //Default Constructor
         public PC()
         {
             Position = new Location(new Vector2(-1, -1));
+            number = (new Random().Next(1, 4) + 1);
             Active = false;
             HP = HPMax = PC_BASE_HP;
             EP = EPMax = PC_BASE_EP;
@@ -74,15 +77,12 @@ namespace DegreeQuest
             equipment = new Item[Item.equip_slots];
             bag = new Item[BASE_BAG_SIZE];
             //changeme
-            Texture = "player";
+            Texture = "Player"+number.ToString();
             atkmod = defmod = spdmod = 0;
             //for server-side use from a client
+            id = System.DateTime.Now.Ticks;
         }
 
-        public PC(String name) : this()
-        {
-            Name = name;
-        }
 
 
         public void Update()
@@ -158,6 +158,12 @@ namespace DegreeQuest
         public bool Equals(PC p)
         {
             return p.Name.Equals(Name);
+        }
+
+        public bool TakeHit(int damage)
+        {
+            HP = Math.Max(0, HP - damage);
+            return true;
         }
 
         public String Attack (Actor a)
