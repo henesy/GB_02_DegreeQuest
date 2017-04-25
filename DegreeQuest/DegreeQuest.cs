@@ -417,7 +417,7 @@ namespace DegreeQuest
                     if (a.GetAType() == AType.Projectile)
                     {
                         var p = (Projectile)a;
-                        if (Math.Abs(p.Position.X - p.Bearing.X) < 1 && Math.Abs(p.Position.Y - p.Bearing.Y) < 1)
+                        if (Math.Abs(p.Position.X - p.Bearing.X) <= 1.5 && Math.Abs(p.Position.Y - p.Bearing.Y) <= 1.5)
                         {
                             //close enough to target
                             p.Active = false;

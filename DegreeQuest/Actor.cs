@@ -135,7 +135,10 @@ namespace DegreeQuest
         {
             if(!(a.Active && Active)) { return false; }
             if (a.Equals(this)) { return false; }
+            if(a.GetAType() == AType.Projectile || GetAType() == AType.Projectile) { return false; }
+            if(a.Position.X == Position.X && a.Position.Y == Position.Y) { return false; }
             Vector2 diff = a.GetPos() - GetPos();
+            if(Math.Abs(diff.X) < 0 && Math.Abs(diff.Y) < 0) { return false; }
             int x = GetWidth();
             int y = GetHeight();
             if (diff.X < 0) { x = a.GetWidth(); diff.X =diff.X * -1; }
