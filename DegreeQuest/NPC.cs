@@ -35,6 +35,9 @@ namespace DegreeQuest
 
         public int atk, def, lvl;
 
+        public long atkspd = 500;
+        public long nextAtk = DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond;
+
         public int subject;
 
         //public Texture2D Texture { get; private set; }
@@ -83,11 +86,31 @@ namespace DegreeQuest
         public override int GetHeight()
         {return TEXTURE_HEIGHT;}
 
+        public void Attack(PC pc)
+        {
+            long now = DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond;
+            if (pc == null || nextAtk> now) { return; }
+            nextAtk = now + atkspd;
+            bool kill = !(pc.TakeHit(atk));
+            if (kill)
+            {
+                return;// "Killed enemy " + ((NPC)a).name + "!";
+            }
+            else
+            {
+                return; //"Hit enemy " + ((NPC)a).name + " for " + attack + ".";
+            }
+        }
 
         public bool Move(Room r)
         {
             Actor target = r.NearestPC(GetPos());
             Vector2 path = target.GetPos() - GetPos();
+            if(Math.Abs(path.X)<=68 && Math.Abs(path.Y) <= 68)
+            {
+                Attack((PC)target);
+                return false;
+            }
             path.Normalize();
             if (TryMove(r, GetPos() + path * MoveSpeed)) { return true; }
             if (path.X != 0) {

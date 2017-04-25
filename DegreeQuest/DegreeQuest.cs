@@ -180,7 +180,7 @@ namespace DegreeQuest
             Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2,
                 GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
 
-            pc.Initialize("player", playerPosition);
+            pc.Initialize(pc.Texture, playerPosition);
         }
 
         /// <summary>
@@ -312,10 +312,8 @@ namespace DegreeQuest
             // toggle player and npc sprites (for testing)
             if (currentKeyboardState.IsKeyDown(Keys.F5) && !previousKeyboardState.IsKeyDown(Keys.F5))
             {
-                if (pc.Texture == "player")
-                    pc.Texture = "npc";
-                else
-                    pc.Texture = "player";
+                pc.number = (pc.number % 4) + 1;
+                pc.Texture = "Player" + pc.number.ToString();
             }
 
             // toggle debug mode display (shows some debug information)
@@ -662,17 +660,38 @@ namespace DegreeQuest
                     //pc.Draw(spriteBatch);
                     for (int i = 0; i < dungeon.currentRoom.num_item && i < dungeon.currentRoom.items.Length; i++) { DrawSprite(dungeon.currentRoom.items[i], spriteBatch); }
                     for (int i = 0; i < dungeon.currentRoom.num && i < dungeon.currentRoom.members.Length; i++){ DrawSprite(dungeon.currentRoom.members[i], spriteBatch); }
-                    //current message
-                    spriteBatch.DrawString(sf, message, message_loc, Color.White,0f,Vector2.Zero,3f,SpriteEffects.None,0f);
 
-                    float percentHP = (float)pc.HP / (float)pc.HPMax;
-                    //current HP, damage
-                    Texture2D rect = new Texture2D(graphics.GraphicsDevice, 400, 900-South);
-                    Color[] data = new Color[400*(900-South)];
-                    for (int j = 0; j < data.Length*percentHP; j++) data[j] = Color.Green;
-                    for (int j = (int)(data.Length * percentHP); j < data.Length; j++) data[j] = Color.Red;
+                    //Bottom Bar:
+                    Vector2 barSize = new Vector2(1600, 900 - South);
+                    Texture2D rect = new Texture2D(graphics.GraphicsDevice, 1600, 900 - South);
+                    Color[] data = new Color[1600 * (900 - South)];
+                    for (int j = 0; j < data.Length; j++) data[j] = Color.Black;
                     rect.SetData(data);
                     spriteBatch.Draw(rect, new Vector2(0, South), Color.White);
+
+                    float percentHP = (float)pc.HP / (float)pc.HPMax;
+                    int middle = (int)(percentHP * 400);
+                    //current HP
+                    rect = new Texture2D(graphics.GraphicsDevice, 400, 900-South);
+                    data = new Color[400*(900-South)];
+                    for (int j = 0; j < data.Length; j++)
+                    {
+                        if (j % 400 < middle) { data[j] = Color.Green; }
+                        else { data[j] = Color.Red; }
+                    }
+                    rect.SetData(data);
+                    spriteBatch.Draw(rect, new Vector2(0, South), Color.White);
+                    String HPString = pc.HP + "/" + pc.HPMax;
+                    Vector2 HPSize = 3f*sf.MeasureString(HPString);
+                    Vector2 HPLoc = new Vector2(200, South+ barSize.Y/2) - HPSize/2;
+                    spriteBatch.DrawString(sf, HPString, HPLoc, Color.White, 0f, Vector2.Zero, 3f, SpriteEffects.None, 0f);
+                    
+                    //currentWeapon+Damage
+                    //Todo
+
+                    //current message
+                    spriteBatch.DrawString(sf, message, message_loc, Color.White, 0f, Vector2.Zero, 3f, SpriteEffects.None, 0f);
+
                 }
 
                 /* debug mode draw */
