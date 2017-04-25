@@ -107,10 +107,13 @@ namespace DegreeQuest
             {
                 if(r.members[i].Overlap(us))
                 {
-                    
                     Console.WriteLine("Cancelled movement with: " + r.members[i].GetHashCode() + " " + i + " " + this.GetHashCode());
                     this.Position = orig;
                     us.Position = orig;
+                    if (r.members[i].Overlap(us))
+                    {
+                        adjustPosition(b, r.members[i]);
+                    }
                     return false;
                 }
             }
@@ -118,6 +121,28 @@ namespace DegreeQuest
             this.Position = orig;
             us.Position = orig;
             return true;
+        }
+
+        public void adjustPosition(Bear b, Actor member)
+        {
+            switch (b)
+            {
+                case Bear.N:
+                    member.Position = new Location(member.Position.X, member.Position.Y -10);
+                    break;
+                case Bear.S:
+                    member.Position = new Location(member.Position.X, member.Position.Y + 10);
+                    break;
+                case Bear.E:
+                    member.Position = new Location(member.Position.X + 10, member.Position.Y);
+                    break;
+                case Bear.W:
+                    member.Position = new Location(member.Position.X - 10, member.Position.Y);
+                    break;
+                default:
+                    member.Position = new Location(member.Position.X - 10, member.Position.Y - 10);
+                    break;
+            }
         }
 
         //true if the actor's texture occupies the given loc
