@@ -85,16 +85,19 @@ namespace DegreeQuest
         /// <returns>a shallow copy of the room</returns>
         public Room copy()
         {
-            Room room = new Room(floor, walls);
-            for(int i = 0; i < num_item; i++)
+            lock (this)
             {
-                room.Add(items[i]);
+                Room room = new Room(floor, walls);
+                for (int i = 0; i < num_item; i++)
+                {
+                    room.Add(items[i]);
+                }
+                for (int i = 0; i < num; i++)
+                {
+                    room.Add(members[i]);
+                }
+                return room;
             }
-            for(int i = 0; i < num; i++)
-            {
-                room.Add(members[i]);
-            }
-            return room;
         }
 
 
@@ -296,12 +299,12 @@ namespace DegreeQuest
                     int i;
                     for (i = 0; i < num_npc; i++)
                     {
-                        textures[i] = npcs[i].Texture;
+                        textures[i] = npcs[i].GetTexture();
                         locs[i] = npcs[i].GetPos();
                     }
                     for (i = num_npc; i < num_npc + num_item; i++)
                     {
-                        textures[i] = items[i + num_item].Texture;
+                        textures[i] = items[i + num_item].GetTexture();
                         locs[i] = items[i + num_item].GetPos();
                     }
                     walls = r.walls;

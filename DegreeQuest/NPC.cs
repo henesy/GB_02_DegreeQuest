@@ -104,23 +104,27 @@ namespace DegreeQuest
 
         public bool Move(Room r)
         {
-            Actor target = r.NearestPC(GetPos());
-            Vector2 path = target.GetPos() - GetPos();
-            if(Math.Abs(path.X)<=68 && Math.Abs(path.Y) <= 68)
+            lock (r)
             {
-                Attack((PC)target);
+                Actor target = r.NearestPC(GetPos());
+                Vector2 path = target.GetPos() - GetPos();
+                if (Math.Abs(path.X) <= 68 && Math.Abs(path.Y) <= 68)
+                {
+                    Attack((PC)target);
+                    return false;
+                }
+                path.Normalize();
+                if (TryMove(r, GetPos() + path * MoveSpeed)) { return true; }
+                if (path.X != 0)
+                {
+                    if (TryMove(r, GetPos() + new Vector2(path.X / Math.Abs(path.X), 0) * MoveSpeed)) { return true; }
+                }
+                if (path.Y != 0)
+                {
+                    if (TryMove(r, GetPos() + new Vector2(0, path.Y / Math.Abs(path.Y)) * MoveSpeed)) { return true; }
+                }
                 return false;
             }
-            path.Normalize();
-            if (TryMove(r, GetPos() + path * MoveSpeed)) { return true; }
-            if (path.X != 0) {
-                if (TryMove(r, GetPos() + new Vector2(path.X / Math.Abs(path.X), 0) * MoveSpeed)) { return true; }
-            }
-            if (path.Y != 0)
-            {
-                if (TryMove(r, GetPos() + new Vector2(0, path.Y / Math.Abs(path.Y)) * MoveSpeed)) { return true; }
-            }
-            return false;
         }
 
         public bool TryMove(Room r, Vector2 dest)
