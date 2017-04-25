@@ -19,7 +19,6 @@ namespace DegreeQuest
         public volatile int num_item;
         public volatile Actor[] members;
         public volatile int num;
-        //public volatile string id;
         public int floor, walls;
 
 

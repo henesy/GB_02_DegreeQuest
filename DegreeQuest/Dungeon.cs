@@ -10,6 +10,10 @@ namespace DegreeQuest
     public enum Direction { None, North, South, East, West}
     public class Dungeon
     {
+        public static int N = 64;
+        public static int S = 900 - 68 - 128;
+        public static int W = 64;
+        public static int E = 1600 - 128;
         //possibly change to different datatype like a 2d array or have a vector2 as key
         public volatile Room[,] Rooms;
         public volatile int index_x;
@@ -42,7 +46,7 @@ namespace DegreeQuest
                 Rooms[x, y] = new Room();
             }
         }
-
+        /* slated for removal ,this part switches rooms when all of the users go next to a door
         public void checkRoomSwitch()
         {
             currentRoom.sortMembers();
@@ -63,19 +67,32 @@ namespace DegreeQuest
 
             switchRooms(direction);
         }
+        */
 
+        public void checkRoomSwitch(Actor pc)
+        {
+            Direction direction = checkDirection(pc);
+            if(direction != Direction.None)
+            {
+                switchRooms(direction);
+            }
+        }
         private Direction checkDirection(Actor pc)
         {
             if (pc.GetAType() == AType.PC)
             {
-                if (pc.Position.X <= 161)
-                    return Direction.West;
-                else if (pc.Position.X >= 1375)
-                    return Direction.East;
-                else if (pc.Position.Y <= 91)
-                    return Direction.North;
-                else if (pc.Position.Y >= 745)
-                    return Direction.South;
+                if (pc.Position.Y >= 320 && pc.Position.Y <= 448) {
+                    if (pc.Position.X <= W - 23)
+                        return Direction.West;
+                    else if (pc.Position.X >= E + 23)
+                        return Direction.East;
+                }
+                if (pc.Position.X >= 704 && pc.Position.X <= 832) {
+                    if (pc.Position.Y <= N - 23)
+                        return Direction.North;
+                    else if (pc.Position.Y >= S + 23)
+                        return Direction.South;
+                }
             }
             return Direction.None;
         }
@@ -84,30 +101,37 @@ namespace DegreeQuest
         {
             lock (currentRoom)
             {
-                Console.WriteLine("Here " + d);
                 if (d == Direction.North)
                 {
-                    Console.WriteLine("North");
                     for (int i = 0; i < currentRoom.num; i++)
                     {
-                        currentRoom.members[i].Position.Y = 741;
-                        Console.WriteLine(i + " " + currentRoom.members[i].Position.Y);
-                    }
+                        currentRoom.members[i].Position.Y = S;
+                        currentRoom.members[i].Position.X = 768;
+                    }                        
                 }
                 else if (d == Direction.South)
                 {
                     for (int i = 0; i < currentRoom.num; i++)
-                        currentRoom.members[i].Position.Y = 95;
+                    {
+                        currentRoom.members[i].Position.Y = N;
+                        currentRoom.members[i].Position.X = 768;
+                    }
                 }
                 else if (d == Direction.East)
                 {
                     for (int i = 0; i < currentRoom.num; i++)
-                        currentRoom.members[i].Position.X = 165;
+                    {
+                        currentRoom.members[i].Position.X = W;
+                        currentRoom.members[i].Position.Y = 384;
+                    }
                 }
                 else if (d == Direction.West)
                 {
                     for (int i = 0; i < currentRoom.num; i++)
-                        currentRoom.members[i].Position.X = 1371;
+                    {
+                        currentRoom.members[i].Position.X = E;
+                        currentRoom.members[i].Position.Y = 384;
+                    }
                 }
             }
             
