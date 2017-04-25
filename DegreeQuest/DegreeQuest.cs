@@ -595,11 +595,22 @@ namespace DegreeQuest
                     debugString = "nil";
                 }
 
-                Texture2D inv = new Texture2D(graphics.GraphicsDevice, 600, 600);
-                Color[] color = new Color[600 * 600];
+                Texture2D inv = new Texture2D(graphics.GraphicsDevice, 900, 500);
+                Color[] color = new Color[900 * 500];
                 for (int i = 0; i < color.Length; i++) color[i] = Color.LightGray;
                 inv.SetData(color);
-                spriteBatch.Draw(inv, new Vector2(600, 150), Color.White);
+                spriteBatch.Draw(inv, new Vector2(450, 200), Color.White);
+                spriteBatch.DrawString(sf, "Name: " + pc.Name, new Vector2(460, 210), Color.Black);
+                spriteBatch.DrawString(sf, "HP: " + pc.HP + "/" + pc.HPMax, new Vector2(460, 240), Color.Black);
+                spriteBatch.DrawString(sf, "EP: " + pc.EP + "/" + pc.EPMax, new Vector2(460, 270), Color.Black);
+                spriteBatch.DrawString(sf, "Dept: " + pc.Debt, new Vector2(460, 300), Color.Black);
+                spriteBatch.DrawString(sf, "Logic: " + pc.Stats[Stat.LOGIC], new Vector2(460, 330), Color.Black);
+                spriteBatch.DrawString(sf, "Life: " + pc.Stats[Stat.LIFE], new Vector2(460, 360), Color.Black);
+                spriteBatch.DrawString(sf, "Chem: " + pc.Stats[Stat.CHEM], new Vector2(460, 390), Color.Black);
+                spriteBatch.DrawString(sf, "Tech: " + pc.Stats[Stat.TECH], new Vector2(460, 420), Color.Black);
+                spriteBatch.DrawString(sf, "Math: " + pc.Stats[Stat.NUM], new Vector2(460, 450), Color.Black);
+                spriteBatch.Draw(Textures["inventory"], new Vector2(900, 275));
+                //todo pc's bag and equipment
 
             }
             if (state == "game")
