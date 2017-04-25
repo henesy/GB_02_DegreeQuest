@@ -359,6 +359,15 @@ namespace DegreeQuest
 
             pc.Position.X = MathHelper.Clamp(pc.Position.X, West+64, East - pc.GetWidth()-64);
             pc.Position.Y = MathHelper.Clamp(pc.Position.Y, North+64, South - pc.GetHeight()-64);
+
+            /* take care of clamps for npc's */
+            int i;
+            for(i = 0; i < dungeon.currentRoom.num; i++)
+            {
+                dungeon.currentRoom.members[i].Position.X = MathHelper.Clamp(dungeon.currentRoom.members[i].Position.X, West + 64, East - dungeon.currentRoom.members[i].GetWidth() - 64);
+                dungeon.currentRoom.members[i].Position.Y = MathHelper.Clamp(dungeon.currentRoom.members[i].Position.Y, West + 64, East - dungeon.currentRoom.members[i].GetWidth() - 64);
+            }
+
             dungeon.currentRoom.Pickup(pc);
             
             if (serverMode)
