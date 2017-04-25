@@ -34,6 +34,8 @@ namespace DegreeQuest
         public String message = "";
         public static Vector2 message_loc = new Vector2(East / 2, South+10);
 
+        double ClickTimer;
+        const double TimerDelay = 500;
         DQServer srv = null;
         DQClient client = null;
         bool clientMode = false;
@@ -248,13 +250,74 @@ namespace DegreeQuest
             {
                 previousKeyboardState = currentKeyboardState;
                 currentKeyboardState = Keyboard.GetState();
+                previousMouseState = currentMouseState;
+                currentMouseState = Mouse.GetState();
                 if (currentKeyboardState.IsKeyDown(Keys.M) && previousKeyboardState.IsKeyUp(Keys.M))
                     state = "game";
+                if(currentMouseState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton == ButtonState.Released)
+                {
+                    UpdateInventory(gameTime);
+                }
+
             }
 
             base.Update(gameTime);
         }
 
+        private void UpdateInventory(GameTime gameTime)
+        {
+            ClickTimer += gameTime.ElapsedGameTime.TotalMilliseconds;
+            if(Mouse.GetState().LeftButton== ButtonState.Pressed)
+            {
+                if(ClickTimer < TimerDelay)
+                {
+                    //double click
+                    Point mouseloc = new Point(currentMouseState.X, currentMouseState.Y);
+                    Rectangle bag = new Rectangle(647, 272, 175, 350);
+                    Rectangle head = new Rectangle(950, 318, 32, 32);
+                    Rectangle chest = new Rectangle(950, 389, 32, 32);
+                    Rectangle legs = new Rectangle(950, 462,32,32);
+                    Rectangle rh = new Rectangle(871, 411, 32,32);
+                    Rectangle lh = new Rectangle(1026, 411, 32, 32);
+                    if(bag.Contains(mouseloc))
+                    {
+                        int i = (mouseloc.X - 647) / 35;
+                        int j = (mouseloc.Y - 272) / 35;
+                        if(pc.bag[i + (j * 10)] != null)
+                            pc.bag[i + (j * 10)] = pc.equip(pc.bag[i + (j * 10)]);
+                    }
+                    if(head.Contains(mouseloc))
+                    {
+                        if(pc.equipment[0] != null)
+                        {
+                            pc.unequip(0);
+                        }
+                    }
+                    if(chest.Contains(mouseloc))
+                    {
+                        pc.unequip(1);
+                    }
+                    if(legs.Contains(mouseloc))
+                    {
+                        pc.unequip(2);
+                    }
+                    if(rh.Contains(mouseloc))
+                    {
+                        pc.unequip(4);
+                    }
+                    if(lh.Contains(mouseloc))
+                    {
+                        pc.unequip(5);
+                    }
+                    
+                }
+                else
+                {
+                    ClickTimer = 0;
+                }
+            }
+
+        }
 
         private void UpdateServer(GameTime gameTime)
         {
@@ -593,22 +656,57 @@ namespace DegreeQuest
                     debugString = "nil";
                 }
 
-                Texture2D inv = new Texture2D(graphics.GraphicsDevice, 900, 500);
-                Color[] color = new Color[900 * 500];
+                Texture2D inv = new Texture2D(graphics.GraphicsDevice, 650, 400);
+                Color[] color = new Color[650 * 430];
                 for (int i = 0; i < color.Length; i++) color[i] = Color.LightGray;
                 inv.SetData(color);
-                spriteBatch.Draw(inv, new Vector2(450, 200), Color.White);
-                spriteBatch.DrawString(sf, "Name: " + pc.Name, new Vector2(460, 210), Color.Black);
-                spriteBatch.DrawString(sf, "HP: " + pc.HP + "/" + pc.HPMax, new Vector2(460, 240), Color.Black);
-                spriteBatch.DrawString(sf, "EP: " + pc.EP + "/" + pc.EPMax, new Vector2(460, 270), Color.Black);
-                spriteBatch.DrawString(sf, "Dept: " + pc.Debt, new Vector2(460, 300), Color.Black);
-                spriteBatch.DrawString(sf, "Logic: " + pc.Stats[Stat.LOGIC], new Vector2(460, 330), Color.Black);
-                spriteBatch.DrawString(sf, "Life: " + pc.Stats[Stat.LIFE], new Vector2(460, 360), Color.Black);
-                spriteBatch.DrawString(sf, "Chem: " + pc.Stats[Stat.CHEM], new Vector2(460, 390), Color.Black);
-                spriteBatch.DrawString(sf, "Tech: " + pc.Stats[Stat.TECH], new Vector2(460, 420), Color.Black);
-                spriteBatch.DrawString(sf, "Math: " + pc.Stats[Stat.NUM], new Vector2(460, 450), Color.Black);
-                spriteBatch.Draw(Textures["inventory"], new Vector2(900, 275));
-                //todo pc's bag and equipment
+                spriteBatch.Draw(inv, new Vector2(445, 250), Color.White);
+                spriteBatch.DrawString(sf, "Name: " + pc.Name, new Vector2(465, 270), Color.Black);
+                spriteBatch.DrawString(sf, "HP: " + pc.HP + "/" + pc.HPMax, new Vector2(465, 300), Color.Black);
+                spriteBatch.DrawString(sf, "EP: " + pc.EP + "/" + pc.EPMax, new Vector2(465, 330), Color.Black);
+                spriteBatch.DrawString(sf, "Dept: " + pc.Debt, new Vector2(465, 360), Color.Black);
+                spriteBatch.DrawString(sf, "Logic: " + pc.Stats[Stat.LOGIC], new Vector2(465, 390), Color.Black);
+                spriteBatch.DrawString(sf, "Life: " + pc.Stats[Stat.LIFE], new Vector2(465, 420), Color.Black);
+                spriteBatch.DrawString(sf, "Chem: " + pc.Stats[Stat.CHEM], new Vector2(465, 450), Color.Black);
+                spriteBatch.DrawString(sf, "Tech: " + pc.Stats[Stat.TECH], new Vector2(465, 480), Color.Black);
+                spriteBatch.DrawString(sf, "Math: " + pc.Stats[Stat.NUM], new Vector2(465, 510), Color.Black);
+                spriteBatch.Draw(Textures["inventory"], new Vector2(645, 270));
+                for (int i = 0; i < pc.bag.Length; i++)
+                {
+                    if (pc.bag[i] == null){ }
+                    else { 
+                        int x = 647 + ((i % 5) * 35);
+                        int y = 272 + ((i / 5) * 35);
+                        Console.WriteLine(pc.bag[i].name);
+                        spriteBatch.Draw(Textures[pc.bag[i].name], new Vector2(x, y));
+                    } 
+                }
+                for (int i = 0; i < pc.equipment.Length; i++)
+                {
+                    if(pc.equipment[i] != null)
+                    {
+                        if(i == 0)
+                        {
+                            spriteBatch.Draw(Textures[pc.equipment[i].name], new Vector2(950, 318));
+                        }
+                        else if (i == 1)
+                        {
+                            spriteBatch.Draw(Textures[pc.equipment[i].name], new Vector2(950, 389));
+                        } 
+                        else if(i == 2)
+                        {
+                            spriteBatch.Draw(Textures[pc.equipment[i].name], new Vector2(950, 462));
+                        }
+                        else if( i == 5 || i == 7)
+                        {
+                            spriteBatch.Draw(Textures[pc.equipment[i].name], new Vector2(871, 411));
+                        }
+                        else if( i == 6)
+                        {
+                            spriteBatch.Draw(Textures[pc.equipment[i].name], new Vector2(1026, 411));
+                        }
+                    }
+                }
 
             }
             if (state == "game")
