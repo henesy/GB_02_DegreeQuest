@@ -358,7 +358,8 @@ namespace DegreeQuest
             }
 
             /* spawn test projectile that goes to 0,0 */
-            if(currentKeyboardState.IsKeyDown(Keys.F10) && !previousKeyboardState.IsKeyDown(Keys.F10) && serverMode == true)
+            if(((currentKeyboardState.IsKeyDown(Keys.F10) && !previousKeyboardState.IsKeyDown(Keys.F10)) ||
+                    (currentKeyboardState.IsKeyDown(Keys.Space) && !previousKeyboardState.IsKeyDown(Keys.Space))) && serverMode == true)
             {
                 Projectile proj = new Projectile(pc, new Location(currentMouseState.X, currentMouseState.Y), 2, PType.Dot, new Location(pc.Position.X, pc.Position.Y));
                // Console.WriteLine("Mouse: " + currentMouseState.X + " : " + currentMouseState.Y);
