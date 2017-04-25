@@ -27,7 +27,7 @@ namespace DegreeQuest
 
         //float Position { get; set; }
 
-        public string Texture { get; set; }
+        protected string Texture { get; set; }
 
         //public Texture2D Texture { get; set; }
 
@@ -42,6 +42,9 @@ namespace DegreeQuest
 
         public abstract int GetHeight();
         public abstract int GetWidth();
+        public  string GetTexture() { return Texture; }
+
+        public void SetTexture(String text) { Texture = text; }
 
         //public abstract void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch);
 
@@ -108,7 +111,7 @@ namespace DegreeQuest
                 if(r.members[i].Overlap(us))
                 {
                     
-                    Console.WriteLine("Cancelled movement with: " + r.members[i].GetHashCode() + " " + i + " " + this.GetHashCode());
+                    //Console.WriteLine("Cancelled movement with: " + r.members[i].GetHashCode() + " " + i + " " + this.GetHashCode());
                     this.Position = orig;
                     us.Position = orig;
                     return false;
@@ -135,7 +138,10 @@ namespace DegreeQuest
         {
             if(!(a.Active && Active)) { return false; }
             if (a.Equals(this)) { return false; }
+            if(a.GetAType() == AType.Projectile || GetAType() == AType.Projectile) { return false; }
+            if(a.Position.X == Position.X && a.Position.Y == Position.Y) { return false; }
             Vector2 diff = a.GetPos() - GetPos();
+            if(Math.Abs(diff.X) < 0 && Math.Abs(diff.Y) < 0) { return false; }
             int x = GetWidth();
             int y = GetHeight();
             if (diff.X < 0) { x = a.GetWidth(); diff.X =diff.X * -1; }

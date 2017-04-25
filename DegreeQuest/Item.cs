@@ -21,7 +21,7 @@ namespace DegreeQuest
         public enum IType { Head, Torso, Feet, Hands, OneHand, OffHand, TwoHand, UseTemp, UsePerm, NONE}
         public static int equip_slots = (int)IType.TwoHand+1;
 
-        public static String name_DFLT = "thing";
+        public static String name_DFLT = "DiamondSword";
         public static IType type_DFLT = IType.NONE;
         public static int atk_DFLT = 0;
         public static int def_DFLT = 0;

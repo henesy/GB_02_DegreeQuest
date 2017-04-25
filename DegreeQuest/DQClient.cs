@@ -94,7 +94,7 @@ namespace DegreeQuest
                     for(j = 0; j < dq.dungeon.currentRoom.num && j < dq.dungeon.currentRoom.members.Length; j++)
                     {
                         PC tc = new PC();
-                        dq.LoadPC(tc, tc.Texture);
+                        dq.LoadPC(tc, tc.GetTexture());
                         dq.dungeon.currentRoom.members[j] = tc;
                     }
 
@@ -105,7 +105,7 @@ namespace DegreeQuest
                         //Console.WriteLine(">>>SUB STRING: " + sub[0] + " then " + sub[1]);
 
                         dq.dungeon.currentRoom.members[i].Position = new Location(sub[0]);
-                        dq.dungeon.currentRoom.members[i].Texture = sub[1];
+                        dq.dungeon.currentRoom.members[i].SetTexture(sub[1]);
                     }
                     for (i = 0; i< dq.dungeon.currentRoom.num_item && i < dq.dungeon.currentRoom.items.Length; i++) //issue is that the second rooms items gets the values of the first room
                     {
@@ -114,6 +114,7 @@ namespace DegreeQuest
                         sub = locations[i+dq.dungeon.currentRoom.num+1].Split('#');
                         //Console.WriteLine(">>>SUB STRING: " + sub[0] + " then " + sub[1]);
 
+                        dq.dungeon.currentRoom.members[i].SetTexture(sub[1]);
                         dq.dungeon.currentRoom.items[i].Position = new Location(sub[0]);
                     
                     }

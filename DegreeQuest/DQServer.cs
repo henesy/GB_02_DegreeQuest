@@ -128,12 +128,12 @@ namespace DegreeQuest
                 int i;
                 for (i = 0; i < dq.dungeon.currentRoom.num; i++)
                 {
-                    str += dq.dungeon.currentRoom.members[i].Position.ToString() + "#" + dq.dungeon.currentRoom.members[i].Texture + "@";
+                    str += dq.dungeon.currentRoom.members[i].Position.ToString() + "#" + dq.dungeon.currentRoom.members[i].GetTexture() + "@";
                     Console.Write("PC: " + i + "; pos: " + dq.dungeon.currentRoom.members[i].Position.ToString());
                 }
                 for (i = 0; i < dq.dungeon.currentRoom.num_item; i++)
                 {
-                    str += dq.dungeon.currentRoom.items[i].Position.ToString() + "#" + dq.dungeon.currentRoom.items[i].Texture + "@";
+                    str += dq.dungeon.currentRoom.items[i].Position.ToString() + "#" + dq.dungeon.currentRoom.items[i].GetTexture() + "@";
                 }
                 //2#2#2@pos#tex@pos2#tex2@ipos#itex@ipos2#itex2@
                 Console.WriteLine(">>> STR IS: " + str);
@@ -323,7 +323,7 @@ namespace DegreeQuest
                 //establish locations/init client "player" object
                 srvDQ.dungeon.currentRoom.Add(cc);
 
-                srvDQ.LoadPC(cc, cc.Texture);
+                srvDQ.LoadPC(cc, cc.GetTexture());
 
 
 
@@ -344,7 +344,7 @@ namespace DegreeQuest
                         //katie was here
                         PC tc = (PC)bin.Deserialize(cStream);
                         cc.Position = tc.Position;
-                        cc.Texture = tc.Texture;
+                        cc.SetTexture( tc.GetTexture());
                         //cc = tc;
 
                         /* read from client and then do processing things, probably with tc.LastAction */
