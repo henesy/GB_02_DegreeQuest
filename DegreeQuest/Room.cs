@@ -46,10 +46,23 @@ namespace DegreeQuest
                     }
                 }
 
-                Console.WriteLine(walls);
+                Console.WriteLine("lol:" + walls);
             }
         }
 
+        /// <summary>
+        /// Secondary constructor used for duplicating a room
+        /// </summary>
+        /// <param name="floor">the room num being used</param>
+        /// <param name="walls">the walls num being used</param>
+        public Room(int floor, int walls)
+        {
+            members = new Actor[200];
+            items = new Item[ITEM_MAX];
+            num = num_item = 0;
+            this.floor = floor;
+            this.walls = walls;
+        }
         public void sortMembers()
         {
             lock (this)
@@ -65,7 +78,7 @@ namespace DegreeQuest
         /// <returns>a shallow copy of the room</returns>
         public Room copy()
         {
-            Room room = new Room();
+            Room room = new Room(floor, walls);
             for(int i = 0; i < num_item; i++)
             {
                 room.Add(items[i]);
@@ -74,8 +87,6 @@ namespace DegreeQuest
             {
                 room.Add(members[i]);
             }
-            room.floor = this.floor;
-            room.walls = this.walls;
             return room;
         }
 
