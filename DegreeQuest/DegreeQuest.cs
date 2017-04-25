@@ -376,8 +376,11 @@ namespace DegreeQuest
             int i;
             for(i = 0; i < dungeon.currentRoom.num; i++)
             {
-                dungeon.currentRoom.members[i].Position.X = MathHelper.Clamp(dungeon.currentRoom.members[i].Position.X, West + 64, East - dungeon.currentRoom.members[i].GetWidth() - 64);
-                dungeon.currentRoom.members[i].Position.Y = MathHelper.Clamp(dungeon.currentRoom.members[i].Position.Y, West + 64, East - dungeon.currentRoom.members[i].GetWidth() - 64);
+                if (dungeon.currentRoom.members[i].GetAType() == AType.NPC)
+                {
+                    dungeon.currentRoom.members[i].Position.X = MathHelper.Clamp(dungeon.currentRoom.members[i].Position.X, West + 64, East - dungeon.currentRoom.members[i].GetWidth() - 64);
+                    dungeon.currentRoom.members[i].Position.Y = MathHelper.Clamp(dungeon.currentRoom.members[i].Position.Y, West + 64, East - dungeon.currentRoom.members[i].GetWidth() - 64);
+                }
             }
 
             dungeon.currentRoom.Pickup(pc);
