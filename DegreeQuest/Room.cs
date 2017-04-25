@@ -32,6 +32,20 @@ namespace DegreeQuest
                 num = num_item = 0;
                 floor = new Random().Next(1, num_floor+1);
                 walls = new Random().Next(1, num_wall+1);
+
+                Random rand = new Random();
+                int enemyCount = rand.Next(5);
+                for(int i = 0; i < enemyCount; i++)
+                {
+                    NPC npc = NPC.Random();
+                    
+                    npc.Initialize(npc.name, new Vector2(rand.Next(64, 1472), rand.Next(64, 704)));
+                    if (npc.TryMove(this, npc.GetPos()))
+                    {
+                        Add(npc);
+                    }
+                }
+
                 Console.WriteLine(walls);
             }
         }
@@ -76,7 +90,6 @@ namespace DegreeQuest
                         items[num_item] = (Item)a;
                         num_item++;
                     }
-
                 }
                 else
                 {

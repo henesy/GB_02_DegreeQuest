@@ -337,9 +337,9 @@ namespace DegreeQuest
             /* spawn test NPC */
             if (currentKeyboardState.IsKeyDown(Keys.F4) && !previousKeyboardState.IsKeyDown(Keys.F4))
             {
-                
-                    NPC npc = NPC.Random();
-                    npc.Initialize(npc.name, Mouse.GetState().Position.ToVector2());
+
+                NPC npc = NPC.Random();
+                npc.Initialize(npc.name, Mouse.GetState().Position.ToVector2());
                 if (npc.TryMove(dungeon.currentRoom,npc.GetPos()))
                 {
                     dungeon.currentRoom.Add(npc);
@@ -362,7 +362,7 @@ namespace DegreeQuest
             pc.mLoc = new Location(currentMouseState.X, currentMouseState.Y);
 
             if (pc.Position.Y >= 320 && pc.Position.Y <= 448 || pc.Position.X >= 704 && pc.Position.X <= 832)
-            {//22
+            {
                 pc.Position.X = MathHelper.Clamp(pc.Position.X, West + 41, East - pc.GetWidth() - 41);
                 pc.Position.Y = MathHelper.Clamp(pc.Position.Y, North + 41, South - pc.GetHeight() - 41);
             }
@@ -535,12 +535,20 @@ namespace DegreeQuest
                         str += "\nMode: Server";
                 
                     debugString += str + "\nRoom cords: " + dungeon.index_x + "," + dungeon.index_y;
-                    /*
+                    
+                    for(int i = 0; i < dungeon.currentRoom.num; i++)
+                    {
+                        debugString +=  i + ": " +dungeon.currentRoom.members[i].Position.ToString();
+                    }
+
                     foreach(Room room in dungeon.Rooms)
                     {
                         //WARNING the debug for the client might not be 100% accurate since it doesn't get the entire Dungeon class                 
-                        debugString += "\nitem #: " + room.num_item + "\nactors: " + room.num;
-                    }*/
+                        if (room != null)
+                        {
+                            debugString += "\nitem #: " + room.num_item + "\nactors: " + room.num;
+                        }
+                    }
 
                     spriteBatch.DrawString(sf, debugString, new Vector2(0, 2), Color.Black);
 
