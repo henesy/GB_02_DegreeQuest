@@ -105,32 +105,44 @@ namespace DegreeQuest
                 {
                     for (int i = 0; i < currentRoom.num; i++)
                     {
-                        currentRoom.members[i].Position.Y = S;
-                        currentRoom.members[i].Position.X = 768;
+                        if (currentRoom.members[i].GetAType() == AType.PC)
+                        {
+                            currentRoom.members[i].Position.Y = S;
+                            currentRoom.members[i].Position.X = 768;
+                        }
                     }                        
                 }
                 else if (d == Direction.South)
                 {
                     for (int i = 0; i < currentRoom.num; i++)
                     {
-                        currentRoom.members[i].Position.Y = N;
-                        currentRoom.members[i].Position.X = 768;
+                        if (currentRoom.members[i].GetAType() == AType.PC)
+                        {
+                            currentRoom.members[i].Position.Y = N;
+                            currentRoom.members[i].Position.X = 768;
+                        }
                     }
                 }
                 else if (d == Direction.East)
                 {
                     for (int i = 0; i < currentRoom.num; i++)
                     {
-                        currentRoom.members[i].Position.X = W;
-                        currentRoom.members[i].Position.Y = 384;
+                        if (currentRoom.members[i].GetAType() == AType.PC)
+                        {
+                            currentRoom.members[i].Position.X = W;
+                            currentRoom.members[i].Position.Y = 384;
+                        }
                     }
                 }
                 else if (d == Direction.West)
                 {
                     for (int i = 0; i < currentRoom.num; i++)
                     {
-                        currentRoom.members[i].Position.X = E;
-                        currentRoom.members[i].Position.Y = 384;
+                        if (currentRoom.members[i].GetAType() == AType.PC)
+                        {
+                            currentRoom.members[i].Position.X = E;
+                            currentRoom.members[i].Position.Y = 384;
+                        }
                     }
                 }
             }

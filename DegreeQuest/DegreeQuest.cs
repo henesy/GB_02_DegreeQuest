@@ -534,11 +534,11 @@ namespace DegreeQuest
                     if (serverMode)
                         str += "\nMode: Server";
                 
-                    debugString += str + "\nRoom cords: " + dungeon.index_x + "," + dungeon.index_y;
+                    debugString += str + "\nRoom cords: " + dungeon.index_x + "," + dungeon.index_y + "\n";
                     
                     for(int i = 0; i < dungeon.currentRoom.num; i++)
                     {
-                        debugString +=  i + ": " +dungeon.currentRoom.members[i].Position.ToString();
+                        debugString +=  i + ": " +dungeon.currentRoom.members[i].Position.ToString() + " ";
                     }
 
                     foreach(Room room in dungeon.Rooms)
