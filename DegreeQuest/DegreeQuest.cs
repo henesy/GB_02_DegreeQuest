@@ -36,7 +36,7 @@ namespace DegreeQuest
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        PC pc;
+        public volatile PC pc;
 
         public volatile Dungeon dungeon;
 
@@ -314,8 +314,8 @@ namespace DegreeQuest
 
             pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - LoadTexture(pc).Width);
             pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 90, 810 - LoadTexture(pc).Height);
-
             
+
             if (serverMode)
             {
                 int i;
@@ -350,8 +350,6 @@ namespace DegreeQuest
                         }
                     }
                 }
-
-                dungeon.checkRoomSwitch();
             }
             
 

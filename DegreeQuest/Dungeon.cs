@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DegreeQuest
 {
-    public enum Direction { None = -1, North = 0, South = 1, East = 2, West = 3}
+    public enum Direction { None, North, South, East, West}
     public class Dungeon
     {
         //possibly change to different datatype like a 2d array or have a vector2 as key
@@ -48,7 +48,7 @@ namespace DegreeQuest
             currentRoom.sortMembers();
             
             Direction direction = checkDirection(currentRoom.members[0]);
-            Console.WriteLine(direction);//todo
+            //Console.WriteLine(direction + "X " + currentRoom.members[0].Position.X + "; Y " + currentRoom.members[0].Position.Y);
             if (direction == Direction.None)
                 return;
 
@@ -61,7 +61,7 @@ namespace DegreeQuest
                 }
             }
 
-
+            switchRooms(direction);
         }
 
         private Direction checkDirection(Actor pc)
@@ -70,37 +70,45 @@ namespace DegreeQuest
             {
                 if (pc.Position.X <= 161)
                     return Direction.West;
-                else if (pc.Position.X >= 1439)
+                else if (pc.Position.X >= 1375)
                     return Direction.East;
                 else if (pc.Position.Y <= 91)
-                    return Direction.South;
-                else if (pc.Position.Y >= 809)
                     return Direction.North;
+                else if (pc.Position.Y >= 745)
+                    return Direction.South;
             }
             return Direction.None;
         }
 
         private void updatePCPos(Direction d)
         {
-            if (d == Direction.North)
+            lock (currentRoom)
             {
-                for(int i = 0; i < currentRoom.num; i++)
-                    currentRoom.members[i].Position.Y = 95;  
-            }     
-            else if (d == Direction.South)
-            {
-                for (int i = 0; i < currentRoom.num; i++)
-                    currentRoom.members[i].Position.Y = 805;
-            }
-            else if (d == Direction.East)
-            {
-                for (int i = 0; i < currentRoom.num; i++)
-                    currentRoom.members[i].Position.X = 165;
-            }
-            else if (d == Direction.West)
-            {
-                for (int i = 0; i < currentRoom.num; i++)
-                    currentRoom.members[i].Position.X = 1435;
+                Console.WriteLine("Here " + d);
+                if (d == Direction.North)
+                {
+                    Console.WriteLine("North");
+                    for (int i = 0; i < currentRoom.num; i++)
+                    {
+                        currentRoom.members[i].Position.Y = 741;
+                        Console.WriteLine(i + " " + currentRoom.members[i].Position.Y);
+                    }
+                }
+                else if (d == Direction.South)
+                {
+                    for (int i = 0; i < currentRoom.num; i++)
+                        currentRoom.members[i].Position.Y = 95;
+                }
+                else if (d == Direction.East)
+                {
+                    for (int i = 0; i < currentRoom.num; i++)
+                        currentRoom.members[i].Position.X = 165;
+                }
+                else if (d == Direction.West)
+                {
+                    for (int i = 0; i < currentRoom.num; i++)
+                        currentRoom.members[i].Position.X = 1371;
+                }
             }
             
         }
@@ -121,13 +129,21 @@ namespace DegreeQuest
             else
                 return;
 
+            switchRooms(x, y);
+
+            updatePCPos(d);
+        }
+
+        public void switchRooms(int x, int y)
+        {
             lock (this)
             {
+               
                 if (Rooms[x, y] == null)
                     AddRoom(x, y);
 
-                Rooms[index_x, index_y] = currentRoom.copy(); 
-
+                Rooms[index_x, index_y] = currentRoom.copy();
+                //Rooms[index_x, index_y] = currentRoom;
                 currentRoom.sortMembers();
                 for (int i = 0; i < currentRoom.num; i++)
                 {
@@ -144,9 +160,10 @@ namespace DegreeQuest
                     }
                 }
                 currentRoom = Rooms[x, y].copy();
+                //currentRoom = Rooms[x, y];
                 index_x = x;
                 index_y = y;
-                updatePCPos(d);
+
             }
         }
     }
