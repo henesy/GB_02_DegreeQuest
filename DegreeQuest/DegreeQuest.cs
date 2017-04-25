@@ -372,7 +372,6 @@ namespace DegreeQuest
             
             if (serverMode)
             {
-                int i;
                 int l = conf.iget("spriteLen");
                 
                 for (i = 0; i < dungeon.currentRoom.num; i++)
