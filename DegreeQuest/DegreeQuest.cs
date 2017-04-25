@@ -26,6 +26,10 @@ namespace DegreeQuest
         public static Vector2 NE = new Vector2(East-64, North);
         public static Vector2 SW = new Vector2(West, South - 64);
         public static Vector2 SE = new Vector2(East-64, South-64);
+        public static Vector2 MN = new Vector2((East -64 - West) / 2, North);
+        public static Vector2 MS = new Vector2((East - 64 - West) / 2, South - 64);
+        public static Vector2 ME = new Vector2(East-64, (South - 64 - North)/2);
+        public static Vector2 MW = new Vector2(West, (South - 64 - North)/2);
 
         DQServer srv = null;
         DQClient client = null;
@@ -45,7 +49,7 @@ namespace DegreeQuest
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        PC pc;
+        public volatile PC pc;
 
         public volatile Dungeon dungeon;
 
@@ -92,7 +96,7 @@ namespace DegreeQuest
             pc = new PC();
 
             dungeon = new Dungeon(pc);
-            dungeon.AddRoom("secondary");
+            //dungeon.AddRoom(dungeon.index_x, dungeon.index_y  + 1);
 
             // initialise texture index
             sf = Content.Load<SpriteFont>("mono");
@@ -312,13 +316,13 @@ namespace DegreeQuest
             if (currentKeyboardState.IsKeyDown(Keys.F12) && !previousKeyboardState.IsKeyDown(Keys.F12))
             {
                 //for testing purposes
-                if (dungeon.currentRoom.id == "default")
+                if (dungeon.index_x == 128 && dungeon.index_y == 128)
                 {
-                    dungeon.switchRooms("secondary");
+                    dungeon.switchRooms(Direction.North);
                 }
                 else
                 {
-                    dungeon.switchRooms("default");
+                    dungeon.switchRooms(Direction.South);
                 }
             }
 
@@ -333,9 +337,9 @@ namespace DegreeQuest
             /* spawn test NPC */
             if (currentKeyboardState.IsKeyDown(Keys.F4) && !previousKeyboardState.IsKeyDown(Keys.F4))
             {
-                
-                    NPC npc = NPC.Random();
-                    npc.Initialize(npc.name, Mouse.GetState().Position.ToVector2());
+
+                NPC npc = NPC.Random();
+                npc.Initialize(npc.name, Mouse.GetState().Position.ToVector2());
                 if (npc.TryMove(dungeon.currentRoom,npc.GetPos()))
                 {
                     dungeon.currentRoom.Add(npc);
@@ -357,8 +361,16 @@ namespace DegreeQuest
             pc.kbState = currentKeyboardState.GetPressedKeys();
             pc.mLoc = new Location(currentMouseState.X, currentMouseState.Y);
 
-            pc.Position.X = MathHelper.Clamp(pc.Position.X, West+64, East - pc.GetWidth()-64);
-            pc.Position.Y = MathHelper.Clamp(pc.Position.Y, North+64, South - pc.GetHeight()-64);
+            if (pc.Position.Y >= 320 && pc.Position.Y <= 448 || pc.Position.X >= 704 && pc.Position.X <= 832)
+            {
+                pc.Position.X = MathHelper.Clamp(pc.Position.X, West + 41, East - pc.GetWidth() - 41);
+                pc.Position.Y = MathHelper.Clamp(pc.Position.Y, North + 41, South - pc.GetHeight() - 41);
+            }
+            else
+            {
+                pc.Position.X = MathHelper.Clamp(pc.Position.X, West + 64, East - pc.GetWidth() - 64);
+                pc.Position.Y = MathHelper.Clamp(pc.Position.Y, North + 64, South - pc.GetHeight() - 64);
+            }
 
             /* take care of clamps for npc's */
             int i;
@@ -373,7 +385,7 @@ namespace DegreeQuest
             if (serverMode)
             {
                 int l = conf.iget("spriteLen");
-                
+                dungeon.checkRoomSwitch(pc);
                 for (i = 0; i < dungeon.currentRoom.num; i++)
                 {
                     var a = dungeon.currentRoom.members[i];
@@ -470,27 +482,50 @@ namespace DegreeQuest
                 lock (dungeon.currentRoom)
                 {
                     Room r = dungeon.currentRoom;
-                    spriteBatch.Draw(Textures["NW"+r.walls.ToString()], NW, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
-                    spriteBatch.Draw(Textures["NE" + r.walls.ToString()], NE, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
-                    spriteBatch.Draw(Textures["SW" + r.walls.ToString()], SW, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
-                    spriteBatch.Draw(Textures["SE" + r.walls.ToString()], SE, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
-                    for(int x = West+64; x < East-64; x += 64)
+                    
+
+                    for (int x = West; x < East; x += 64)
                     {
-                        spriteBatch.Draw(Textures["H" + r.walls.ToString()], new Vector2(x,North), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
-                        spriteBatch.Draw(Textures["H" + r.walls.ToString()], new Vector2(x,South-64), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
-                    }
-                    for (int y = North+64; y < South-64; y += 64)
-                    {
-                        spriteBatch.Draw(Textures["V" + r.walls.ToString()], new Vector2(West, y), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
-                        spriteBatch.Draw(Textures["V" + r.walls.ToString()], new Vector2(East-64, y), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
-                    }
-                    for (int x = West+64;x<East-64; x += 64)
-                    {
-                        for(int y = North + 64; y < South - 64; y += 64)
+                        for (int y = North; y < South; y += 64)
                         {
                             spriteBatch.Draw(Textures["Floor" + r.floor.ToString()], new Vector2(x, y), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
                         }
                     }
+                    spriteBatch.Draw(Textures["NW" + r.walls.ToString()], NW, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(Textures["NE" + r.walls.ToString()], NE, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(Textures["SW" + r.walls.ToString()], SW, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(Textures["SE" + r.walls.ToString()], SE, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    for (int x = West+64; x < East-64; x += 64)
+                    {
+                        if (x < MN.X-128 || x > MN.X + 128)
+                        {
+                            spriteBatch.Draw(Textures["H" + r.walls.ToString()], new Vector2(x, North), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                            spriteBatch.Draw(Textures["H" + r.walls.ToString()], new Vector2(x, South - 64), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                        }
+                    }
+                    for (int y = North + 64; y < South - 64; y += 64)
+                    {
+                        if (y < ME.Y - 128 || y > ME.Y + 128) {
+                            spriteBatch.Draw(Textures["V" + r.walls.ToString()], new Vector2(West, y), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                            spriteBatch.Draw(Textures["V" + r.walls.ToString()], new Vector2(East - 64, y), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                        }
+                    }
+
+                    //spriteBatch.Draw(Textures["HDoor" + r.walls.ToString()], MN, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    for (int offset = -64; offset <= 64; offset += 64) {
+                        spriteBatch.Draw(Textures["HDoor" + r.walls.ToString()], new Vector2(MN.X + offset, MN.Y), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                        spriteBatch.Draw(Textures["HDoor" + r.walls.ToString()], new Vector2(MS.X + offset, MS.Y), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                        spriteBatch.Draw(Textures["VDoor" + r.walls.ToString()], new Vector2(ME.X, ME.Y + offset), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                        spriteBatch.Draw(Textures["VDoor" + r.walls.ToString()], new Vector2(MW.X, MW.Y + offset), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    }
+                    spriteBatch.Draw(Textures["W" + r.walls.ToString()], new Vector2(MN.X + 128, North), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(Textures["W" + r.walls.ToString()], new Vector2(MN.X + 128, South - 64), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(Textures["E" + r.walls.ToString()], new Vector2(MN.X - 128, North), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(Textures["E" + r.walls.ToString()], new Vector2(MN.X - 128, South - 64), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(Textures["N" + r.walls.ToString()], new Vector2(East-64, ME.Y + 128), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(Textures["N" + r.walls.ToString()], new Vector2(West, ME.Y + 128), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(Textures["S" + r.walls.ToString()], new Vector2(East-64, ME.Y - 128), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(Textures["S" + r.walls.ToString()], new Vector2(West, ME.Y - 128), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 
                     //draw player
                     //pc.Draw(spriteBatch);
@@ -498,25 +533,30 @@ namespace DegreeQuest
                     for (int i = 0; i < dungeon.currentRoom.num && i < dungeon.currentRoom.members.Length; i++){ DrawSprite(dungeon.currentRoom.members[i], spriteBatch); }
                 }
 
-            /* debug mode draw */
-            if(debugMode)
-            {
-                string str = "";
-                if (clientMode)
-                    str += "\nMode: Client";
-                if (serverMode)
-                    str += "\nMode: Server";
-                
-                debugString += str + "\nRoom Id: " + dungeon.currentRoom.id;
-                
-                foreach(var rom in dungeon.Rooms)
+                /* debug mode draw */
+                if(debugMode)
                 {
-                    //WARNING the debug for the client might not be 100% accurate since it doesn't get the entire Dungeon class
-                    if(rom.Key == dungeon.currentRoom.id)
-                        debugString += "\n" + dungeon.currentRoom.id + " item #: " + dungeon.currentRoom.num_item + "\nactors: " + dungeon.currentRoom.num;
-                    else
-                        debugString += "\n" + rom.Key + " item #: " + rom.Value.num_item + "\nactors: " + rom.Value.num;
-                }
+                    string str = "";
+                    if (clientMode)
+                        str += "\nMode: Client";
+                    if (serverMode)
+                        str += "\nMode: Server";
+                
+                    debugString += str + "\nRoom cords: " + dungeon.index_x + "," + dungeon.index_y + "\n";
+                    
+                    for(int i = 0; i < dungeon.currentRoom.num; i++)
+                    {
+                        debugString +=  i + ": " +dungeon.currentRoom.members[i].Position.ToString() + " ";
+                    }
+
+                    foreach(Room room in dungeon.Rooms)
+                    {
+                        //WARNING the debug for the client might not be 100% accurate since it doesn't get the entire Dungeon class                 
+                        if (room != null)
+                        {
+                            debugString += "\nitem #: " + room.num_item + "\nactors: " + room.num;
+                        }
+                    }
 
                     spriteBatch.DrawString(sf, debugString, new Vector2(0, 2), Color.Black);
 

@@ -19,11 +19,10 @@ namespace DegreeQuest
         public volatile int num_item;
         public volatile Actor[] members;
         public volatile int num;
-        public volatile string id;
         public int floor, walls;
 
 
-        public Room(string room_id)
+        public Room()
         {
             lock (this)
             {
@@ -31,13 +30,39 @@ namespace DegreeQuest
                 members = new Actor[200];
                 items = new Item[ITEM_MAX];
                 num = num_item = 0;
-                id = room_id;
                 floor = new Random().Next(1, num_floor+1);
                 walls = new Random().Next(1, num_wall+1);
-                Console.WriteLine(walls);
+
+                Random rand = new Random();
+                int enemyCount = rand.Next(5);
+                for(int i = 0; i < enemyCount; i++)
+                {
+                    NPC npc = NPC.Random();
+                    
+                    npc.Initialize(npc.name, new Vector2(rand.Next(64, 1472), rand.Next(64, 704)));
+                    if (npc.TryMove(this, npc.GetPos()))
+                    {
+                        Add(npc);
+                    }
+                }
+
+                Console.WriteLine("lol:" + walls);
             }
         }
 
+        /// <summary>
+        /// Secondary constructor used for duplicating a room
+        /// </summary>
+        /// <param name="floor">the room num being used</param>
+        /// <param name="walls">the walls num being used</param>
+        public Room(int floor, int walls)
+        {
+            members = new Actor[200];
+            items = new Item[ITEM_MAX];
+            num = num_item = 0;
+            this.floor = floor;
+            this.walls = walls;
+        }
         public void sortMembers()
         {
             lock (this)
@@ -53,7 +78,7 @@ namespace DegreeQuest
         /// <returns>a shallow copy of the room</returns>
         public Room copy()
         {
-            Room room = new Room(id);
+            Room room = new Room(floor, walls);
             for(int i = 0; i < num_item; i++)
             {
                 room.Add(items[i]);
@@ -62,8 +87,6 @@ namespace DegreeQuest
             {
                 room.Add(members[i]);
             }
-            room.floor = this.floor;
-            room.walls = this.walls;
             return room;
         }
 
@@ -78,7 +101,6 @@ namespace DegreeQuest
                         items[num_item] = (Item)a;
                         num_item++;
                     }
-
                 }
                 else
                 {
