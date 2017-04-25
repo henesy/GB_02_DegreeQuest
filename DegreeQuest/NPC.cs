@@ -54,14 +54,13 @@ namespace DegreeQuest
             Texture = name;
         }
 
-        public NPC(NPCTemplate temp)
+        public NPC(NPCTemplate temp) : this()
         {
             name = temp.name;
             HP = HPMax = temp.HP.roll();
             EP = EPMax = temp.EP.roll();
             atk = temp.atk.roll();
             def = temp.def.roll();
-            MoveSpeed = temp.spd.roll();
             subject = temp.subject();
         }
 
@@ -115,6 +114,17 @@ namespace DegreeQuest
             }
             return true;
         }
+
+        public bool TakeHit(int damage)
+        {
+            HP = HP - damage;
+            if (HP < 0)
+            {
+                this.Active = false;
+            }
+            return this.Active;
+        }
+
 
     }
 }

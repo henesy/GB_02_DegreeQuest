@@ -34,7 +34,7 @@ namespace DegreeQuest
                 walls = new Random().Next(1, num_wall+1);
 
                 Random rand = new Random();
-                int enemyCount = rand.Next(5);
+                int enemyCount = rand.Next(4)+rand.Next(4);
                 for(int i = 0; i < enemyCount; i++)
                 {
                     NPC npc = NPC.Random();
@@ -45,7 +45,14 @@ namespace DegreeQuest
                         Add(npc);
                     }
                 }
+                int itemCount = rand.Next(3)+rand.Next(3);
+                for (int i = 0; i < itemCount; i++)
+                {
+                    Item item = Item.Random();
 
+                    item.Initialize(item.name, new Vector2(rand.Next(64, 1472), rand.Next(64, 704)));
+                    Add(item);
+                }
                 Console.WriteLine("lol:" + walls);
             }
         }
@@ -165,27 +172,37 @@ namespace DegreeQuest
                 return best;
             }
         }
-        public bool occupied(Vector2 loc)
+        public Actor Occupying(Vector2 loc)
         {
             lock (this)
             {
                 for (int i = 0; i < num; i++)
                 {
-                    if (members[i].Occupying(loc)) { return true; }
+                    if (members[i].Occupying(loc)) { return members[i]; }
                 }
-                return false;
+                return null;
             }
         }
 
-        public void Pickup(PC p)
+        public String Pickup(PC p)
         {
+            String ret = null;
             for (int i = 0; i < num_item; i++)
             {
                 if (p.Overlap(items[i]))
                 {
-                    if (p.pickup(items[i])) { Delete(items[i]); }
+                    if (p.pickup(items[i])) {
+                        ret = "Picked up " + items[i].name + ".";
+                        Delete(items[i]);
+                        return ret;
+                    }
+                    else
+                    {
+                        return "Inventory is full.";
+                    }
                 }
             }
+            return ret;
         }
     }
 

@@ -31,6 +31,9 @@ namespace DegreeQuest
         public static Vector2 ME = new Vector2(East-64, (South - 64 - North)/2);
         public static Vector2 MW = new Vector2(West, (South - 64 - North)/2);
 
+        public String message = "";
+        public static Vector2 message_loc = new Vector2(East / 2, South+10);
+
         DQServer srv = null;
         DQClient client = null;
         bool clientMode = false;
@@ -262,14 +265,18 @@ namespace DegreeQuest
                 {
                     var n = (NPC)a;
                     n.Move(dungeon.currentRoom);
-                    
+                    dungeon.currentRoom.members[i].Position.X = MathHelper.Clamp(dungeon.currentRoom.members[i].Position.X, West + 64, East - dungeon.currentRoom.members[i].GetWidth() - 64);
+                    dungeon.currentRoom.members[i].Position.Y = MathHelper.Clamp(dungeon.currentRoom.members[i].Position.Y, West + 64, East - dungeon.currentRoom.members[i].GetWidth() - 64);
                 }
             }
         }
 
         private void UpdatePlayer(GameTime gameTime)
         {
-            if (currentKeyboardState.IsKeyDown(Keys.Left))
+            previousMouseState = currentMouseState;
+            currentMouseState = Mouse.GetState();
+
+            if (currentKeyboardState.IsKeyDown(Keys.Left) || currentKeyboardState.IsKeyDown(Keys.A))
             {
                 if(pc.CanMove(Bear.W, dungeon.currentRoom, conf))
                 {
@@ -277,19 +284,19 @@ namespace DegreeQuest
                 }
             }
 
-            if (currentKeyboardState.IsKeyDown(Keys.Right))
+            if (currentKeyboardState.IsKeyDown(Keys.Right) || currentKeyboardState.IsKeyDown(Keys.D))
             {
                 if (pc.CanMove(Bear.E, dungeon.currentRoom, conf))
                     pc.Position.X += pc.MoveSpeed;
             }
 
-            if (currentKeyboardState.IsKeyDown(Keys.Up))
+            if (currentKeyboardState.IsKeyDown(Keys.Up) || currentKeyboardState.IsKeyDown(Keys.W))
             {
                 if (pc.CanMove(Bear.N, dungeon.currentRoom, conf))
                     pc.Position.Y -= pc.MoveSpeed;
             }
 
-            if (currentKeyboardState.IsKeyDown(Keys.Down))
+            if (currentKeyboardState.IsKeyDown(Keys.Down) || currentKeyboardState.IsKeyDown(Keys.S))
             {
                 if (pc.CanMove(Bear.S, dungeon.currentRoom, conf))
                     pc.Position.Y += pc.MoveSpeed;
@@ -313,7 +320,7 @@ namespace DegreeQuest
                     debugMode = true;
             }
             //for changing rooms
-            if (currentKeyboardState.IsKeyDown(Keys.F12) && !previousKeyboardState.IsKeyDown(Keys.F12))
+            if (currentKeyboardState.IsKeyDown(Keys.F12) && !previousKeyboardState.IsKeyDown(Keys.F12) && serverMode == true)
             {
                 //for testing purposes
                 if (dungeon.index_x == 128 && dungeon.index_y == 128)
@@ -327,7 +334,7 @@ namespace DegreeQuest
             }
 
             /* spawn test item */
-            if (currentKeyboardState.IsKeyDown(Keys.F3) && !previousKeyboardState.IsKeyDown(Keys.F3))
+            if (currentKeyboardState.IsKeyDown(Keys.F3) && !previousKeyboardState.IsKeyDown(Keys.F3) && serverMode == true)
             {
                 Item item = Item.Random();
                 item.Initialize(item.Texture, Mouse.GetState().Position.ToVector2());
@@ -335,7 +342,7 @@ namespace DegreeQuest
             }
 
             /* spawn test NPC */
-            if (currentKeyboardState.IsKeyDown(Keys.F4) && !previousKeyboardState.IsKeyDown(Keys.F4))
+            if (currentKeyboardState.IsKeyDown(Keys.F4) && !previousKeyboardState.IsKeyDown(Keys.F4) && serverMode == true)
             {
 
                 NPC npc = NPC.Random();
@@ -357,6 +364,26 @@ namespace DegreeQuest
                 dungeon.currentRoom.Add(proj);
             }
 
+            Vector2 mousePos = currentMouseState.Position.ToVector2(); 
+            if(currentMouseState.LeftButton == ButtonState.Pressed &&
+                previousMouseState.LeftButton == ButtonState.Released &&
+                Math.Abs(mousePos.X-(pc.GetPos().X+32))< 32 + PC.PC_MELEE_RANGE &&
+                Math.Abs(mousePos.Y - (pc.GetPos().Y + 32)) < 32+PC.PC_MELEE_RANGE)
+            {
+                Console.WriteLine("click");
+                Actor target = dungeon.currentRoom.Occupying(mousePos);
+                Console.WriteLine(mousePos);
+                   Console.WriteLine(target);
+                if (target != null)
+                {
+                    message = pc.Attack(target);
+                    if (!target.Active)
+                    {
+                        dungeon.currentRoom.Delete(target);
+                    }
+                }
+            }
+
 
             pc.kbState = currentKeyboardState.GetPressedKeys();
             pc.mLoc = new Location(currentMouseState.X, currentMouseState.Y);
@@ -372,19 +399,11 @@ namespace DegreeQuest
                 pc.Position.Y = MathHelper.Clamp(pc.Position.Y, North + 64, South - pc.GetHeight() - 64);
             }
 
-            /* take care of clamps for npc's */
-            int i;
-            for(i = 0; i < dungeon.currentRoom.num; i++)
-            {
-                if (dungeon.currentRoom.members[i].GetAType() == AType.NPC)
-                {
-                    dungeon.currentRoom.members[i].Position.X = MathHelper.Clamp(dungeon.currentRoom.members[i].Position.X, West + 64, East - dungeon.currentRoom.members[i].GetWidth() - 64);
-                    dungeon.currentRoom.members[i].Position.Y = MathHelper.Clamp(dungeon.currentRoom.members[i].Position.Y, West + 64, East - dungeon.currentRoom.members[i].GetWidth() - 64);
-                }
-            }
 
-            dungeon.currentRoom.Pickup(pc);
-            
+
+            String pickup = dungeon.currentRoom.Pickup(pc);
+            if(pickup != null) { message = pickup; }
+            int i;
             if (serverMode)
             {
                 int l = conf.iget("spriteLen");
@@ -534,10 +553,21 @@ namespace DegreeQuest
                     //pc.Draw(spriteBatch);
                     for (int i = 0; i < dungeon.currentRoom.num_item && i < dungeon.currentRoom.items.Length; i++) { DrawSprite(dungeon.currentRoom.items[i], spriteBatch); }
                     for (int i = 0; i < dungeon.currentRoom.num && i < dungeon.currentRoom.members.Length; i++){ DrawSprite(dungeon.currentRoom.members[i], spriteBatch); }
+                    //current message
+                    spriteBatch.DrawString(sf, message, message_loc, Color.White,0f,Vector2.Zero,3f,SpriteEffects.None,0f);
+
+                    float percentHP = (float)pc.HP / (float)pc.HPMax;
+                    //current HP, damage
+                    Texture2D rect = new Texture2D(graphics.GraphicsDevice, 400, 900-South);
+                    Color[] data = new Color[400*(900-South)];
+                    for (int j = 0; j < data.Length*percentHP; j++) data[j] = Color.Green;
+                    for (int j = (int)(data.Length * percentHP); j < data.Length; j++) data[j] = Color.Red;
+                    rect.SetData(data);
+                    spriteBatch.Draw(rect, new Vector2(0, South), Color.White);
                 }
 
                 /* debug mode draw */
-                if(debugMode)
+                if (debugMode)
                 {
                     string str = "";
                     if (clientMode)

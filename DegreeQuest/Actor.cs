@@ -101,7 +101,7 @@ namespace DegreeQuest
                     break;
             }
 
-            Console.WriteLine("Members in room to be scanned: " + r.num);
+            //Console.WriteLine("Members in room to be scanned: " + r.num);
             int i;
             for (i = 0; i < r.num; i++)
             {

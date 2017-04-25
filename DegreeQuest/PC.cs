@@ -24,12 +24,13 @@ namespace DegreeQuest
         public static readonly int TEXTURE_HEIGHT = 64;
 
         //Base values and constants related to PCs
-        public readonly int PC_BASE_HP= 100;
-        public readonly int PC_BASE_EP = 100;
-        public readonly int PC_BASE_DEBT = 10000;
-        public readonly int[] PC_BASE_STATS = { 0, 0, 0, 0, 0 };
-        public readonly int BASE_BAG_SIZE = 50;
-
+        public static readonly int PC_BASE_HP= 100;
+        public static readonly int PC_BASE_EP = 100;
+        public static readonly int PC_BASE_DEBT = 10000;
+        public static readonly int[] PC_BASE_STATS = { 0, 0, 0, 0, 0 };
+        public static readonly int BASE_BAG_SIZE = 50;
+        public static readonly int PC_BASE_DAMAGE = 5;
+        public static readonly int PC_MELEE_RANGE = 96;
         // Animation representing the player
         //[NonSerialized] public Texture2D PlayerTexture;
 
@@ -97,6 +98,14 @@ namespace DegreeQuest
         { return Position.toVector2(); }
 
 
+        public int Swing()
+        {
+            Item weapon = equipment[(int)Item.IType.TwoHand];
+            if (weapon == null) { weapon = equipment[(int)Item.IType.OneHand]; }
+            if(weapon == null) { return PC_BASE_DAMAGE; }
+            else { return weapon.atk + PC_BASE_DAMAGE; }
+        }
+
         //If room in bag, adds and returns true. else returns false
         public bool pickup(Item p)
         {
@@ -149,6 +158,22 @@ namespace DegreeQuest
         public bool Equals(PC p)
         {
             return p.Name.Equals(Name);
+        }
+
+        public String Attack (Actor a)
+        {
+
+            if (a == null || a.GetAType() != AType.NPC) { return "Nothing to attack!"; }
+            int damage = Swing();
+            bool kill = !((NPC)a).TakeHit(damage);
+            if (kill)
+            {
+                return "Killed enemy " + ((NPC)a).name + "!";
+            }
+            else
+            {
+                return "Hit enemy " + ((NPC)a).name + " for "+damage+".";
+            }
         }
     }
 }
