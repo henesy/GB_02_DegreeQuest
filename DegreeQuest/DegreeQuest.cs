@@ -180,7 +180,7 @@ namespace DegreeQuest
             Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width / 2,
                 GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
 
-            pc.Initialize("player", playerPosition);
+            pc.Initialize(pc.Texture, playerPosition);
         }
 
         /// <summary>
@@ -305,10 +305,8 @@ namespace DegreeQuest
             // toggle player and npc sprites (for testing)
             if (currentKeyboardState.IsKeyDown(Keys.F5) && !previousKeyboardState.IsKeyDown(Keys.F5))
             {
-                if (pc.Texture == "player")
-                    pc.Texture = "npc";
-                else
-                    pc.Texture = "player";
+                pc.number = (pc.number % 4) + 1;
+                pc.Texture = "Player" + pc.number.ToString();
             }
 
             // toggle debug mode display (shows some debug information)
@@ -563,11 +561,15 @@ namespace DegreeQuest
                     spriteBatch.Draw(rect, new Vector2(0, South), Color.White);
 
                     float percentHP = (float)pc.HP / (float)pc.HPMax;
+                    int middle = (int)(percentHP * 400);
                     //current HP
                     rect = new Texture2D(graphics.GraphicsDevice, 400, 900-South);
                     data = new Color[400*(900-South)];
-                    for (int j = 0; j < data.Length*percentHP; j++) data[j] = Color.Green;
-                    for (int j = (int)(data.Length * percentHP); j < data.Length; j++) data[j] = Color.Red;
+                    for (int j = 0; j < data.Length; j++)
+                    {
+                        if (j % 400 < middle) { data[j] = Color.Green; }
+                        else { data[j] = Color.Red; }
+                    }
                     rect.SetData(data);
                     spriteBatch.Draw(rect, new Vector2(0, South), Color.White);
                     String HPString = pc.HP + "/" + pc.HPMax;
