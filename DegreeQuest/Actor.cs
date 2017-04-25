@@ -27,7 +27,7 @@ namespace DegreeQuest
 
         //float Position { get; set; }
 
-        public string Texture { get; set; }
+        protected string Texture { get; set; }
 
         //public Texture2D Texture { get; set; }
 
@@ -42,6 +42,9 @@ namespace DegreeQuest
 
         public abstract int GetHeight();
         public abstract int GetWidth();
+        public  string GetTexture() { return Texture; }
+
+        public void SetTexture(String text) { Texture = text; }
 
         //public abstract void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch);
 
@@ -108,7 +111,7 @@ namespace DegreeQuest
                 if(r.members[i].Overlap(us))
                 {
                     
-                    Console.WriteLine("Cancelled movement with: " + r.members[i].GetHashCode() + " " + i + " " + this.GetHashCode());
+                    //Console.WriteLine("Cancelled movement with: " + r.members[i].GetHashCode() + " " + i + " " + this.GetHashCode());
                     this.Position = orig;
                     us.Position = orig;
                     return false;
