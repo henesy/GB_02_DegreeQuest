@@ -18,6 +18,15 @@ namespace DegreeQuest
 
     public class DegreeQuest : Game
     {
+        public static int North = 0;
+        public static int South = 900 - 68;
+        public static int West = 0;
+        public static int East = 1600;
+        public static Vector2 NW = new Vector2(West, North);
+        public static Vector2 NE = new Vector2(East-64, North);
+        public static Vector2 SW = new Vector2(West, South - 64);
+        public static Vector2 SE = new Vector2(East-64, South-64);
+
         DQServer srv = null;
         DQClient client = null;
         bool clientMode = false;
@@ -222,6 +231,10 @@ namespace DegreeQuest
             {
                 previousKeyboardState = currentKeyboardState;
                 currentKeyboardState = Keyboard.GetState();
+                if (serverMode)
+                {
+                    UpdateServer(gameTime);
+                }
                 UpdatePlayer(gameTime);
             }
             if (state == "inventory")
@@ -233,26 +246,49 @@ namespace DegreeQuest
         }
 
 
+        private void UpdateServer(GameTime gameTime)
+        {
+            for (int i = 0; i < dungeon.currentRoom.num; i++)
+            {
+                var a = dungeon.currentRoom.members[i];
+
+
+                //move npcs
+                if (a.GetAType() == AType.NPC && a.Active)
+                {
+                    var n = (NPC)a;
+                    n.Move(dungeon.currentRoom);
+                    
+                }
+            }
+        }
+
         private void UpdatePlayer(GameTime gameTime)
         {
             if (currentKeyboardState.IsKeyDown(Keys.Left))
             {
-                pc.Position.X -= pc.MoveSpeed;
+                if(pc.CanMove(Bear.W, dungeon.currentRoom, conf))
+                {
+                    pc.Position.X -= pc.MoveSpeed;
+                }
             }
 
             if (currentKeyboardState.IsKeyDown(Keys.Right))
             {
-                pc.Position.X += pc.MoveSpeed;
+                if (pc.CanMove(Bear.E, dungeon.currentRoom, conf))
+                    pc.Position.X += pc.MoveSpeed;
             }
 
             if (currentKeyboardState.IsKeyDown(Keys.Up))
             {
-                pc.Position.Y -= pc.MoveSpeed;
+                if (pc.CanMove(Bear.N, dungeon.currentRoom, conf))
+                    pc.Position.Y -= pc.MoveSpeed;
             }
 
             if (currentKeyboardState.IsKeyDown(Keys.Down))
             {
-                pc.Position.Y += pc.MoveSpeed;
+                if (pc.CanMove(Bear.S, dungeon.currentRoom, conf))
+                    pc.Position.Y += pc.MoveSpeed;
             }
 
             // toggle player and npc sprites (for testing)
@@ -264,6 +300,7 @@ namespace DegreeQuest
                     pc.Texture = "player";
             }
 
+            // toggle debug mode display (shows some debug information)
             if (currentKeyboardState.IsKeyDown(Keys.F2) && !previousKeyboardState.IsKeyDown(Keys.F2))
             {
                 if (debugMode)
@@ -288,47 +325,57 @@ namespace DegreeQuest
             /* spawn test item */
             if (currentKeyboardState.IsKeyDown(Keys.F3) && !previousKeyboardState.IsKeyDown(Keys.F3))
             {
-                Item item = new Item();
-                item.Initialize(item.Texture, pc.Position.toVector2());
+                Item item = Item.Random();
+                item.Initialize(item.Texture, Mouse.GetState().Position.ToVector2());
                 dungeon.currentRoom.Add(item);
             }
 
             /* spawn test NPC */
             if (currentKeyboardState.IsKeyDown(Keys.F4) && !previousKeyboardState.IsKeyDown(Keys.F4))
             {
-                NPC npc = new NPC();
-                npc.Initialize(npc.Texture, pc.Position.toVector2());
-                dungeon.currentRoom.Add(npc);
+                
+                    NPC npc = NPC.Random();
+                    npc.Initialize(npc.name, Mouse.GetState().Position.ToVector2());
+                if (npc.TryMove(dungeon.currentRoom,npc.GetPos()))
+                {
+                    dungeon.currentRoom.Add(npc);
+                }
             }
 
             /* spawn test projectile that goes to 0,0 */
             if(currentKeyboardState.IsKeyDown(Keys.F10) && !previousKeyboardState.IsKeyDown(Keys.F10) && serverMode == true)
             {
-                Projectile proj = new Projectile(pc, new Location(0, 0), 2, PType.Dot, new Location(1000, 1000));
+                Projectile proj = new Projectile(pc, new Location(currentMouseState.X, currentMouseState.Y), 2, PType.Dot, new Location(pc.Position.X, pc.Position.Y));
+                Console.WriteLine("Mouse: " + currentMouseState.X + " : " + currentMouseState.Y);
+                Console.WriteLine("Bearing: " + proj.Bearing);
+
                 proj.Initialize("dot", pc.Position.toVector2());
                 dungeon.currentRoom.Add(proj);
             }
 
 
             pc.kbState = currentKeyboardState.GetPressedKeys();
+            pc.mLoc = new Location(currentMouseState.X, currentMouseState.Y);
 
-            pc.Position.X = MathHelper.Clamp(pc.Position.X, 160, 1440 - LoadTexture(pc).Width);
-            pc.Position.Y = MathHelper.Clamp(pc.Position.Y, 90, 810 - LoadTexture(pc).Height);
+            pc.Position.X = MathHelper.Clamp(pc.Position.X, West+64, East - pc.GetWidth()-64);
+            pc.Position.Y = MathHelper.Clamp(pc.Position.Y, North+64, South - pc.GetHeight()-64);
+            dungeon.currentRoom.Pickup(pc);
             
-
             if (serverMode)
             {
                 int i;
                 int l = conf.iget("spriteLen");
-
-                //move projectiles
+                
                 for (i = 0; i < dungeon.currentRoom.num; i++)
                 {
                     var a = dungeon.currentRoom.members[i];
+
+
+                    //move projectiles
                     if (a.GetAType() == AType.Projectile)
                     {
                         var p = (Projectile)a;
-                        if (Math.Abs(p.Position.X - p.Bearing.X) < l && Math.Abs(p.Position.Y - p.Bearing.Y) < l)
+                        if (Math.Abs(p.Position.X - p.Bearing.X) < 1 && Math.Abs(p.Position.Y - p.Bearing.Y) < 1)
                         {
                             //close enough to target
                             p.Active = false;
@@ -406,20 +453,41 @@ namespace DegreeQuest
             }
             if (state == "game")
             {
-                Texture2D rect = new Texture2D(graphics.GraphicsDevice, 1280, 720);
-                Color[] data = new Color[1280 * 720];
-                for (int j = 0; j < data.Length; j++) data[j] = Color.Green;
-                rect.SetData(data);
-                spriteBatch.Draw(rect, new Vector2(160, 90), Color.White);
-                
+                //Texture2D rect = new Texture2D(graphics.GraphicsDevice, 1600, 720);
+                //Color[] data = new Color[1600* 720];
+                //for (int j = 0; j < data.Length; j++) data[j] = Color.Green;
+                //rect.SetData(data);
+                //spriteBatch.Draw(rect, new Vector2(0, 90), Color.White);
 
                 lock (dungeon.currentRoom)
                 {
+                    Room r = dungeon.currentRoom;
+                    spriteBatch.Draw(Textures["NW"+r.walls.ToString()], NW, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(Textures["NE" + r.walls.ToString()], NE, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(Textures["SW" + r.walls.ToString()], SW, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(Textures["SE" + r.walls.ToString()], SE, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    for(int x = West+64; x < East-64; x += 64)
+                    {
+                        spriteBatch.Draw(Textures["H" + r.walls.ToString()], new Vector2(x,North), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                        spriteBatch.Draw(Textures["H" + r.walls.ToString()], new Vector2(x,South-64), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    }
+                    for (int y = North+64; y < South-64; y += 64)
+                    {
+                        spriteBatch.Draw(Textures["V" + r.walls.ToString()], new Vector2(West, y), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                        spriteBatch.Draw(Textures["V" + r.walls.ToString()], new Vector2(East-64, y), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                    }
+                    for (int x = West+64;x<East-64; x += 64)
+                    {
+                        for(int y = North + 64; y < South - 64; y += 64)
+                        {
+                            spriteBatch.Draw(Textures["Floor" + r.floor.ToString()], new Vector2(x, y), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+                        }
+                    }
+
                     //draw player
                     //pc.Draw(spriteBatch);
-                    int i;
-                    for (i = 0; i < dungeon.currentRoom.num_item && i < dungeon.currentRoom.items.Length; i++) { DrawSprite(dungeon.currentRoom.items[i], spriteBatch); }
-                    for (i = 0; i < dungeon.currentRoom.num && i < dungeon.currentRoom.members.Length; i++){ DrawSprite(dungeon.currentRoom.members[i], spriteBatch); }
+                    for (int i = 0; i < dungeon.currentRoom.num_item && i < dungeon.currentRoom.items.Length; i++) { DrawSprite(dungeon.currentRoom.items[i], spriteBatch); }
+                    for (int i = 0; i < dungeon.currentRoom.num && i < dungeon.currentRoom.members.Length; i++){ DrawSprite(dungeon.currentRoom.members[i], spriteBatch); }
                 }
 
                 /* debug mode draw */

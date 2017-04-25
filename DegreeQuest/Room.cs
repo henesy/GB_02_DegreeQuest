@@ -12,12 +12,15 @@ namespace DegreeQuest
     public class Room
     {
         public static int ITEM_MAX = 256;
+        public static int num_floor = 10;
+        public static int num_wall = 2;
         /* Populate actors by looping over members and getting X/Y values on location in Room */
         public volatile Item[] items;
         public volatile int num_item;
         public volatile Actor[] members;
         public volatile int num;
         //public volatile string id;
+        public int floor, walls;
 
 
         public Room()
@@ -28,7 +31,9 @@ namespace DegreeQuest
                 members = new Actor[200];
                 items = new Item[ITEM_MAX];
                 num = num_item = 0;
-                
+                floor = new Random().Next(1, num_floor+1);
+                walls = new Random().Next(1, num_wall+1);
+                Console.WriteLine(walls);
             }
         }
 
@@ -56,6 +61,8 @@ namespace DegreeQuest
             {
                 room.Add(members[i]);
             }
+            room.floor = this.floor;
+            room.walls = this.walls;
             return room;
         }
 
@@ -89,10 +96,72 @@ namespace DegreeQuest
         {
             lock (this)
             {
-                a.Active = false;
-                ClientComparator comp = new ClientComparator();
-                Array.Sort(members, 0, this.num, comp);
-                num--;
+                if (a.GetAType() == AType.Item) {
+                    a.Active = false;
+                    Array.Sort(items, 0, this.num_item, new ClientComparator());
+                    num_item--;
+                }
+                else
+                {
+                    a.Active = false;
+                    ClientComparator comp = new ClientComparator();
+                    Array.Sort(members, 0, this.num, comp);
+                    num--;
+                }
+            }
+        }
+
+        //true if the given actor overlaps with any other actor in the room
+        public bool Overlap(Actor a)
+        {
+            lock (this)
+            {
+                for(int i = 0; i < num; i++)
+                {
+                    if (a.Overlap(members[i]))
+                    {
+                        if (!a.Equals(members[i])) { return true; }
+                    }
+                }
+                return false;
+            }
+        }
+
+
+        public Actor NearestPC(Vector2 loc)
+        {
+            lock (this)
+            {
+                int i = 1;
+                Actor best = members[0];
+                while (i < num && members[i].GetAType() == AType.PC)
+                {
+                    if ((members[i].GetPos() - loc).Length() < (best.GetPos() - loc).Length()) { best = members[i]; }
+                    i++;
+                }
+                return best;
+            }
+        }
+        public bool occupied(Vector2 loc)
+        {
+            lock (this)
+            {
+                for (int i = 0; i < num; i++)
+                {
+                    if (members[i].Occupying(loc)) { return true; }
+                }
+                return false;
+            }
+        }
+
+        public void Pickup(PC p)
+        {
+            for (int i = 0; i < num_item; i++)
+            {
+                if (p.Overlap(items[i]))
+                {
+                    if (p.pickup(items[i])) { Delete(items[i]); }
+                }
             }
         }
     }

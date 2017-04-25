@@ -333,6 +333,7 @@ namespace DegreeQuest
                 BinaryFormatter bin = new BinaryFormatter();
 
                 Microsoft.Xna.Framework.Input.Keys[] lastkb = cc.kbState;
+                Location lastm = cc.mLoc;
 
                 while (!_halt2)
                 {
@@ -359,7 +360,7 @@ namespace DegreeQuest
                                 if(k == Microsoft.Xna.Framework.Input.Keys.F10 && !lastkb.Contains(Microsoft.Xna.Framework.Input.Keys.F10))
                                 {
                                     //shoot command
-                                    Projectile proj = new Projectile(cc, new Location(0, 0), 2, PType.Dot, new Location(1000, 1000));
+                                    Projectile proj = new Projectile(cc, new Location(tc.mLoc.X, tc.mLoc.Y), 2, PType.Dot, new Location(tc.Position.X, tc.Position.Y));
                                     proj.Initialize("dot", cc.Position.toVector2());
                                     srvDQ.dungeon.currentRoom.Add(proj);
                                 }
@@ -367,6 +368,17 @@ namespace DegreeQuest
                         }
 
                         lastkb = tc.kbState;
+
+                        if(tc.mLoc != null)
+                        {
+                            //mouse things
+                            //Console.WriteLine("Mouse State: " + tc.mLoc.ToString());
+
+                        }
+
+                        lastm = tc.mLoc;
+
+                        
 
                         /* write the (potentially modified) temporary character back to the client */
 
