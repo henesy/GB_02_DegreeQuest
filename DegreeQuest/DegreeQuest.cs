@@ -277,6 +277,7 @@ namespace DegreeQuest
         {
             previousMouseState = currentMouseState;
             currentMouseState = Mouse.GetState();
+            Vector2 mousePos = currentMouseState.Position.ToVector2();
 
             if (currentKeyboardState.IsKeyDown(Keys.Left) || currentKeyboardState.IsKeyDown(Keys.A))
             {
@@ -359,7 +360,8 @@ namespace DegreeQuest
 
             /* spawn test projectile that goes to 0,0 */
             if(((currentKeyboardState.IsKeyDown(Keys.F10) && !previousKeyboardState.IsKeyDown(Keys.F10)) ||
-                    (currentKeyboardState.IsKeyDown(Keys.Space) && !previousKeyboardState.IsKeyDown(Keys.Space))) && serverMode == true)
+                    (currentKeyboardState.IsKeyDown(Keys.Space) && !previousKeyboardState.IsKeyDown(Keys.Space))) || (currentMouseState.RightButton == ButtonState.Pressed &&
+                previousMouseState.RightButton == ButtonState.Released) && serverMode == true)
             {
                 Projectile proj = new Projectile(pc, new Location(currentMouseState.X, currentMouseState.Y), 2, PType.Dot, new Location(pc.Position.X, pc.Position.Y));
                // Console.WriteLine("Mouse: " + currentMouseState.X + " : " + currentMouseState.Y);
@@ -369,7 +371,7 @@ namespace DegreeQuest
                 dungeon.currentRoom.Add(proj);
             }
 
-            Vector2 mousePos = currentMouseState.Position.ToVector2(); 
+            
             if(currentMouseState.LeftButton == ButtonState.Pressed &&
                 previousMouseState.LeftButton == ButtonState.Released &&
                 Math.Abs(mousePos.X-(pc.GetPos().X+32))< 32 + PC.PC_MELEE_RANGE &&
@@ -420,11 +422,22 @@ namespace DegreeQuest
                     if (a.GetAType() == AType.Projectile)
                     {
                         var p = (Projectile)a;
+                        Actor who = dungeon.currentRoom.Occupying(p.GetPos());
                         if (Math.Abs(p.Position.X - p.Bearing.X) <= 1.5 && Math.Abs(p.Position.Y - p.Bearing.Y) <= 1.5)
                         {
                             //close enough to target
                             p.Active = false;
                             dungeon.currentRoom.Delete(a);
+                        }
+                        else if(who!= null && who.GetAType() == AType.NPC)
+                        {
+                            if (!((NPC)who).TakeHit(5))
+                            {
+                                message = "Killed enemy " + ((NPC)who).name + "!";
+                                dungeon.currentRoom.Delete(who);
+                            }
+                            p.Active = false;
+                            dungeon.currentRoom.Delete(p);
                         }
                         else
                         {
@@ -696,10 +709,25 @@ namespace DegreeQuest
                     Vector2 HPSize = 3f*sf.MeasureString(HPString);
                     Vector2 HPLoc = new Vector2(200, South+ barSize.Y/2) - HPSize/2;
                     spriteBatch.DrawString(sf, HPString, HPLoc, Color.White, 0f, Vector2.Zero, 3f, SpriteEffects.None, 0f);
-                    
-                    //currentWeapon+Damage
-                    //Todo
 
+                //currentWeapon+Damage
+                spriteBatch.DrawString(sf, "Weapon: ", new Vector2(420,South), Color.White, 0f, Vector2.Zero, 32f/sf.MeasureString("Weapon: ").Y, SpriteEffects.None, 0f);
+                Vector2 weapon_loc = new Vector2(420 + sf.MeasureString("Weapon: ").X* 32f / sf.MeasureString("Weapon: ").Y, South);
+                Item weapon = null;
+                weapon = pc.equipment[(int)Item.IType.TwoHand];
+                if (weapon == null) { weapon = pc.equipment[(int)Item.IType.OneHand]; }
+                if (weapon == null) {
+                    rect = new Texture2D(graphics.GraphicsDevice, 32, 32);
+                    data = new Color[32 * 32];
+                    for (int j = 0; j < data.Length; j++)
+                    {
+                        data[j] = Color.White;
+                    }
+                    rect.SetData(data);
+                    spriteBatch.Draw(rect, weapon_loc, Color.White);
+                }
+                else { spriteBatch.Draw(Textures[weapon.name], weapon_loc, null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f); }
+                    
                     //current message
                     spriteBatch.DrawString(sf, message, message_loc, Color.White, 0f, Vector2.Zero, 3f, SpriteEffects.None, 0f);
 

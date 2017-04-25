@@ -236,7 +236,7 @@ namespace DegreeQuest
             {
                 for (int i = 0; i < num; i++)
                 {
-                    if (members[i].Occupying(loc)) { return members[i]; }
+                    if (members[i].Occupying(loc) && (members[i].GetAType()==AType.PC || members[i].GetAType() == AType.NPC)) { return members[i]; }
                 }
                 return null;
             }
