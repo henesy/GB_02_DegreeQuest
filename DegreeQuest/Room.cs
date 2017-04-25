@@ -97,6 +97,61 @@ namespace DegreeQuest
             return room;
         }
 
+
+        public PC[] GetPCs()
+        {
+            lock (this) {
+                int count;
+                for (count = 0; count < num; count++)
+                {
+                    Actor next = members[count];
+                    if (next == null || next.GetAType() != AType.PC) { break; }
+                }
+                PC[] pcs = new PC[count];
+                for(int i = 0; i < count; i++)
+                {
+                    pcs[i] = (PC)members[i];
+                }
+                return pcs;
+            }
+        }
+
+        public NPC[] GetNPCs()
+        {
+            lock (this)
+            {
+                int count = 0;
+                for (int i = 0; i < num; i++)
+                {
+                    Actor next = members[i];
+                    if (next!= null && next.GetAType() == AType.NPC && next.Active) { count++; }
+                }
+                NPC[] npcs = new NPC[count];
+                int n = 0;
+                for (int i = 0; n < count;i++ )
+                {
+                    Actor next = members[i];
+                    if (next != null && next.GetAType() == AType.NPC && next.Active) { npcs[n] = (NPC)next; n++; }
+                }
+                return npcs;
+            }
+        }
+
+        public Item[] GetItems()
+        {
+            lock (this)
+            {
+                Item[] arr = new Item[num_item];
+                for (int i = 0; i< num_item; i++)
+                {
+                    Item next = items[i];
+                    arr[i] = next;
+                }
+                return arr;
+            }
+        }
+
+
         public void Add(Actor a)
         {
             lock (this)
@@ -186,23 +241,73 @@ namespace DegreeQuest
 
         public String Pickup(PC p)
         {
-            String ret = null;
-            for (int i = 0; i < num_item; i++)
+            lock (this)
             {
-                if (p.Overlap(items[i]))
+                String ret = null;
+                for (int i = 0; i < num_item; i++)
                 {
-                    if (p.pickup(items[i])) {
-                        ret = "Picked up " + items[i].name + ".";
-                        Delete(items[i]);
-                        return ret;
-                    }
-                    else
+                    if (p.Overlap(items[i]))
                     {
-                        return "Inventory is full.";
+                        if (p.pickup(items[i]))
+                        {
+                            ret = "Picked up " + items[i].name + ".";
+                            Delete(items[i]);
+                            return ret;
+                        }
+                        else
+                        {
+                            return "Inventory is full.";
+                        }
                     }
                 }
+                return ret;
             }
-            return ret;
+        }
+
+
+        public RoomInfo Info()
+        {
+            lock (this)
+            {
+                return new RoomInfo(this);
+            }
+        }
+
+        [Serializable()]
+        public class RoomInfo{
+            public String[] textures;
+            public Vector2[] locs;
+            public PC[] pcs;
+            public int num_npc;
+            public int num_item;
+            public int walls, floor;
+            
+            public RoomInfo(Room r)
+            {
+                lock (r)
+                {
+                    pcs = r.GetPCs();
+                    NPC[] npcs = r.GetNPCs();
+                    Item[] items = r.GetItems();
+                    num_npc = npcs.Length;
+                    num_item = items.Length;
+                    textures = new String[num_npc + num_item];
+                    locs = new Vector2[num_npc + num_item];
+                    int i;
+                    for (i = 0; i < num_npc; i++)
+                    {
+                        textures[i] = npcs[i].Texture;
+                        locs[i] = npcs[i].GetPos();
+                    }
+                    for (i = num_npc; i < num_npc + num_item; i++)
+                    {
+                        textures[i] = items[i + num_item].Texture;
+                        locs[i] = items[i + num_item].GetPos();
+                    }
+                    walls = r.walls;
+                    floor = r.floor;
+                }
+            }
         }
     }
 

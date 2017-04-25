@@ -553,17 +553,34 @@ namespace DegreeQuest
                     //pc.Draw(spriteBatch);
                     for (int i = 0; i < dungeon.currentRoom.num_item && i < dungeon.currentRoom.items.Length; i++) { DrawSprite(dungeon.currentRoom.items[i], spriteBatch); }
                     for (int i = 0; i < dungeon.currentRoom.num && i < dungeon.currentRoom.members.Length; i++){ DrawSprite(dungeon.currentRoom.members[i], spriteBatch); }
-                    //current message
-                    spriteBatch.DrawString(sf, message, message_loc, Color.White,0f,Vector2.Zero,3f,SpriteEffects.None,0f);
+
+                    //Bottom Bar:
+                    Vector2 barSize = new Vector2(1600, 900 - South);
+                    Texture2D rect = new Texture2D(graphics.GraphicsDevice, 1600, 900 - South);
+                    Color[] data = new Color[1600 * (900 - South)];
+                    for (int j = 0; j < data.Length; j++) data[j] = Color.Black;
+                    rect.SetData(data);
+                    spriteBatch.Draw(rect, new Vector2(0, South), Color.White);
 
                     float percentHP = (float)pc.HP / (float)pc.HPMax;
-                    //current HP, damage
-                    Texture2D rect = new Texture2D(graphics.GraphicsDevice, 400, 900-South);
-                    Color[] data = new Color[400*(900-South)];
+                    //current HP
+                    rect = new Texture2D(graphics.GraphicsDevice, 400, 900-South);
+                    data = new Color[400*(900-South)];
                     for (int j = 0; j < data.Length*percentHP; j++) data[j] = Color.Green;
                     for (int j = (int)(data.Length * percentHP); j < data.Length; j++) data[j] = Color.Red;
                     rect.SetData(data);
                     spriteBatch.Draw(rect, new Vector2(0, South), Color.White);
+                    String HPString = pc.HP + "/" + pc.HPMax;
+                    Vector2 HPSize = 3f*sf.MeasureString(HPString);
+                    Vector2 HPLoc = new Vector2(200, South+ barSize.Y/2) - HPSize/2;
+                    spriteBatch.DrawString(sf, HPString, HPLoc, Color.White, 0f, Vector2.Zero, 3f, SpriteEffects.None, 0f);
+                    
+                    //currentWeapon+Damage
+                    //Todo
+
+                    //current message
+                    spriteBatch.DrawString(sf, message, message_loc, Color.White, 0f, Vector2.Zero, 3f, SpriteEffects.None, 0f);
+
                 }
 
                 /* debug mode draw */
